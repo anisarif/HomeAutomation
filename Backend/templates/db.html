@@ -1,0 +1,9 @@
+{% block content %}
+    <h1>{% block title %} users {% endblock %}</h1>
+    {% for user in users %}
+        <div>
+            <h3>{{ user['id'] }}</h3>
+            <i><p>{{ user['username'] }} </p></i>
+        </div>
+    {% endfor %}
+{% endblock %}
