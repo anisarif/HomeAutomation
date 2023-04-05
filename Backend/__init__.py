@@ -1,7 +1,6 @@
 import os
-
 from flask import Flask, render_template
-from flask_sqlalchemy import SQLAlchemy
+from .models import db, UserHome, Rooms
 #from flask_cors import CORS
 #import urllib.request, json
 #from flask_mqtt import Mqtt
@@ -10,14 +9,15 @@ from flask_sqlalchemy import SQLAlchemy
 
 def create_app(test_config=None):
 
-    db = SQLAlchemy()
 
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
 
     app.config["SECRET_KEY"] = 'dev'
     app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://home:admin@localhost:5432/home_db"
-
+    db.init_app(app)
+    with app.app_context():
+        db.create_all()
     """
     CORS(app, resources={r'/*':{"origins":"*"}})
     app.config['CORS_HEADERS'] = 'Content-Type'
@@ -30,7 +30,6 @@ def create_app(test_config=None):
     mqtt_client = Mqtt(app)
 
     cache = Cache(app)
-
 
     @mqtt_client.on_connect()
     def handle_connect(client, userdata, flags, rc):
@@ -55,9 +54,7 @@ def create_app(test_config=None):
 
         print('Received message on topic: {topic} with payload: {payload}'.format(**data))
      """
-
-    
-    db.init_app(app)
+  
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
@@ -71,21 +68,19 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    class UserHome(db.Model):
-        id = db.Column(db.Integer, primary_key=True)
-        username = db.Column(db.String, unique=True, nullable=False)
+    from . import auth
+    app.register_blueprint(auth.bp)
 
-    with app.app_context():
-        db.create_all()
+
     # a simple page that says hello
     @app.route('/hello')
     def hello():
         return 'Hello, World!'
     
     @app.route('/query')
-    def query():
-        
+    def query():        
         users = UserHome.query.all()
-        return render_template('db.html', users=users)
+        rooms = Rooms.query.all()
+        return render_template('db.html', rooms=rooms, users=users)
 
     return app
