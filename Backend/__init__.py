@@ -1,16 +1,15 @@
 import os
 
 from flask import Flask, render_template
-import psycopg2
 from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
-import urllib.request, json
-from flask_mqtt import Mqtt
-from flask_caching import Cache
+#from flask_cors import CORS
+#import urllib.request, json
+#from flask_mqtt import Mqtt
+#from flask_caching import Cache
 
 
 def create_app(test_config=None):
-    
+
     db = SQLAlchemy()
 
     # create and configure the app
@@ -19,6 +18,7 @@ def create_app(test_config=None):
     app.config["SECRET_KEY"] = 'dev'
     app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://home:admin@localhost:5432/home_db"
 
+    """
     CORS(app, resources={r'/*':{"origins":"*"}})
     app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -54,7 +54,7 @@ def create_app(test_config=None):
             cache.set("room_humidity", message.payload.decode('utf-8'))
 
         print('Received message on topic: {topic} with payload: {payload}'.format(**data))
-
+     """
 
     
     db.init_app(app)
