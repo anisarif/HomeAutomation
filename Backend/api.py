@@ -36,7 +36,7 @@ def getuser(id):
 
 # UPDATE A USER BY ID
 
-@bp.route("/user/update/<int:id>")
+@bp.route("/user/update/<int:id>", methods=['PUT'])
 def updateuser(id):
     user = UserHome.query.filter_by(id=id).first()
     if user:
@@ -90,13 +90,13 @@ def getboard(id):
 
 # UPDATE A BOARD BY ID
 
-@bp.route("/board/update/<int:id>")
+@bp.route("/board/update/<int:id>", methods=['PUT'])
 def updateboard(id):
     return
 
 # DELETE BOARD BY ID 
 
-@bp.route("/board/delete/<int:id>")
+@bp.route("/board/delete/<int:id>", methods=['DELETE'])
 def deletboard():
     board = Boards.query.filter_by(id=id).first()
     if board:
@@ -140,13 +140,13 @@ def getactuator(id):
 
 # UPDATE A ACTUATOR BY ID
 
-@bp.route("/actuator/update/<int:id>")
+@bp.route("/actuator/update/<int:id>", methods=['PUT'])
 def updateactuator(id):
     return
 
 # DELETE ACTUATOR BY ID 
 
-@bp.route("/actuator/delete/<int:id>")
+@bp.route("/actuator/delete/<int:id>", methods=['DELETE'])
 def deletactuator():
     actuator = Actuators.query.filter_by(id=id).first()
     if actuator:

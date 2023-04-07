@@ -1,5 +1,4 @@
 from flask import Flask, request, flash, render_template, redirect, url_for, Blueprint
-from . import api
 from .models import db, UserHome
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')

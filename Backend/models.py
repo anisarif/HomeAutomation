@@ -1,12 +1,11 @@
-from flask import current_app as app
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
 
 user_auth = db.Table('user_auth',
-    db.Column('userhome_id', db.Integer, db.ForeignKey('userhome.id'), primary_key=True),
-    db.Column('board_id', db.Integer, db.ForeignKey('board.id'), primary_key=True)
+    db.Column('userhome_id', db.Integer, db.ForeignKey('user_home.id'), primary_key=True),
+    db.Column('boards_id', db.Integer, db.ForeignKey('boards.id'), primary_key=True)
 )
 
 class UserHome(db.Model):
@@ -22,9 +21,6 @@ class Boards(db.Model):
     name = db.Column(db.String, unique=True, nullable=False)
     privacy = db.Column(db.String, nullable=False)     
     """ private or public """
-    """     user_auth = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('UserHome', backref=db.backref('user_auth', lazy=True))
-    """
 
 class Actuators(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

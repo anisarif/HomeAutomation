@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template
 from .models import db, UserHome, Boards
-# from flask_cors import CORS
+from flask_cors import CORS
 # import urllib.request, json
 # from flask_mqtt import Mqtt
 # from flask_caching import Cache
@@ -17,10 +17,10 @@ def create_app(test_config=None):
     db.init_app(app)
     with app.app_context():
         db.create_all()
-    """
-    CORS(app, resources={r'/*':{"origins":"*"}})
+    CORS(app, resources={r'/*': {"origins": "*"}})
     app.config['CORS_HEADERS'] = 'Content-Type'
 
+    """
 
     app.config['MQTT_BROKER_URL'] = 'localhost'
     app.config['MQTT_BROKER_PORT'] = 1883
