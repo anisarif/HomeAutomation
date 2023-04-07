@@ -1,5 +1,4 @@
 from flask_sqlalchemy import SQLAlchemy
-
 db = SQLAlchemy()
 
 
@@ -26,7 +25,7 @@ class Actuators(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, unique=True, nullable=False)
     pin = db.Column(db.Integer, nullable=False)
-    board_id = db.Column(db.Integer, db.ForeignKey('board.id'), nullable=False)
+    board_id = db.Column(db.Integer, db.ForeignKey('boards.id'), nullable=False)
     board = db.relationship('Boards', backref=db.backref('board_id', lazy=True) )
     type = db.Column(db.String, nullable=False)
     """ light, locker .. different output switcher time """
