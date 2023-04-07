@@ -1,14 +1,13 @@
 import os
 from flask import Flask, render_template
-from .models import db, UserHome, Rooms
-#from flask_cors import CORS
-#import urllib.request, json
-#from flask_mqtt import Mqtt
-#from flask_caching import Cache
+from .models import db, UserHome, Boards
+# from flask_cors import CORS
+# import urllib.request, json
+# from flask_mqtt import Mqtt
+# from flask_caching import Cache
 
 
 def create_app(test_config=None):
-
 
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -54,7 +53,7 @@ def create_app(test_config=None):
 
         print('Received message on topic: {topic} with payload: {payload}'.format(**data))
      """
-  
+
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
@@ -71,16 +70,19 @@ def create_app(test_config=None):
     from . import auth
     app.register_blueprint(auth.bp)
 
+    from . import api
+    app.register_blueprint(api.bp)
 
     # a simple page that says hello
-    @app.route('/hello')
-    def hello():
+
+    @app.route('/')
+    def index():
         return 'Hello, World!'
-    
+
     @app.route('/query')
-    def query():        
+    def query():
         users = UserHome.query.all()
-        rooms = Rooms.query.all()
-        return render_template('db.html', rooms=rooms, users=users)
+        boards = Boards.query.all()
+        return render_template('db.html', boards=boards, users=users)
 
     return app

@@ -1,0 +1,22 @@
+{% block header %}
+<h1>{% block title %}Add Board{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form method="post">
+    <label for="name">Name</label>
+    <input name="name" id="name" required>
+    <label for="privacy">Privacy settings</label>
+    <select name="privacy" id="privacy" required>
+        <option value="public">public</option>
+        <option value="private">private</option>
+    </select>
+    <label for="user_auth">Authorized Users</label>
+    <select name="user_auth" id="user_auth" required>
+        {% for user in users %}
+        <option value="{{ user.id }}">{{ user.username }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="add">
+</form>
+{% endblock %}

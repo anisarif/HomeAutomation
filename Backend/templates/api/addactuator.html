@@ -1,0 +1,26 @@
+{% block header %}
+<h1>{% block title %}Add Board{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form method="post">
+    <label for="name">Name</label>
+    <input name="name" id="name" required>
+    <label for="pin">pin</label>
+    <input name="pin" id="pin" required>
+
+    <label for="board_id">board</label>
+    <select name="board_id" id="board_id" required>
+        {% for board in boards %}
+        <option value="{{ board.id }}">{{ board.name }}</option>
+        {% endfor %}
+    </select>
+    <label for="type">type</label>
+    <select name="type" id="type" required>
+        <option value="light">light</option>
+        <option value="light">locker</option>
+    </select>
+
+    <input type="submit" value="add">
+</form>
+{% endblock %}
