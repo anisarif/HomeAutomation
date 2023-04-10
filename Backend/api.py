@@ -1,6 +1,8 @@
-from flask import Flask, request, flash, render_template, redirect, url_for, Blueprint
+import functools
+from flask import Flask, request, flash, render_template, redirect, url_for, Blueprint, jsonify
 from . import api
 from .models import db, UserHome, Boards, Actuators
+from werkzeug.security import generate_password_hash
 
 bp = Blueprint('api', __name__, url_prefix='/api')
 
@@ -9,13 +11,13 @@ bp = Blueprint('api', __name__, url_prefix='/api')
 @bp.route("/user/add", methods=['GET', 'POST'])
 def adduser():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        role = request.form['role']
-        user = UserHome(username=username, password=password, role=role)
+        username = request.args.get('username')
+        password = request.args.get('password')
+        role = request.args.get('role')
+        user = UserHome(username=username, password=generate_password_hash(password), role=role)
         db.session.add(user)
         db.session.commit()
-        flash("admin added")
+        flash("user added")
         return redirect(url_for('index'))
 
     return render_template('api/adduser.html')
@@ -25,18 +27,46 @@ def adduser():
 @bp.route("/user/getall")
 def getusers():
     users = UserHome.query.all()
-    return users
+    res = []
+    for user in users:
+        user = {
+            "id": user.id,
+            "username":user.username,
+            "role":user.role,
+        }
+        res.append(user)
+    return jsonify(res)
 
 # GET USER BY ID
 
-@bp.route("/user/get/<int:id>")
-def getuser(id):
+@bp.route("/user/get_id/")
+def getuser_id(id):
     user = UserHome.query.filter_by(id=id).first()
-    return user
+    return jsonify({
+        "id":user.id,
+        "username":user.username,
+        "role":user.role
+    })
+
+# GET USER BY USERNAME
+
+@bp.route("/user/get_username/")
+def getuser_username(username):
+    user = UserHome.query.filter_by(username=username).first()
+
+    if user is None:
+        error = 'Incorrect username.'
+
+    return jsonify({
+        "id":user.id,
+        "username":user.username,
+        "password":user.password,
+        "role":user.role
+    })
 
 # UPDATE A USER BY ID
 
-@bp.route("/user/update/<int:id>", methods=['PUT'])
+@bp.route("/user/update/", methods=['PUT'])
 def updateuser(id):
     user = UserHome.query.filter_by(id=id).first()
     if user:
@@ -45,17 +75,17 @@ def updateuser(id):
       user.password = data['password']
       user.role = data['role']
       db.session.commit()
-    return
-
+    return str("user {user.username} updated")
 # DELETE USER BY ID 
 
-@bp.route("/user/delete/<int:id>", methods=['DELETE'])
+@bp.route("/user/delete/", methods=['DELETE'])
 def deleteuser(id):
     user = UserHome.query.filter_by(id=id).first()
     if user:
         db.session.delete(user)
         db.session.commit()    
-    return
+    return str("user {user.username} deleted")
+
 
 # ADD A BOARD
 

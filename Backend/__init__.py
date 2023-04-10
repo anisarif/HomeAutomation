@@ -2,6 +2,8 @@ import os
 from flask import Flask, render_template
 from .models import db, UserHome, Boards
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
+
 # import urllib.request, json
 # from flask_mqtt import Mqtt
 # from flask_caching import Cache
@@ -17,8 +19,14 @@ def create_app(test_config=None):
     db.init_app(app)
     with app.app_context():
         db.create_all()
-    CORS(app, resources={r'/*': {"origins": "*"}})
+    cors = CORS(app, resources={r'/*': {"origins": "*"}}, supports_credentials=True)
+      
+
     app.config['CORS_HEADERS'] = 'Content-Type'
+
+    # Setup the Flask-JWT-Extended extension
+    app.config["JWT_SECRET_KEY"] = "super-secret"
+    jwt = JWTManager(app)
 
     """
 
