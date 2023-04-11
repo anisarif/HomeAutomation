@@ -19,7 +19,7 @@ def create_app(test_config=None):
     db.init_app(app)
     with app.app_context():
         db.create_all()
-    cors = CORS(app, resources={r'/*': {"origins": "*"}}, supports_credentials=True)
+    cors = CORS(app)
     app.config['CORS_HEADERS'] = 'Content-Type'
 
     # Setup the Flask-JWT-Extended extension

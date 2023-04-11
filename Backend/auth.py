@@ -1,11 +1,9 @@
-from flask import Flask, request, flash, render_template, redirect, url_for, Blueprint, jsonify
+from flask import request, Blueprint, jsonify
 from .models import db, UserHome
 from flask_jwt_extended import create_access_token
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_cors import CORS, cross_origin
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
-cors = CORS(bp, supports_credentials=True)
 
 # First connection Admin registration 
 
@@ -14,14 +12,13 @@ def register():
     username = request.json.get("username", None)
     password = request.json.get("password", None)
     role = 'admin'
-
     error = None
     user = UserHome(username=username, password=generate_password_hash(password), role=role)
     db.session.add(user)
     db.session.commit()
     if error is None:
         username = {"username":user.username}
-        return jsonify(username)
+        return "Admin {username} registred"
     return error
 
 
