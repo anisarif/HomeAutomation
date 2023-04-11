@@ -1,10 +1,17 @@
 import { getUsers } from "../utils/api";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { Context } from "../store/appContext";
 
 
 
 const Home = () => {
    const [users, setUsers] = useState([])
+   const { store, actions } = useContext(Context)
+
+   useEffect(() => {
+      if (store.token && store.token !="" && store.token !=undefined) actions.getMessage()
+      },
+      [store.token])
 
    useEffect(() => {
       const fetchData = async () => {

@@ -33,11 +33,6 @@ export const getAcc = () => {
 
 /* LOGIN API */
 
-export const loginApi = (opts) => {
-    fetch("http://127.0.0.1:5000/auth/login", opts)
-  .then(res => res.json())
-  .then(data => {sessionStorage.setItem("token", data.access_token)})
-  .catch(error => console.log(error))}
 
 export const RegisterApi = (opts) => {
     fetch("http://127.0.0.1:5000/auth/register", opts)

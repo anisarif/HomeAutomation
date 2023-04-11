@@ -37,13 +37,12 @@ def login():
         error = 'incorrect password.'
 
     if error is None:
-        access_token = create_access_token(identity=user.id)
+        if user.role == "admin":
+            is_admin = True
+        else:
+            is_admin = False    
+        access_token = create_access_token(identity=user.id, additional_claims={"is_administrator": is_admin})
         return jsonify(access_token=access_token)
 
     return error
 
-# Logout Route
-
-@bp.route("/logout")
-def logout():
-    return

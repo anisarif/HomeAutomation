@@ -1,8 +1,9 @@
 import os
-from flask import Flask, render_template, Response, current_app, request
+from functools import wraps
+from flask import Flask, render_template, Response, current_app, request, jsonify
 from .models import db, UserHome, Boards
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, get_jwt, verify_jwt_in_request, jwt_required
 
 # import urllib.request, json
 # from flask_mqtt import Mqtt
@@ -25,6 +26,22 @@ def create_app(test_config=None):
     # Setup the Flask-JWT-Extended extension
     app.config["JWT_SECRET_KEY"] = "super-secret"
     jwt = JWTManager(app)
+
+    # Creating a custom decorator @admin_required to check user.role in the jwt access token as additional claims
+    def admin_required():
+        def wrapper(fn):
+            @wraps(fn)
+            def decorator(*args, **kwargs):
+                verify_jwt_in_request()
+                claims = get_jwt()
+                if claims["is_administrator"]:
+                    return fn(*args, **kwargs)
+                else:
+                    return 'admin only', 403
+
+            return decorator
+
+        return wrapper
 
     """
 
@@ -81,8 +98,15 @@ def create_app(test_config=None):
 
     
     @app.route('/')
+    @admin_required()
     def index():
         return 'Hello, World!'
+    
+    @app.route('/test')
+    @jwt_required
+    @admin_required()
+    def test():
+        return "hello"
 
     @app.route('/query')
     def query():
