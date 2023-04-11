@@ -5,7 +5,20 @@ const Login = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
-  const handleClick = () => loginApi()
+  const opts = {    
+    method:'POST',
+    mode: 'cors',
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      "username": username,
+      "password": password,
+    }),
+  }
+  
+  const handleClick = () => loginApi(opts)
 
   return (
     <div>

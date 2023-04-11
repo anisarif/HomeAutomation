@@ -33,29 +33,22 @@ export const getAcc = () => {
 
 /* LOGIN API */
 
-export const loginApi = () => {
-    const opts = {    
-        method:'POST',
-        mode: 'cors',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          "username": username,
-          "password": password,
-        }),
-      
-    }
+export const loginApi = (opts) => {
     fetch("http://127.0.0.1:5000/auth/login", opts)
   .then(res => res.json())
   .then(data => {sessionStorage.setItem("token", data.access_token)})
   .catch(error => console.log(error))}
 
+export const RegisterApi = (opts) => {
+    fetch("http://127.0.0.1:5000/auth/register", opts)
+  .then(res => res.json())
+  .catch(error => console.log(error))}
+
 /* GET ALL USERS API */
 
-  export const getUsers = () => {
+export const getUsers = () => {
     return fetch('http://127.0.0.1:5000/api/user/getall')
         .then(res => res.json())
         .catch(error => console.log(error))
 }
+

@@ -5,29 +5,29 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_cors import CORS, cross_origin
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
-CORS(bp)
+cors = CORS(bp, supports_credentials=True)
 
 # First connection Admin registration 
 
-@bp.route('/register/', methods=['GET', 'POST'])
+@bp.route('/register', methods=["POST"])
 def register():
-    if request.method == 'POST':
-        username = request.args.get('username')
-        password = request.args.get('password')
-        role = 'admin'
-        user = UserHome(username=username, password=generate_password_hash(password), role=role)
-        db.session.add(user)
-        db.session.commit()
-        flash("admin added")
-        return redirect(url_for('index'))
+    username = request.json.get("username", None)
+    password = request.json.get("password", None)
+    role = 'admin'
 
-    return render_template('auth/register.html')
+    error = None
+    user = UserHome(username=username, password=generate_password_hash(password), role=role)
+    db.session.add(user)
+    db.session.commit()
+    if error is None:
+        username = {"username":user.username}
+        return jsonify(username)
+    return error
 
 
 # Login Route
 
 @bp.route("/login", methods=["POST"])
-@cross_origin()
 def login():
     username = request.json.get("username", None)
     password = request.json.get("password", None)
@@ -40,7 +40,7 @@ def login():
         error = 'incorrect password.'
 
     if error is None:
-        access_token = create_access_token(identity=username)
+        access_token = create_access_token(identity=user.id)
         return jsonify(access_token=access_token)
 
     return error

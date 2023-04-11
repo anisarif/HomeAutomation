@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, Response, current_app, request
 from .models import db, UserHome, Boards
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -20,8 +20,6 @@ def create_app(test_config=None):
     with app.app_context():
         db.create_all()
     cors = CORS(app, resources={r'/*': {"origins": "*"}}, supports_credentials=True)
-      
-
     app.config['CORS_HEADERS'] = 'Content-Type'
 
     # Setup the Flask-JWT-Extended extension
@@ -81,8 +79,7 @@ def create_app(test_config=None):
     from . import api
     app.register_blueprint(api.bp)
 
-    # a simple page that says hello
-
+    
     @app.route('/')
     def index():
         return 'Hello, World!'
