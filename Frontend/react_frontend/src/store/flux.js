@@ -1,6 +1,7 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
+			users: null,
             token: null,
 			message: null,
 			demo: [
@@ -82,6 +83,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error)
 				}
 			},
+			
+			getUsers: async () =>  {
+                try{
+                    const res =  await fetch("http://127.0.0.1:5000/api/user/getall")
+                    if (res.status !== 200){
+                        alert("There has been an error");
+                        return false;
+                    }
+
+                    const data = await res.json();
+                    sessionStorage.setItem("users", data);
+                    if (users && users!=undefined && users != null) setStore({ users: users });
+                    return true;
+                }
+                catch(error){
+                    console.error(error)
+                }
+            },
+
 			changeColor: (index, color) => {
 				//get the store
 				const store = getStore();

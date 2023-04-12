@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState} from 'react';
 import { RegisterApi } from '../utils/api';
+
 
 const Register = () => {
   const [username, setUsername] = useState("")
@@ -16,7 +17,10 @@ const Register = () => {
     }),
   
   }
+
   const handleClick = () => RegisterApi(opts)
+
+
 
   return (
     <div>

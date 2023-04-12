@@ -79,7 +79,9 @@ def updateuser(id):
 # DELETE USER BY ID 
 
 @bp.route("/user/delete/", methods=['DELETE'])
-def deleteuser(id):
+def deleteuser():
+    data = request.get_json()
+    id = data['id']
     user = UserHome.query.filter_by(id=id).first()
     if user:
         db.session.delete(user)

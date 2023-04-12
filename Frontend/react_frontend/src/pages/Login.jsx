@@ -1,7 +1,9 @@
 import { useContext, useState } from 'react';
 import { Context } from '../store/appContext';
+
+
 const Login = () => {
-  const { store, actions } = useContext(Context);
+  const { actions } = useContext(Context);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const token = sessionStorage.getItem("token");
