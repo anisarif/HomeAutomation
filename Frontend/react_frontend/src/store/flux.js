@@ -1,45 +1,28 @@
 const getState = ({ getStore, getActions, setStore }) => {
-	return {
-		store: {
-			users: null,
+    return {
+        store: {
+            users: null,
             token: null,
-			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
-		},
-		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
-            
-            login: async (username, password) =>  {
+            message: null,
+        },
+        actions: {
+            login: async (username, password) => {
                 const opts = {
                     method: 'POST',
                     mode: 'cors',
                     headers: {
-                      'Accept': 'application/json',
-                      'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                      "username": username,
-                      "password": password,
+                        "username": username,
+                        "password": password,
                     }),
                 };
 
-                try{
-                    const res =  await fetch("http://127.0.0.1:5000/auth/login", opts)
-                    if (res.status !== 200){
+                try {
+                    const res = await fetch("http://127.0.0.1:5000/auth/login", opts)
+                    if (res.status !== 200) {
                         alert("There has been an error");
                         return false;
                     }
@@ -49,75 +32,105 @@ const getState = ({ getStore, getActions, setStore }) => {
                     setStore({ token: data.access_token });
                     return true;
                 }
-                catch(error){
+                catch (error) {
                     console.error(error)
                 }
             },
-            
+
             syncTokenFromSessionStore: () => {
                 const token = sessionStorage.getItem("token");
-                if (token && token!="" && token!=undefined) setStore({ token: token });
+                if (token && token != "" && token != undefined) setStore({ token: token });
+            },
+
+            syncUsersFromSessionStore: () => {
+                const users = sessionStorage.getItem("users");
+                if (users && users != undefined && users != "") setStore({ users: users });
             },
 
             logout: () => {
                 sessionStorage.removeItem("token");
+                sessionStorage.removeItem("current_user");
                 setStore({ token: null });
                 console.log("logged out");
             },
 
-			getMessage: async () => {
+            getMessage: async () => {
                 const store = getStore();
                 const opts = {
                     headers: {
                         "Authorization": "Bearer " + store.token
                     }
                 };
-				try{
-					// fetching data from the backend
-					const resp = await fetch("http://127.0.0.1:5000/", opts)
-					const data = await resp.json()
-					setStore({ message: data.message })
-					// don't forget to return something, that is how the async resolves
-					return data;
-				}catch(error){
-					console.log("Error loading message from backend", error)
-				}
-			},
-			
-			getUsers: async () =>  {
-                try{
-                    const res =  await fetch("http://127.0.0.1:5000/api/user/getall")
-                    if (res.status !== 200){
+                try {
+                    // fetching data from the backend
+                    const resp = await fetch("http://127.0.0.1:5000/", opts)
+                    const data = await resp.json()
+                    setStore({ message: data.message })
+                    // don't forget to return something, that is how the async resolves
+                    return data;
+                } catch (error) {
+                    console.log("Error loading message from backend", error)
+                }
+            },
+
+            addUser: (username, role) => {
+                const store = getStore();
+                const opts = {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': "Bearer " + store.token,
+                    },
+                    body: JSON.stringify({
+                        "username": username,
+                        "role":role,
+                    }),
+                };
+
+                const data = fetch("http://127.0.0.1:5000/api/user/add", opts)
+                return data;
+            },
+
+            deleteUser: (id) => {
+                const store = getStore();
+                const opts = {
+                    method: 'DELETE',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': "Bearer " + store.token
+                    },
+                    body: JSON.stringify({
+                        "id": id,
+                    }),
+                };
+
+                const data = fetch("http://127.0.0.1:5000/api/user/delete", opts)
+                return data;
+            },
+
+            getUsers: async () => {
+                try {
+                    const res = await fetch("http://127.0.0.1:5000/api/user/getall")
+                    if (res.status !== 200) {
                         alert("There has been an error");
                         return false;
                     }
 
                     const data = await res.json();
-                    sessionStorage.setItem("users", data);
-                    if (users && users!=undefined && users != null) setStore({ users: users });
+                    const users = JSON.stringify(data)
+                    if (users && users != undefined && users != "[]" && users != "") sessionStorage.setItem("users", users);
                     return true;
                 }
-                catch(error){
+                catch (error) {
                     console.error(error)
                 }
             },
-
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
-
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
-
-				//reset the global store
-				setStore({ demo: demo });
-			}
-		}
-	};
+            
+        }
+    };
 };
 
 export default getState;

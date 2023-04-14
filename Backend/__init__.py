@@ -1,6 +1,6 @@
 import os
 from functools import wraps
-from flask import Flask, render_template, Response, current_app, request, jsonify
+from flask import Flask, render_template
 from .models import db, UserHome, Boards
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, get_jwt, verify_jwt_in_request, jwt_required

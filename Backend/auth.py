@@ -37,11 +37,17 @@ def login():
         error = 'incorrect password.'
 
     if error is None:
+        current_user = {
+                "id" : user.id,
+                "username" : user.username,
+                "role" : user.role,
+            }
         if user.role == "admin":
             is_admin = True
         else:
-            is_admin = False    
-        access_token = create_access_token(identity=user.id, additional_claims={"is_administrator": is_admin})
+            is_admin = False
+            
+        access_token = create_access_token(identity=user.id, additional_claims={"is_administrator": is_admin, "current_user":current_user})
         return jsonify(access_token=access_token)
 
     return error

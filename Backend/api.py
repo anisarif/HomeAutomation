@@ -8,38 +8,37 @@ bp = Blueprint('api', __name__, url_prefix='/api')
 
 # ADD A USER 
 
-@bp.route("/user/add", methods=['GET', 'POST'])
+@bp.route("/user/add", methods=['POST'])
 def adduser():
-    if request.method == 'POST':
-        username = request.args.get('username')
-        password = request.args.get('password')
-        role = request.args.get('role')
-        user = UserHome(username=username, password=generate_password_hash(password), role=role)
-        db.session.add(user)
-        db.session.commit()
-        flash("user added")
-        return redirect(url_for('index'))
+    data = request.get_json()
 
-    return render_template('api/adduser.html')
+    username = data['username']
+    password = data['username']
+    role = data['role']
+    user = UserHome(username=username, password=generate_password_hash(password), role=role)
+    db.session.add(user)
+    db.session.commit()
+    return 'user added'
+
 
 # GET ALL USERS
 
 @bp.route("/user/getall")
 def getusers():
-    users = UserHome.query.all()
-    res = []
-    for user in users:
-        user = {
+    res = UserHome.query.all()
+    list = []
+    for user in res:
+        users = {
             "id": user.id,
             "username":user.username,
             "role":user.role,
         }
-        res.append(user)
-    return jsonify(res)
+        list.append(users)
+    return jsonify(list)
 
 # GET USER BY ID
 
-@bp.route("/user/get_id/")
+@bp.route("/user/get_id")
 def getuser_id(id):
     user = UserHome.query.filter_by(id=id).first()
     return jsonify({
@@ -50,7 +49,7 @@ def getuser_id(id):
 
 # GET USER BY USERNAME
 
-@bp.route("/user/get_username/")
+@bp.route("/user/get_username")
 def getuser_username(username):
     user = UserHome.query.filter_by(username=username).first()
 
@@ -66,7 +65,7 @@ def getuser_username(username):
 
 # UPDATE A USER BY ID
 
-@bp.route("/user/update/", methods=['PUT'])
+@bp.route("/user/update", methods=['PUT'])
 def updateuser(id):
     user = UserHome.query.filter_by(id=id).first()
     if user:
@@ -76,17 +75,18 @@ def updateuser(id):
       user.role = data['role']
       db.session.commit()
     return str("user {user.username} updated")
+
 # DELETE USER BY ID 
 
-@bp.route("/user/delete/", methods=['DELETE'])
+@bp.route("/user/delete", methods=['DELETE'])
 def deleteuser():
     data = request.get_json()
-    id = data['id']
+    id = data['id']['id']
     user = UserHome.query.filter_by(id=id).first()
     if user:
         db.session.delete(user)
         db.session.commit()    
-    return str("user {user.username} deleted")
+    return "user {user.username} deleted"
 
 
 # ADD A BOARD
