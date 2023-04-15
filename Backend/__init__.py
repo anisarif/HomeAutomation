@@ -4,7 +4,6 @@ from flask import Flask, render_template
 from .models import db, UserHome, Boards
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, get_jwt, verify_jwt_in_request, jwt_required
-
 # import urllib.request, json
 # from flask_mqtt import Mqtt
 # from flask_caching import Cache
@@ -13,17 +12,21 @@ from flask_jwt_extended import JWTManager, get_jwt, verify_jwt_in_request, jwt_r
 def create_app(test_config=None):
 
     # create and configure the app
+
     app = Flask(__name__, instance_relative_config=True)
 
     app.config["SECRET_KEY"] = 'dev'
     app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://home:admin@localhost:5432/home_db"
     db.init_app(app)
+
     with app.app_context():
         db.create_all()
+
+    # Setup the Flask-Cors 
     cors = CORS(app)
     app.config['CORS_HEADERS'] = 'Content-Type'
 
-    # Setup the Flask-JWT-Extended extension
+    # Setup the Flask-JWT-Extended 
     app.config["JWT_SECRET_KEY"] = "super-secret"
     jwt = JWTManager(app)
 
@@ -49,7 +52,8 @@ def create_app(test_config=None):
     app.config['MQTT_BROKER_PORT'] = 1883
     app.config['MQTT_KEEPALIVE'] = 5  # Set KeepAlive time in seconds
     app.config['MQTT_TLS_ENABLED'] = False  # If your server supports TLS, set it True
-    mqtt_client = Mqtt(app)
+    mqtt = Mqtt()
+    mqtt.init_app(app)
 
     cache = Cache(app)
 
@@ -102,16 +106,5 @@ def create_app(test_config=None):
     def index():
         return 'Hello, World!'
     
-    @app.route('/test')
-    @jwt_required
-    @admin_required()
-    def test():
-        return "hello"
-
-    @app.route('/query')
-    def query():
-        users = UserHome.query.all()
-        boards = Boards.query.all()
-        return render_template('db.html', boards=boards, users=users)
 
     return app

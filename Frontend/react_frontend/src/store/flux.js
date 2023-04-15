@@ -128,7 +128,84 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error(error)
                 }
             },
-            
+
+            addBoard: (name, privacy) => {
+                const store = getStore();
+                const opts = {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': "Bearer " + store.token,
+                    },
+                    body: JSON.stringify({
+                        "name": name,
+                        "privacy":privacy,
+                    }),
+                };
+
+                const data = fetch("http://127.0.0.1:5000/api/board/add", opts)
+                return data;
+            },
+
+            deleteBoard: (id) => {
+                const store = getStore();
+                const opts = {
+                    method: 'DELETE',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': "Bearer " + store.token
+                    },
+                    body: JSON.stringify({
+                        "id": id,
+                    }),
+                };
+
+                const data = fetch("http://127.0.0.1:5000/api/board/delete", opts)
+                return data;
+            },
+
+            addActuator: (name, pin, board_id, type) => {
+                const store = getStore();
+                const opts = {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': "Bearer " + store.token,
+                    },
+                    body: JSON.stringify({
+                        "name": name,
+                        "pin": pin,
+                        "board_id": board_id,
+                        "type": type,
+                    }),
+                };
+
+                const data = fetch("http://127.0.0.1:5000/api/actuator/add", opts)
+                return data;
+            },
+
+            deleteActuator: (id) => {
+                const store = getStore();
+                const opts = {
+                    method: 'DELETE',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': "Bearer " + store.token
+                    },
+                    body: JSON.stringify({
+                        "id": id,
+                    }),
+                };
+
+                const data = fetch("http://127.0.0.1:5000/api/actuator/delete", opts)
+                return data;
+            },
+
         }
     };
 };

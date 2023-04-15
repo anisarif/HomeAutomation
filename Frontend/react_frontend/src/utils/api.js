@@ -33,7 +33,6 @@ export const getAcc = () => {
 
 /* LOGIN API */
 
-
 export const RegisterApi = (opts) => {
     fetch("http://127.0.0.1:5000/auth/register", opts)
   .then(res => res.json())
@@ -47,3 +46,14 @@ export const getUsers = () => {
         .catch(error => console.log(error))
 }
 
+export const getBoards = () => {
+    return fetch('http://127.0.0.1:5000/api/board/getall')
+        .then(res => res.json())
+        .catch(error => console.log(error))
+}
+
+export const getActuators = () => {
+    return fetch('http://127.0.0.1:5000/api/actuator/getall')
+        .then(res => res.json())
+        .catch(error => console.log(error))
+}

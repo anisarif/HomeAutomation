@@ -10,23 +10,23 @@ const ButtonAddUser = () => {
     const [username, setUsername] = useState([])
     const [role, setRole] = useState([])
     const [toggleIsOn, setToggleIsOn] = useState(false)
-    
+
 
 
 
     return (
         <>
-        {toggleIsOn ? (
-            <div>
-                <button onClick={ () => {setToggleIsOn(!toggleIsOn)}} > + </button>
-                <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username"/>
-                <input type="text" value={role} onChange={(e) => setRole(e.target.value)} placeholder="Role"/>
-                <button type="submit" onClick={handleClick} > ADD </button>
-            </div>
+            {toggleIsOn ? (
+                <div>
+                    <button onClick={() => { setToggleIsOn(!toggleIsOn) }} > + </button>
+                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
+                    <input type="text" value={role} onChange={(e) => setRole(e.target.value)} placeholder="Role" />
+                    <button type="submit" onClick={handleClick} > ADD </button>
+                </div>
             ) : (
-            <button onClick={ () => {setToggleIsOn(!toggleIsOn)}} > + </button>
+                <button onClick={() => { setToggleIsOn(!toggleIsOn) }} > + </button>
             )}
-        
+
         </>
     )
 }

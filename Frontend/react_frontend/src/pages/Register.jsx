@@ -2,7 +2,6 @@ import { useState} from 'react';
 import { RegisterApi } from '../utils/api';
 import { useNavigate } from "react-router-dom";
 
-
 const Register = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("")
@@ -17,15 +16,12 @@ const Register = () => {
       "username": username,
       "password": password,
     }),
-  
   }
 
   const handleClick = () => {
     RegisterApi(opts)
     navigate("/login")
   }
-
-
 
   return (
     <div>

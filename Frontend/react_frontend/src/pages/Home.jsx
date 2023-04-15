@@ -1,44 +1,37 @@
+import AdminPanel from "../components/AdminPanel";
 import { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
-import { useNavigate } from "react-router-dom";
 import { decodeToken } from "react-jwt";
-import UsersBoard from "../components/UsersBoard";
-
+import LogoutButton from "../components/LogoutButton";
 
 const Home = () => {
-
-   const { store, actions } = useContext(Context)
-   const navigate = useNavigate();
-   const myDecodedToken = decodeToken(store.token);
-   const [current_user, setCurrent_user] = useState("")
-
-
+   const { store } = useContext(Context)
+   const [current_username, setCurrent_username] = useState("")
+   const [isAdminView, setIsAdminView] = useState("")
    useEffect(() => {
-      if (store.token && store.token !== undefined && store.token != null) navigate("/login")
-   }, [])
-
-
-   useEffect(() => {
-      if (store.token && store.token !== undefined) {         
-         const current = myDecodedToken.current_user
-         setCurrent_user(current)
-         sessionStorage.setItem("current_user", current_user.username)
+      const getRole = () => {
+         if (store.token && store.token !== undefined && store.token !== null) {
+            const myDecodedToken = decodeToken(store.token);
+            const current = myDecodedToken.current_user
+            const checkrole = myDecodedToken.is_administrator
+            setCurrent_username(current.username)
+            setIsAdminView(checkrole)
+            sessionStorage.setItem("current_user", current)
+         }
       }
-   }, [])
-
-   const handleLogout = () => { actions.logout() }
-
+      getRole()
+   }, [store.token]);
 
    return (
       <div>
-         <h1>This is the homepage</h1>
          <div>
-            <h1>Welcome back {current_user.username} !</h1>
-            <button type="submit" onClick={handleLogout} > LOGOUT </button>
+            <h1>Hi {current_username} ! Welcome back !</h1>
+            <LogoutButton />
          </div>
-         <UsersBoard/>
-
-     </div>
+         {(isAdminView) ?
+            <h1><AdminPanel /></h1> :
+            <h1>{current_username} is not admin</h1>}
+      </div>
    )
 }
 

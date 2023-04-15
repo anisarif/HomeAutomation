@@ -6,7 +6,6 @@ import  Login  from "./pages/Login";
 import Register from "./pages/Register";
 import injectContext from "./store/appContext";
 
-
 const Layout = () => {
     const users = sessionStorage.getItem("users")
     const token = sessionStorage.getItem("token")
