@@ -13,7 +13,7 @@ class UserHome(db.Model):
     password = db.Column(db.String)
     role = db.Column(db.String)
     """ admin user or guest """
-    boards = db.relationship('Boards', secondary=user_auth, backref=db.backref('boards', lazy=True))
+    boards = db.relationship('Boards', secondary=user_auth, backref=db.backref('users', lazy=True))
 
 class Boards(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

@@ -39,12 +39,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             syncTokenFromSessionStore: () => {
                 const token = sessionStorage.getItem("token");
-                if (token && token != "" && token != undefined) setStore({ token: token });
+                if (token && token !== "" && token !== undefined) setStore({ token: token });
             },
 
             syncUsersFromSessionStore: () => {
                 const users = sessionStorage.getItem("users");
-                if (users && users != undefined && users != "") setStore({ users: users });
+                if (users && users !== undefined && users !== "" && users !== []) setStore({ users: users });
+            },
+
+            syncIdFromSessionStore: () => {
+                const token = sessionStorage.getItem("token");
+                if (token && token !== "" && token !== undefined) setStore({ currentUserId: token });
             },
 
             logout: () => {
@@ -85,7 +90,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     },
                     body: JSON.stringify({
                         "username": username,
-                        "role":role,
+                        "role": role,
                     }),
                 };
 
@@ -121,7 +126,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
                     const data = await res.json();
                     const users = JSON.stringify(data)
-                    if (users && users != undefined && users != "[]" && users != "") sessionStorage.setItem("users", users);
+                    if (users && users !== undefined && users !== "[]" && users !== "") sessionStorage.setItem("users", users);
                     return true;
                 }
                 catch (error) {
@@ -129,7 +134,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            addBoard: (name, privacy) => {
+            addBoard: (name, privacy, users) => {
                 const store = getStore();
                 const opts = {
                     method: 'POST',
@@ -141,7 +146,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                     },
                     body: JSON.stringify({
                         "name": name,
-                        "privacy":privacy,
+                        "privacy": privacy,
+                        "users": users,
                     }),
                 };
 
@@ -204,6 +210,51 @@ const getState = ({ getStore, getActions, setStore }) => {
 
                 const data = fetch("http://127.0.0.1:5000/api/actuator/delete", opts)
                 return data;
+            },
+
+            getBoardsByUserId: (currentId) => {
+                const id = Object.stringify(currentId.id)
+                const url = "http://127.0.0.1:5000/api/user/boards/" + { id }
+                const data = fetch(url)
+                return data;
+            },
+
+            getActuatorById: async (lockId) => {
+
+                try {
+                    const id = Object.values(lockId)
+                    console.log(id)
+                    const url = `http://127.0.0.1:5000/api/actuator/get/${id}`
+                    const data = await fetch(url)
+                    return data;
+                }
+                catch (error) {
+                    console.log(error)
+                }
+            },
+
+            updateState: async ({lockId, state}) => {
+                try {
+                    console.log(lockId)
+                    const store = getStore();
+                    const opts = {
+                        method: 'PUT',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': "Bearer " + store.token
+                        },
+                         body: JSON.stringify({
+                            "state": state,
+                        }),
+                    };
+                    const url = `http://127.0.0.1:5000/api/actuator/update/${lockId}`
+                    const data = await fetch(url, opts)
+                    return data;
+                }
+                catch (error) {
+                    console.error(error)
+                }
             },
 
         }

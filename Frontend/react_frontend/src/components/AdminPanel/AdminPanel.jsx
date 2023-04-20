@@ -1,6 +1,6 @@
-import UsersBoard from "./UsersBoard";
-import Boards from "./Boards";
-import Actuators from "./Actuators";
+import UsersBoard from "./Users/UsersBoard";
+import Boards from "./Boards/Boards";
+import Actuators from "./Actuators/Actuators";
 
 const AdminPanel = () => {
 

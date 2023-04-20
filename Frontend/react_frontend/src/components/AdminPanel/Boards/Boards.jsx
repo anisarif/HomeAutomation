@@ -1,14 +1,16 @@
-import { getBoards } from "../utils/api";
+import { getBoards } from "../../../utils/api";
 import { useState, useEffect } from "react";
 import ButtonAddBoard from "./ButtonAddBoard";
-import ButtonDeleteUser from "./ButtonDeleteUser";
+import ButtonDeleteBoard from "./ButtonDeleteBoard";
 
 const Boards = () => {
     const [boards, setBoards] = useState([])
 
+
     useEffect(() => {
         const fetchData = async () => {
             const loaded_boards = await getBoards()
+            if (loaded_boards && loaded_boards !== [])
             setBoards(loaded_boards)
         }
         fetchData().catch(console.error)
@@ -21,7 +23,7 @@ const Boards = () => {
                 <div key={board.id}>
                     <h4>{board.id}</h4>
                     <h1>{board.name}</h1>
-                    <ButtonDeleteUser id={board.id} />
+                    <ButtonDeleteBoard id={board.id} />
                 </div>
             ))}
                 <ButtonAddBoard />

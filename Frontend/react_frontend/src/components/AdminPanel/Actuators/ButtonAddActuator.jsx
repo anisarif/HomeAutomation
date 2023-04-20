@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Context } from "../store/appContext";
+import { Context } from "../../../store/appContext";
 
 const ButtonAddActuator = () => {
     const { actions } = useContext(Context)
@@ -25,7 +25,12 @@ const ButtonAddActuator = () => {
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name"/>
                 <input type="text" value={pin} onChange={(e) => setPin(e.target.value)} placeholder="Pin"/>
                 <input type="text" value={board_id} onChange={(e) => setBoard_id(e.target.value)} placeholder="Board"/>
-                <input type="text" value={type} onChange={(e) => setType(e.target.value)} placeholder="Type"/>
+                <select value={type} onChange={(e) => setType(e.target.value)}>
+                    <option value="">-- Select --</option>
+                    <option value="Light">Light</option>
+                    <option value="Lock">Locker</option>
+                    <option value="Sensor">Sensor</option>
+                </select>
                 <button type="submit" onClick={handleClick} > ADD </button>
             </div>
             ) : (

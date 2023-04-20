@@ -6,6 +6,12 @@ from flask_jwt_extended import jwt_required, verify_jwt_in_request, get_jwt
 
 bp = Blueprint('api', __name__, url_prefix='/api')
 
+
+##################################            ##################################
+##################################   USERS    ##################################
+##################################            ##################################
+
+
 # ADD A USER
 
 
@@ -92,7 +98,23 @@ def deleteuser():
     if user:
         db.session.delete(user)
         db.session.commit()
-    return "user {user.username} deleted"
+    return "user " + str(id) + " deleted"
+
+@bp.route('/user/boards/<int:current_id>')
+def get_user_boards(current_id):
+    user = UserHome.query.filter_by(id=current_id).first()
+    if not user:
+        return jsonify({'error': 'User not found'})
+
+    boards = user.boards
+    board_list = [{'id': board.id, 'name': board.name} for board in boards]
+    return jsonify(board_list)
+
+
+
+##################################            ##################################
+##################################   BOARDS   ##################################
+##################################            ##################################
 
 
 # ADD A BOARD
@@ -103,7 +125,14 @@ def addboard():
 
     name = data['name']
     privacy = data['privacy']
-    board = Boards(name=name, privacy=privacy)
+    if privacy == "public":
+        users = UserHome.query.all()
+        board = Boards(name=name, privacy=privacy, users=users)
+    else:
+        user_ids = data['users']
+        users = UserHome.query.filter(UserHome.id.in_(user_ids)).all()
+        board = Boards(name=name, privacy=privacy, users=users)
+
     db.session.add(board)
     db.session.commit()
     return 'board added'
@@ -145,13 +174,22 @@ def updateboard(id):
 # DELETE BOARD BY ID
 
 
-@bp.route("/board/delete/<int:id>", methods=['DELETE'])
-def deletboard():
+@bp.route("/board/delete", methods=['DELETE'])
+def deleteboard():
+    data = request.get_json()
+    id = data['id']['id']
+
     board = Boards.query.filter_by(id=id).first()
     if board:
         db.session.delete(board)
         db.session.commit()
-    return
+    return "Board " + str(id) + " deleted"
+
+
+##################################            ##################################
+################################## ACTUATORS  ##################################
+##################################            ##################################
+
 
 
 # ADD AN ACTUATOR
@@ -193,31 +231,42 @@ def getactuators():
 # GET ACTUATOR BY ID
 
 
-@bp.route("/actuator/get")
+@bp.route("/actuator/get/<int:id>")
 def getactuator(id):
+    
     actuator = Actuators.query.filter_by(id=id).first()
     if actuator:
-
+        actuator = {
+            "id": actuator.id,
+            "name": actuator.name,
+            "pin": actuator.pin,
+            "board_id": actuator.board_id,
+            "type": actuator.type,
+            "state": actuator.state,            
+        }
         return actuator
 
-# UPDATE A ACTUATOR BY ID
 
+# UPDATE A ACTUATOR STATE BY ID
 
-@bp.route("/actuator/update", methods=['PUT'])
-def updateactuator(id):
-    actuator = Actuators.query.filter_by(id=id).first()
+@bp.route("/actuator/update/<int:id>", methods=['PUT'])
+def update_actuator(id):
+    actuator = Actuators.query.filter_by(id=id).first() 
     if actuator:
-        name = request.form['name']
-        pin = request.form['pin']
-        board_id = request.form['board_id']
-        type = request.form['type']
-        state = 0
-        actuator = Actuators(name=name, pin=pin,
-                             board_id=board_id, type=type, state=state)
-        db.session.add(actuator)
-        db.session.commit()
-        return "actuator added"
+        state = request.get_json('state')
+        print(state['state'])
+        if state['state'] == False:
+            actuator.state = 0
+            db.session.commit()
+            return "updated to false"
+        elif state['state'] == True:
+            actuator.state = 1
+            db.session.commit()
+            return "updated to true"
+        return "."
 
+    else:
+        return "actuator not found"
 
 # DELETE ACTUATOR BY ID
 
@@ -230,3 +279,6 @@ def deletactuator():
         db.session.delete(actuator)
         db.session.commit()
     return "actuator deleted"
+
+
+

@@ -1,4 +1,4 @@
-import { getUsers } from "../utils/api";
+import { getUsers } from "../../../utils/api";
 import { useState, useEffect } from "react";
 import ButtonDeleteUser from "./ButtonDeleteUser";
 import ButtonAddUser from "./ButtonAddUser";

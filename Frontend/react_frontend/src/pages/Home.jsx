@@ -1,9 +1,10 @@
-import AdminPanel from "../components/AdminPanel";
+import AdminPanel from "../components/AdminPanel/AdminPanel";
 import { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 import { decodeToken } from "react-jwt";
 import LogoutButton from "../components/LogoutButton";
-
+import Locks from "../components/Dashboard/Lockers/Locks";
+import Lights from "../components/Dashboard/Lights/Lights";
 const Home = () => {
    const { store } = useContext(Context)
    const [current_username, setCurrent_username] = useState("")
@@ -31,7 +32,10 @@ const Home = () => {
          {(isAdminView) ?
             <h1><AdminPanel /></h1> :
             <h1>{current_username} is not admin</h1>}
+            <Locks/>
+            <Lights/>
       </div>
+      
    )
 }
 

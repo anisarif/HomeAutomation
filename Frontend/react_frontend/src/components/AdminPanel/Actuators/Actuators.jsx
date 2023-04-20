@@ -1,4 +1,4 @@
-import { getActuators } from "../utils/api";
+import { getActuators } from "../../../utils/api";
 import { useState, useEffect } from "react";
 import ButtonAddActuator from "./ButtonAddActuator";
 import ButtonDeleteActuator from "./ButtonDeleteActuator";
