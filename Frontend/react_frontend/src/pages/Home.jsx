@@ -5,6 +5,7 @@ import { decodeToken } from "react-jwt";
 import LogoutButton from "../components/LogoutButton";
 import Locks from "../components/Dashboard/Lockers/Locks";
 import Lights from "../components/Dashboard/Lights/Lights";
+import Weather from "../components/Dashboard/Weather/Weather";
 const Home = () => {
    const { store } = useContext(Context)
    const [current_username, setCurrent_username] = useState("")
@@ -34,6 +35,7 @@ const Home = () => {
             <h1>{current_username} is not admin</h1>}
             <Locks/>
             <Lights/>
+            <Weather/>
       </div>
       
    )

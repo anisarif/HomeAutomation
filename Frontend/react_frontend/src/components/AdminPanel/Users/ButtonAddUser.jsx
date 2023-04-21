@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Context } from "../../../store/appContext";
 
 const ButtonAddUser = () => {
@@ -11,16 +11,17 @@ const ButtonAddUser = () => {
     const [role, setRole] = useState([])
     const [toggleIsOn, setToggleIsOn] = useState(false)
 
-
-
-
     return (
         <>
             {toggleIsOn ? (
                 <div>
                     <button onClick={() => { setToggleIsOn(!toggleIsOn) }} > + </button>
                     <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
-                    <input type="text" value={role} onChange={(e) => setRole(e.target.value)} placeholder="Role" />
+                    <select value={role} onChange={(e) => setRole(e.target.value)} placeholder="Role">
+                        <option value="">-- Select --</option>
+                        <option value="admin">Admin</option>
+                        <option value="user">User</option>
+                    </select>
                     <button type="submit" onClick={handleClick} > ADD </button>
                 </div>
             ) : (

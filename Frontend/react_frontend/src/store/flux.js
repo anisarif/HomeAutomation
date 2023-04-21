@@ -67,11 +67,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }
                 };
                 try {
-                    // fetching data from the backend
                     const resp = await fetch("http://127.0.0.1:5000/", opts)
                     const data = await resp.json()
                     setStore({ message: data.message })
-                    // don't forget to return something, that is how the async resolves
                     return data;
                 } catch (error) {
                     console.log("Error loading message from backend", error)
@@ -255,6 +253,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                 catch (error) {
                     console.error(error)
                 }
+            },
+
+            getCurrentWeather: () => {
+                const url = "https://api.open-meteo.com/v1/forecast?latitude=52.49&longitude=13.43&current_weather=true&forecast_days=1&timezone=Europe%2FBerlin"
+                return fetch(url)
+                    .then(res => res.json())
+                    .catch(error => console.log(error)) 
             },
 
         }
