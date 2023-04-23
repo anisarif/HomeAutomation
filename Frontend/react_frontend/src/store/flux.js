@@ -262,6 +262,28 @@ const getState = ({ getStore, getActions, setStore }) => {
                     .catch(error => console.log(error)) 
             },
 
+            act:  (board_id, pin, state) => {
+               
+                    const store = getStore();
+                    const opts = {
+                        method: 'POST',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': "Bearer " + store.token
+                        },
+                         body: JSON.stringify({
+                            "board_id":board_id,
+                            "pin":pin,
+                            "state": state,
+                        }),
+                    };
+                    const url = "http://127.0.0.1:5000/action"
+                    const data = fetch(url, opts)
+                    return data;
+            },
+
+
         }
     };
 };

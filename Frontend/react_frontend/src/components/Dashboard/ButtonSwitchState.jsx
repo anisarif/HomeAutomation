@@ -14,10 +14,12 @@ const ButtonSwitchState = (props) => {
         { newState === false ? 
             <button  onClick ={() => {
                 actions.updateState({lockId:props.lockId, state:true})
+                actions.act({topic:props.LockId, state:true})
                 setNewState(true)}}
             > Turn On </button> :
             <button  onClick ={() => {
                 actions.updateState({lockId:props.lockId, state:false})
+                actions.act({topic:props.LockId, state:false})
                 setNewState(false)}}
             > Turn Off </button>
         }
