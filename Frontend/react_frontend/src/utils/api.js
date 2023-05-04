@@ -1,4 +1,4 @@
-export const insertStatus = (action) => {
+/* export const insertStatus = (action) => {
     return fetch(`http://192.168.178.171:5000/Act`,{
             method:'POST',
             mode: 'cors',
@@ -11,7 +11,7 @@ export const insertStatus = (action) => {
         .then(res => res.json())
         .catch(error => console.log(error))
 }
-
+ */
 export const getAccurators = () => {
     return fetch('http://192.168.178.171:5000/')
         .then(res => res.json())

@@ -233,7 +233,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             updateState: async ({lockId, state}) => {
                 try {
-                    console.log(lockId)
                     const store = getStore();
                     const opts = {
                         method: 'PUT',
@@ -254,16 +253,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error(error)
                 }
             },
-
-            getCurrentWeather: () => {
-                const url = "https://api.open-meteo.com/v1/forecast?latitude=52.49&longitude=13.43&current_weather=true&forecast_days=1&timezone=Europe%2FBerlin"
-                return fetch(url)
-                    .then(res => res.json())
-                    .catch(error => console.log(error)) 
-            },
-
-            act:  (board_id, pin, state) => {
-               
+            
+            act: async ({lockId, state}) => {
+                try {
                     const store = getStore();
                     const opts = {
                         method: 'POST',
@@ -273,15 +265,25 @@ const getState = ({ getStore, getActions, setStore }) => {
                             'Authorization': "Bearer " + store.token
                         },
                          body: JSON.stringify({
-                            "board_id":board_id,
-                            "pin":pin,
                             "state": state,
                         }),
                     };
-                    const url = "http://127.0.0.1:5000/action"
-                    const data = fetch(url, opts)
+                    const url = `http://127.0.0.1:5000/act/${lockId}`
+                    const data = await fetch(url, opts)
                     return data;
+                }
+                catch (error) {
+                    console.error(error)
+                }
             },
+
+            getCurrentWeather: () => {
+                const url = "https://api.open-meteo.com/v1/forecast?latitude=52.49&longitude=13.43&current_weather=true&forecast_days=1&timezone=Europe%2FBerlin"
+                return fetch(url)
+                    .then(res => res.json())
+                    .catch(error => console.log(error)) 
+            },
+
 
 
         }

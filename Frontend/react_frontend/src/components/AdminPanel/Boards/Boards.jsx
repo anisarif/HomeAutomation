@@ -20,9 +20,9 @@ const Boards = () => {
         <div>
             <h1>Boards</h1>
             <div> {boards.map((board) => (
-                <div key={board.id}>
+                <div key={board.id} class="Board">
                     <h4>{board.id}</h4>
-                    <h1>{board.name}</h1>
+                    <h4>{board.name}</h4>
                     <ButtonDeleteBoard id={board.id} />
                 </div>
             ))}

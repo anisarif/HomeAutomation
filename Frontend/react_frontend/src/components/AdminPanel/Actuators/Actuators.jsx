@@ -23,13 +23,12 @@ const Actuators = () => {
         <div>
             <h1>Actuators</h1>
             <div> {actuators.map((actuator) => (
-                <div key={actuator.id}>
+                <div key={actuator.id} class="Board">
                     <h4>{actuator.id}</h4>
-                    <h1>{actuator.name}</h1>
-                    <h1>{actuator.pin}</h1>
-                    <h1>{actuator.board_id}</h1>
-                    <h1>{actuator.type}</h1>
-                    <h1>{actuator.state}</h1>
+                    <h4>{actuator.name}</h4>
+                    <h4>{actuator.board_id}</h4>
+                    <h4>{actuator.type}</h4>
+                    <h4>{actuator.state}</h4>
                     <ButtonDeleteActuator id={actuator.id} />
                 </div>
             ))}
