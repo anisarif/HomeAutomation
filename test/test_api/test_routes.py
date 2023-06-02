@@ -1,8 +1,8 @@
 # test_routes.py
 import pytest
 from werkzeug.security import generate_password_hash
-from .app import app, db  # import your Flask application instance and your database instance
-from .models import UserHome  # import your UserHome model
+from ...Backend import app, db  # import your Flask application instance and your database instance
+from ...Backend.models import UserHome  # import your UserHome model
 
 @pytest.fixture
 def client():
