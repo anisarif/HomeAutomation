@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { Context } from "../../store/appContext";
+import "./ButtonSwitchState.css"
 
 const ButtonSwitchState = (props) => {
     const { actions } = useContext(Context)
@@ -12,16 +13,16 @@ const ButtonSwitchState = (props) => {
     return (
         <>
         { newState === false ? 
-            <button  onClick ={() => {
+            <button  className="ButtonSwitchState_Off" onClick ={() => {
                 actions.updateState({lockId:props.lockId, state:true})
                 actions.act({lockId:props.lockId, state:true})
                 setNewState(true)}}
-            > Turn On </button> :
-            <button  onClick ={() => {
+            > OFF </button> :
+            <button  className="ButtonSwitchState_On" onClick ={() => {
                 actions.updateState({lockId:props.lockId, state:false})
                 actions.act({lockId:props.lockId, state:false})
                 setNewState(false)}}
-            > Turn Off </button>
+            > ON </button>
         }
         </>
     )

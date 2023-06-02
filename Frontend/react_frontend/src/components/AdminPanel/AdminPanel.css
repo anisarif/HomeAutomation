@@ -22,10 +22,18 @@
 .Board {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: space-between;
     flex-basis: 300px;
 }
 
 .ButtonAddUser {
-    display: flex;
+    width: 100%;
 }
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    grid-gap: 10px;
+    padding: 10px;
+}
+

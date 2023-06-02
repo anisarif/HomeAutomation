@@ -1,13 +1,14 @@
 import os
 from functools import wraps
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from .models import db, UserHome, Boards
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, get_jwt, verify_jwt_in_request, jwt_required
-# import urllib.request, json
-# from flask_mqtt import Mqtt
-# from flask_caching import Cache
+import urllib.request, json
+from flask_mqtt import Mqtt
+from flask_caching import Cache
 
+mqtt = Mqtt()
 
 def create_app(test_config=None):
 
@@ -46,27 +47,45 @@ def create_app(test_config=None):
 
         return wrapper
 
-    """
 
     app.config['MQTT_BROKER_URL'] = 'localhost'
     app.config['MQTT_BROKER_PORT'] = 1883
     app.config['MQTT_KEEPALIVE'] = 5  # Set KeepAlive time in seconds
     app.config['MQTT_TLS_ENABLED'] = False  # If your server supports TLS, set it True
-    mqtt = Mqtt()
+
     mqtt.init_app(app)
+    
+    # Creating a custom decorator @admin_required to check user.role in the jwt access token as additional claims
+    def admin_required():
+        def wrapper(fn):
+            @wraps(fn)
+            def decorator(*args, **kwargs):
+                verify_jwt_in_request()
+                claims = get_jwt()
+                if claims["is_administrator"]:
+                    return fn(*args, **kwargs)
+                else:
+                    return 'admin only', 403
+
+            return decorator
+
+        return wrapper
+
 
     cache = Cache(app)
 
-    @mqtt_client.on_connect()
+    @mqtt.on_connect()
     def handle_connect(client, userdata, flags, rc):
         if rc == 0:
             print('Connected successfully')
-            mqtt_client.subscribe('t')
-            mqtt_client.subscribe('h') 
+            mqtt.subscribe('t')
+            mqtt.subscribe('h')
+            mqtt.subscribe('1')
+ 
         else:
             print('Bad connection. Code:', rc)
 
-    @mqtt_client.on_message()
+    @mqtt.on_message()
     def handle_mqtt_message(client, userdata, message):
         data = {
             'topic' : message.topic,
@@ -79,7 +98,6 @@ def create_app(test_config=None):
             cache.set("room_humidity", message.payload.decode('utf-8'))
 
         print('Received message on topic: {topic} with payload: {payload}'.format(**data))
-     """
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -105,6 +123,17 @@ def create_app(test_config=None):
     @admin_required()
     def index():
         return 'Hello, World!'
-    
+
+    @app.route("/act/<int:id>", methods=['POST'])
+    def Action(id):
+        data = request.get_json()
+        state = data['state']
+        if state == False:
+            action = "0"
+        if state == True:
+            action = "1"
+        mqtt.publish(str(id), action)
+        return action + " " + str(id) + " is done"
+
 
     return app

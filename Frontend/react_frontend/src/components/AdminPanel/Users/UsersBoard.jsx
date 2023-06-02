@@ -23,14 +23,14 @@ const UsersBoard = () => {
         <div >
             <h1>Users</h1>
             <div > {users.map((user) => (
-                <div key={user.id} >
+                <div key={user.id} className="Board" >
                     <h4>{user.id}</h4>
                     <h4>{user.username}</h4>
                     <h4>{user.role} </h4>
                     <ButtonDeleteUser id={user.id} />
                 </div>
             ))}
-                <ButtonAddUser class="ButtonAddUser"/>
+                <ButtonAddUser className="ButtonAddUser"/>
             </div>
         </div>
 

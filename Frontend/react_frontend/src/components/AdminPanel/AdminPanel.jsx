@@ -10,7 +10,7 @@ const AdminPanel = () => {
          <div class="AdminPanel_title">
             <h1>Admin Panel</h1>
          </div>
-         <div class="AdminPanel">
+         <div class="grid-container">
             <UsersBoard />
             <Boards />
             <Actuators />

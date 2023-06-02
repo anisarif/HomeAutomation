@@ -24,15 +24,15 @@ const Actuators = () => {
             <h1>Actuators</h1>
             <div> {actuators.map((actuator) => (
                 <div key={actuator.id} class="Board">
-                    <h4>{actuator.id}</h4>
-                    <h4>{actuator.name}</h4>
-                    <h4>{actuator.board_id}</h4>
-                    <h4>{actuator.type}</h4>
-                    <h4>{actuator.state}</h4>
+                    <h5>{actuator.id}</h5>
+                    <h5>{actuator.name}</h5>
+                    <h5>{actuator.board_id}</h5>
+                    <h5>{actuator.type}</h5>
+                    <h5>{actuator.state}</h5>
                     <ButtonDeleteActuator id={actuator.id} />
                 </div>
             ))}
-                <ButtonAddActuator />
+                <ButtonAddActuator className="ButtonAddUser"/>
             </div>
         </div>
 

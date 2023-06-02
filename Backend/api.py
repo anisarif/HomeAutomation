@@ -1,9 +1,11 @@
 from functools import wraps
 from flask import request, Blueprint, jsonify, current_app
-from .models import db, UserHome, Boards, Actuators
+from .models import db, UserHome, Boards, Actuators, LockActions
 from werkzeug.security import generate_password_hash
-from flask_jwt_extended import jwt_required, verify_jwt_in_request, get_jwt
+from flask_jwt_extended import get_jwt_identity, get_jwt,jwt_required
+from flask_mqtt import Mqtt
 
+mqtt = Mqtt()
 bp = Blueprint('api', __name__, url_prefix='/api')
 
 
@@ -100,6 +102,7 @@ def deleteuser():
         db.session.commit()
     return "user " + str(id) + " deleted"
 
+
 @bp.route('/user/boards/<int:current_id>')
 def get_user_boards(current_id):
     user = UserHome.query.filter_by(id=current_id).first()
@@ -109,7 +112,6 @@ def get_user_boards(current_id):
     boards = user.boards
     board_list = [{'id': board.id, 'name': board.name} for board in boards]
     return jsonify(board_list)
-
 
 
 ##################################            ##################################
@@ -191,7 +193,6 @@ def deleteboard():
 ##################################            ##################################
 
 
-
 # ADD AN ACTUATOR
 
 @bp.route("/actuator/add", methods=['POST'])
@@ -233,7 +234,7 @@ def getactuators():
 
 @bp.route("/actuator/get/<int:id>")
 def getactuator(id):
-    
+
     actuator = Actuators.query.filter_by(id=id).first()
     if actuator:
         actuator = {
@@ -242,7 +243,7 @@ def getactuator(id):
             "pin": actuator.pin,
             "board_id": actuator.board_id,
             "type": actuator.type,
-            "state": actuator.state,            
+            "state": actuator.state,
         }
         return actuator
 
@@ -250,25 +251,50 @@ def getactuator(id):
 # UPDATE A ACTUATOR STATE BY ID
 
 @bp.route("/actuator/update/<int:id>", methods=['PUT'])
+@jwt_required()
 def update_actuator(id):
-    actuator = Actuators.query.filter_by(id=id).first() 
+    # Extracting the user_id from the JWT token
+    user_id = get_jwt_identity()
+
+    actuator = Actuators.query.filter_by(id=id).first()
     if actuator:
         state = request.get_json('state')
         print(state['state'])
         if state['state'] == False:
             actuator.state = 0
             db.session.commit()
-            return "updated to false"
+
+            # create a new LockActions entry
+            lock_action = LockActions(user_id=user_id,
+                                      board_id=actuator.board_id,
+                                      actuator_id=id,
+                                      state=0)
+            db.session.add(lock_action)
+            db.session.commit()
+
+            return "updated to false " + str(id)
+        
         elif state['state'] == True:
             actuator.state = 1
             db.session.commit()
-            return "updated to true"
+
+            # create a new LockActions entry
+            lock_action = LockActions(user_id=user_id,
+                                      board_id=actuator.board_id,
+                                      actuator_id=id,
+                                      state=1)
+            db.session.add(lock_action)
+            db.session.commit()
+
+            return "updated to true " + str(id)
+        
         return "."
 
     else:
         return "actuator not found"
-
+    
 # DELETE ACTUATOR BY ID
+
 
 @bp.route("/actuator/delete", methods=['DELETE'])
 def deletactuator():
@@ -279,6 +305,3 @@ def deletactuator():
         db.session.delete(actuator)
         db.session.commit()
     return "actuator deleted"
-
-
-

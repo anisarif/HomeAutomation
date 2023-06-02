@@ -2,6 +2,7 @@ import { getBoards } from "../../../utils/api";
 import { useState, useEffect } from "react";
 import ButtonAddBoard from "./ButtonAddBoard";
 import ButtonDeleteBoard from "./ButtonDeleteBoard";
+import "./Board.css"
 
 const Boards = () => {
     const [boards, setBoards] = useState([])
@@ -26,7 +27,7 @@ const Boards = () => {
                     <ButtonDeleteBoard id={board.id} />
                 </div>
             ))}
-                <ButtonAddBoard />
+                <ButtonAddBoard className="ButtonAddBoard"/>
             </div>
         </div>
 
