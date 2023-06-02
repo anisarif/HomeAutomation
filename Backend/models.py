@@ -17,7 +17,7 @@ class UserHome(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String)
-    role = db.Column(Enum("admin", "user"), default="user", nullable=False)
+    role = db.Column(Enum("admin", "user", name="role_type"), default="user", nullable=False)
     """ admin or user """
     boards = db.relationship(
         'Boards', secondary=user_auth, backref=db.backref('users', lazy=True))
@@ -26,7 +26,7 @@ class UserHome(db.Model):
 class Boards(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, unique=True, nullable=False)
-    privacy = db.Column(Enum("private", "public"),
+    privacy = db.Column(Enum("private", "public", name="privacy_type"),
                         default="public", nullable=False)
     """ private or public """
 
@@ -39,7 +39,7 @@ class Actuators(db.Model):
         'boards.id'), nullable=False)
     board = db.relationship(
         'Boards', backref=db.backref('actuators', lazy=True))
-    type = db.Column(Enum("Light", "Lock", "Sensor"), nullable=False)
+    type = db.Column(Enum("Light", "Lock", "Sensor", name="actuator_type" ), nullable=False)
     """ light, locker .. different output switcher time """
     state = db.Column(db.Boolean)
 

@@ -32,7 +32,7 @@ def create_app(test_config=None):
 
     # Setup the Flask-MQTT
 
-    app.config['MQTT_BROKER_URL'] = 'localhost'
+    app.config['MQTT_BROKER_URL'] = '192.168.178.171'
     app.config['MQTT_BROKER_PORT'] = 1883
     app.config['MQTT_KEEPALIVE'] = 5  # Set KeepAlive time in seconds
     app.config['MQTT_TLS_ENABLED'] = False  # If your server supports TLS, set it True
