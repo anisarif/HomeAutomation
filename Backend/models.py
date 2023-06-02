@@ -1,4 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+
 db = SQLAlchemy()
 
 
@@ -31,8 +33,16 @@ class Actuators(db.Model):
     """ light, locker .. different output switcher time """
     state = db.Column(db.Boolean)
 
-
-    
+class LockActions(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user_home.id'), nullable=False)
+    user = db.relationship('UserHome', backref=db.backref('user_id', lazy=True))
+    board_id = db.Column(db.Integer, db.ForeignKey('boards.id'), nullable=False)
+    board = db.relationship('Boards', backref=db.backref('lockactions', lazy=True))
+    actuator_id = db.Column(db.Integer, db.ForeignKey('actuators.id'), nullable=False)
+    actuator = db.relationship('Actuators', backref=db.backref('actuator_id', lazy=True))
+    state = db.Column(db.Boolean, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 
