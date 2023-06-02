@@ -1,10 +1,9 @@
 import os
 from functools import wraps
-from flask import Flask, render_template, request
-from .models import db, UserHome, Boards
+from flask import Flask, request
+from .models import db
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager, get_jwt, verify_jwt_in_request, jwt_required
-import urllib.request, json
+from flask_jwt_extended import JWTManager, get_jwt, verify_jwt_in_request
 from flask_mqtt import Mqtt
 from flask_caching import Cache
 
@@ -31,22 +30,7 @@ def create_app(test_config=None):
     app.config["JWT_SECRET_KEY"] = "super-secret"
     jwt = JWTManager(app)
 
-    # Creating a custom decorator @admin_required to check user.role in the jwt access token as additional claims
-    def admin_required():
-        def wrapper(fn):
-            @wraps(fn)
-            def decorator(*args, **kwargs):
-                verify_jwt_in_request()
-                claims = get_jwt()
-                if claims["is_administrator"]:
-                    return fn(*args, **kwargs)
-                else:
-                    return 'admin only', 403
-
-            return decorator
-
-        return wrapper
-
+    # Setup the Flask-MQTT
 
     app.config['MQTT_BROKER_URL'] = 'localhost'
     app.config['MQTT_BROKER_PORT'] = 1883
@@ -56,6 +40,7 @@ def create_app(test_config=None):
     mqtt.init_app(app)
     
     # Creating a custom decorator @admin_required to check user.role in the jwt access token as additional claims
+
     def admin_required():
         def wrapper(fn):
             @wraps(fn)
@@ -73,6 +58,8 @@ def create_app(test_config=None):
 
 
     cache = Cache(app)
+
+    
 
     @mqtt.on_connect()
     def handle_connect(client, userdata, flags, rc):
