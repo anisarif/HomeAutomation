@@ -27,7 +27,7 @@ class Boards(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, unique=True, nullable=False)
     privacy = db.Column(Enum("private", "public", name="privacy_type"),
-                        default="public", nullable=False)
+                         nullable=False)
     """ private or public """
 
 

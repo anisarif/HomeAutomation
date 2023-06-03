@@ -1,6 +1,7 @@
-# test_routes.py
+# conftest.py
+
 import pytest
-from ..Backend import create_app, db  # import your Flask application instance and your database instance
+from Backend import create_app, db  # import your Flask application instance and your database instance
 
 @pytest.fixture
 def app():
@@ -12,13 +13,19 @@ def app():
     # If you are using a separate test database
     # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://home:admin@localhost:5432/test_home_db'
 
-    with app.test_client() as client:
+    with app.app_context():
         # Setup: create the database tables
-        with app.app_context():
-            db.create_all()
-        yield client
-        # Teardown: drop the database tables
-        with app.app_context():
-            db.session.remove()
-            db.drop_all()
+        db.create_all()
+        
+    yield app
 
+    with app.app_context():
+        # Teardown: drop the database tables
+        db.session.remove()
+        db.drop_all()
+
+
+@pytest.fixture
+def client(app):
+    with app.test_client() as client:
+        yield client

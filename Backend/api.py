@@ -127,6 +127,7 @@ def addboard():
 
     name = data['name']
     privacy = data['privacy']
+    
     if privacy == "public":
         users = UserHome.query.all()
         board = Boards(name=name, privacy=privacy, users=users)

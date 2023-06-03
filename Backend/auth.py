@@ -1,4 +1,4 @@
-from flask import request, Blueprint, jsonify
+from flask import request, Blueprint, jsonify, make_response
 from .models import db, UserHome
 from flask_jwt_extended import create_access_token
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -32,9 +32,11 @@ def login():
     user = UserHome.query.filter_by(username=username).first()
     if user is None:
         error = 'Incorrect username.'
+        return make_response(error, 401)
     
     elif not check_password_hash(user.password, password):
         error = 'incorrect password.'
+        return make_response(error, 401)
 
     if error is None:
         current_user = {
