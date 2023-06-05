@@ -1,12 +1,13 @@
+
 const getState = ({ getStore, getActions, setStore }) => {
     return {
         store: {
             users: null,
             token: null,
-            message: null,
         },
         actions: {
             login: async (username, password) => {
+                const actions = getActions();
                 const opts = {
                     method: 'POST',
                     mode: 'cors',
@@ -21,9 +22,11 @@ const getState = ({ getStore, getActions, setStore }) => {
                 };
 
                 try {
+                    
                     const res = await fetch("http://127.0.0.1:5000/auth/login", opts)
                     if (res.status !== 200) {
-                        alert("There has been an error");
+                        alert(res);
+                        actions.refreshToken();
                         return false;
                     }
 
@@ -59,22 +62,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                 console.log("logged out");
             },
 
-            getMessage: async () => {
-                const store = getStore();
-                const opts = {
-                    headers: {
-                        "Authorization": "Bearer " + store.token
-                    }
-                };
-                try {
-                    const resp = await fetch("http://127.0.0.1:5000/", opts)
-                    const data = await resp.json()
-                    setStore({ message: data.message })
-                    return data;
-                } catch (error) {
-                    console.log("Error loading message from backend", error)
-                }
-            },
 
             addUser: (username, role) => {
                 const store = getStore();
@@ -234,6 +221,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             updateState: async ({lockId, state}) => {
                 try {
                     const store = getStore();
+                    const actions = getActions();
                     const opts = {
                         method: 'PUT',
                         mode: 'cors',
@@ -246,15 +234,30 @@ const getState = ({ getStore, getActions, setStore }) => {
                         }),
                     };
                     const url = `http://127.0.0.1:5000/api/actuator/update/${lockId}`
-                    const data = await fetch(url, opts)
-                    return data;
+                    const res = await fetch(url, opts)
+                    if (res.status !== 200) {
+                        alert("update 1 res.status !== 200");
+                        actions.refreshToken();
+                        return false;
+                    }
+
+                    const res2 = actions.act({lockId, state})
+
+                    if (res2 === true) {
+                        alert("update 2 res.status !== 200");
+                        return false;
+                    }
+
+                    console.log("update and action done")
+                    return true;
                 }
+
                 catch (error) {
                     console.error(error)
                 }
             },
             
-            act: async ({lockId, state}) => {
+            act: async ({ lockId, state }) => {
                 try {
                     const store = getStore();
                     const opts = {
@@ -264,16 +267,21 @@ const getState = ({ getStore, getActions, setStore }) => {
                             'Content-Type': 'application/json',
                             'Authorization': "Bearer " + store.token
                         },
-                         body: JSON.stringify({
+                        body: JSON.stringify({
                             "state": state,
                         }),
                     };
-                    const url = `http://127.0.0.1:5000/act/${lockId}`
-                    const data = await fetch(url, opts)
-                    return data;
-                }
-                catch (error) {
-                    console.error(error)
+                    const url = `http://127.0.0.1:5000/act/${lockId}`;
+                    const response = await fetch(url, opts);
+
+                    if (response.status !== 200) {
+                        return false;
+                    }
+
+                    return true;
+
+                } catch (error) {
+                    console.error(error);
                 }
             },
 
@@ -284,7 +292,35 @@ const getState = ({ getStore, getActions, setStore }) => {
                     .catch(error => console.log(error)) 
             },
 
+            refreshToken: async () => {
+                try {
+                    const store = getStore();
+                    const opts = {
+                        method: 'PUT',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': "Bearer " + store.token
+                        },
+                    };
+            
+                    const url = "http://127.0.0.1:5000/auth/refresh";
+                    const response = await fetch(url, opts);
+                    const data = await response.json();
+            
+                    if (response.status !== 200) {
+                        alert(data);
+                        return false;
+                    }
+            
+                    sessionStorage.setItem("token", data.access_token);
+                    setStore({ token: data.access_token });
+                    return true;
 
+                } catch (error) {
+                    console.error(error);
+                }
+            },
 
         }
     };

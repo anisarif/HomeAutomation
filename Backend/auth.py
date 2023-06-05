@@ -1,11 +1,11 @@
 from flask import request, Blueprint, jsonify, make_response
 from .models import db, UserHome
-from flask_jwt_extended import create_access_token, create_refresh_token,jwt_required, get_jwt_identity
-from werkzeug.security import check_password_hash, generate_password_hash
+from flask_jwt_extended import create_access_token,jwt_required, get_jwt_identity, get_jwt
+from werkzeug.security import check_password_hash
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-# First connection Admin registration 
+""" # First connection Admin registration 
 
 @bp.route('/register', methods=["POST"])
 def register():
@@ -20,7 +20,7 @@ def register():
         username = {"username":user.username}
         return "Admin {username} registred"
     return error
-
+ """
 
 # Login Route
 
@@ -50,17 +50,17 @@ def login():
             is_admin = False
             
         access_token = create_access_token(identity=user.id, additional_claims={"is_administrator": is_admin, "current_user":current_user})
-        refresh_token = create_refresh_token(identity=user.id, additional_claims={"is_administrator": is_admin, "current_user":current_user})
-        return jsonify(access_token=access_token, refresh_token=refresh_token)
+        return jsonify(access_token=access_token)
 
     return error
 
-# Refresh Token Route
+# Refresh JWT Token Route
 
 @bp.route("/refresh", methods=["POST"])
 @jwt_required(refresh=True)
 def refresh():
     identity = get_jwt_identity()
-    access_token = create_access_token(identity=identity)
+    additional_claims = get_jwt()["additional_claims"]
+    access_token = create_access_token(identity=identity, additional_claims=additional_claims)
     return jsonify(access_token=access_token)
 

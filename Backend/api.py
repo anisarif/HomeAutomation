@@ -2,7 +2,7 @@ from functools import wraps
 from flask import request, Blueprint, jsonify, current_app
 from .models import db, UserHome, Boards, Actuators, LockActions
 from werkzeug.security import generate_password_hash
-from flask_jwt_extended import get_jwt_identity, get_jwt,jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_mqtt import Mqtt
 
 mqtt = Mqtt()
@@ -14,7 +14,7 @@ bp = Blueprint('api', __name__, url_prefix='/api')
 ##################################            ##################################
 
 
-# ADD A USER
+# ADD A USER  
 
 
 @bp.route("/user/add", methods=['POST'])

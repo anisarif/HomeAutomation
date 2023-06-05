@@ -1,13 +1,16 @@
 import os
 from functools import wraps
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from .models import db
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager, get_jwt, verify_jwt_in_request
+from flask_jwt_extended import JWTManager, get_jwt, verify_jwt_in_request, create_access_token, get_jwt_identity, set_access_cookies
 from flask_mqtt import Mqtt
 from flask_caching import Cache
+from werkzeug.security import generate_password_hash
+from datetime import timedelta, datetime, timezone
 
 mqtt = Mqtt()
+
 
 def create_app(test_config=None):
 
@@ -22,23 +25,40 @@ def create_app(test_config=None):
     with app.app_context():
         db.create_all()
 
-    # Setup the Flask-Cors 
+        from .models import UserHome  # Import your UserHome model here
+        # Check if the default user already exists
+        user = UserHome.query.filter_by(username='admin').first()
+        if user is None:
+            # If the user doesn't exist, create it
+            user = UserHome(username='admin', password=generate_password_hash('admin'), role='admin')
+            db.session.add(user)
+            db.session.commit()
+
+    # Setup the Flask-Cors
     cors = CORS(app)
     app.config['CORS_HEADERS'] = 'Content-Type'
 
-    # Setup the Flask-JWT-Extended 
+    # Setup the Flask-JWT-Extended
+
     app.config["JWT_SECRET_KEY"] = "super-secret"
+    # If true this will only allow the cookies that contain your JWTs to be sent
+    # over https. In production, this should always be set to True
+    app.config["JWT_COOKIE_SECURE"] = False
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(min==2)
+
     jwt = JWTManager(app)
+
 
     # Setup the Flask-MQTT
 
     app.config['MQTT_BROKER_URL'] = '192.168.178.171'
     app.config['MQTT_BROKER_PORT'] = 1883
     app.config['MQTT_KEEPALIVE'] = 5  # Set KeepAlive time in seconds
-    app.config['MQTT_TLS_ENABLED'] = False  # If your server supports TLS, set it True
+    # If your server supports TLS, set it True
+    app.config['MQTT_TLS_ENABLED'] = False
 
     mqtt.init_app(app)
-    
+
     # Creating a custom decorator @admin_required to check user.role in the jwt access token as additional claims
 
     def admin_required():
@@ -56,10 +76,7 @@ def create_app(test_config=None):
 
         return wrapper
 
-
     cache = Cache(app)
-
-    
 
     @mqtt.on_connect()
     def handle_connect(client, userdata, flags, rc):
@@ -68,23 +85,24 @@ def create_app(test_config=None):
             mqtt.subscribe('t')
             mqtt.subscribe('h')
             mqtt.subscribe('1')
- 
+
         else:
             print('Bad connection. Code:', rc)
 
     @mqtt.on_message()
     def handle_mqtt_message(client, userdata, message):
         data = {
-            'topic' : message.topic,
-            'payload' : message.payload.decode('utf-8')
+            'topic': message.topic,
+            'payload': message.payload.decode('utf-8')
         }
         if message.topic == 't':
             cache.set("room_temp", message.payload.decode('utf-8'))
-        
+
         if message.topic == 'h':
             cache.set("room_humidity", message.payload.decode('utf-8'))
 
-        print('Received message on topic: {topic} with payload: {payload}'.format(**data))
+        print(
+            'Received message on topic: {topic} with payload: {payload}'.format(**data))
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -105,7 +123,6 @@ def create_app(test_config=None):
     from . import api
     app.register_blueprint(api.bp)
 
-    
     @app.route('/')
     @admin_required()
     def index():
@@ -115,12 +132,15 @@ def create_app(test_config=None):
     def Action(id):
         data = request.get_json()
         state = data['state']
+
         if state == False:
             action = "0"
+
         if state == True:
             action = "1"
-        mqtt.publish(str(id), action)
-        return action + " " + str(id) + " is done"
 
+        mqtt.publish(str(id), action)
+
+        return action + " " + str(id) + " is done"
 
     return app

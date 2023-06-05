@@ -13,9 +13,8 @@ const Layout = () => {
         <div>
             <BrowserRouter>
                     <Routes>
-                        <Route path="/"  element={users ? <Home /> : <Navigate replace to={"/register"} />}/>
+                        <Route path="/"  element={users ? <Home /> : <Navigate replace to={"/login"} />}/>
                         <Route path="/login" element={ token ? <Navigate replace to={"/"} /> : <Login /> }/>
-                        <Route  path="/register" element={users ?  <Navigate replace to={"/login"} /> : <Register /> }/>
 
                     </Routes>
             </BrowserRouter>
