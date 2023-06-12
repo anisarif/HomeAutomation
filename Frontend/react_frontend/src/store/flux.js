@@ -32,6 +32,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
                     const data = await res.json();
                     sessionStorage.setItem("token", data.access_token);
+                    sessionStorage.setItem("refresh_token", data.refresh_token);
                     setStore({ token: data.access_token });
                     return true;
                 }
@@ -271,7 +272,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             "state": state,
                         }),
                     };
-                    const url = `http://127.0.0.1:5000/act/${lockId}`;
+                    const url = `http://127.0.0.1:5000/api/act/${lockId}`;
                     const response = await fetch(url, opts);
 
                     if (response.status !== 200) {
@@ -294,13 +295,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             refreshToken: async () => {
                 try {
-                    const store = getStore();
+                    const refresh_token = sessionStorage.getItem("refresh_token")
                     const opts = {
-                        method: 'PUT',
+                        method: 'POST',
                         mode: 'cors',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': "Bearer " + store.token
+                            'Authorization': "Bearer " + refresh_token
                         },
                     };
             

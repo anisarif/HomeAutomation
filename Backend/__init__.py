@@ -8,6 +8,7 @@ from flask_mqtt import Mqtt
 from flask_caching import Cache
 from werkzeug.security import generate_password_hash
 from datetime import timedelta, datetime, timezone
+from .utils import admin_required
 
 mqtt = Mqtt()
 
@@ -44,8 +45,8 @@ def create_app(test_config=None):
     # If true this will only allow the cookies that contain your JWTs to be sent
     # over https. In production, this should always be set to True
     app.config["JWT_COOKIE_SECURE"] = False
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(min==2)
-
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=90)
+    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(weeks=4)
     jwt = JWTManager(app)
 
 
@@ -59,24 +60,6 @@ def create_app(test_config=None):
 
     mqtt.init_app(app)
 
-    # Creating a custom decorator @admin_required to check user.role in the jwt access token as additional claims
-
-    def admin_required():
-        def wrapper(fn):
-            @wraps(fn)
-            def decorator(*args, **kwargs):
-                verify_jwt_in_request()
-                claims = get_jwt()
-                if claims["is_administrator"]:
-                    return fn(*args, **kwargs)
-                else:
-                    return 'admin only', 403
-
-            return decorator
-
-        return wrapper
-
-    cache = Cache(app)
 
     @mqtt.on_connect()
     def handle_connect(client, userdata, flags, rc):
@@ -104,6 +87,12 @@ def create_app(test_config=None):
         print(
             'Received message on topic: {topic} with payload: {payload}'.format(**data))
 
+    app.config['CACHE_TYPE'] = 'simple'
+       
+    cache = Cache(app)
+
+     
+
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
@@ -128,19 +117,6 @@ def create_app(test_config=None):
     def index():
         return 'Hello, World!'
 
-    @app.route("/act/<int:id>", methods=['POST'])
-    def Action(id):
-        data = request.get_json()
-        state = data['state']
-
-        if state == False:
-            action = "0"
-
-        if state == True:
-            action = "1"
-
-        mqtt.publish(str(id), action)
-
-        return action + " " + str(id) + " is done"
+    
 
     return app

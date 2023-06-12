@@ -4,6 +4,7 @@ from .models import db, UserHome, Boards, Actuators, LockActions
 from werkzeug.security import generate_password_hash
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_mqtt import Mqtt
+from .utils import Action
 
 mqtt = Mqtt()
 bp = Blueprint('api', __name__, url_prefix='/api')
@@ -289,7 +290,7 @@ def update_actuator(id):
 
             return "updated to true " + str(id)
         
-        return "."
+        return ("error while updating actuator state", 400) 
 
     else:
         return "actuator not found"
@@ -306,3 +307,9 @@ def deletactuator():
         db.session.delete(actuator)
         db.session.commit()
     return "actuator deleted"
+
+
+@bp.route("/act/<int:id>", methods=['POST'])
+def actionmqtt(id):
+    Action(id)
+    return "Action triggered for ID: " + str(id)

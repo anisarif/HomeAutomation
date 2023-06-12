@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Enum
+from sqlalchemy import Enum, event
 from datetime import datetime
 
 db = SQLAlchemy()
@@ -28,7 +28,6 @@ class Boards(db.Model):
     name = db.Column(db.String, unique=True, nullable=False)
     privacy = db.Column(Enum("private", "public", name="privacy_type"),
                          nullable=False)
-    """ private or public """
 
 
 class Actuators(db.Model):
@@ -60,3 +59,8 @@ class LockActions(db.Model):
         'Actuators', backref=db.backref('actuator_actions', lazy=True))
     state = db.Column(db.Boolean, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+@event.listens_for(Boards, 'before_delete')
+def delete_associated_actuators(mapper, connection, target):
+    connection.execute(Actuators.__table__.delete().where(Actuators.board_id == target.id))
