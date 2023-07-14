@@ -19,8 +19,21 @@ def create_app(test_config=None):
 
     app = Flask(__name__, instance_relative_config=True)
 
+    if test_config is None:
+        # load the instance config, if it exists, when not testing
+        app.config.from_pyfile('config.py', silent=True)
+    else:
+        # load the test config if passed in
+        app.config.from_mapping(test_config)
+
+
     app.config["SECRET_KEY"] = 'dev'
-    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://home:admin@localhost:5432/home_db"
+
+    if test_config is None:
+        app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://home:admin@localhost:5432/home_db"
+    else:
+        app.config["SQLALCHEMY_DATABASE_URI"] = test_config["DATABASE_URI"]    
+        
     db.init_app(app)
 
     with app.app_context():
@@ -93,12 +106,6 @@ def create_app(test_config=None):
 
      
 
-    if test_config is None:
-        # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        # load the test config if passed in
-        app.config.from_mapping(test_config)
 
     # ensure the instance folder exists
     try:

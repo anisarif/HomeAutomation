@@ -3,12 +3,12 @@ import { useState, useEffect } from "react";
 import ButtonDeleteUser from "./ButtonDeleteUser";
 import ButtonAddUser from "./ButtonAddUser";
 
-
-
-
-
 const UsersBoard = () => {
     const [users, setUsers] = useState([])
+    const [usersCount, setUsersCount] = useState(0)
+    const updateState = () => {
+        setUsersCount(usersCount+1)
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -16,8 +16,7 @@ const UsersBoard = () => {
             setUsers(loaded_users)
         }
         fetchData().catch(console.error)
-    }, [])
-
+    }, [usersCount])
 
     return (
         <div >
@@ -30,7 +29,7 @@ const UsersBoard = () => {
                     <ButtonDeleteUser id={user.id} />
                 </div>
             ))}
-                <ButtonAddUser className="ButtonAddUser"/>
+                <ButtonAddUser update={updateState} className="ButtonAddUser"/>
             </div>
         </div>
 

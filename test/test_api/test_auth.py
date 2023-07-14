@@ -20,7 +20,7 @@ def test_login(client):
     response = client.post("/auth/login", json={"username": "admin", "password": "admin"})
     assert response.status_code == 200
     assert "access_token" in response.get_json()  # Checks if there is a token in the response
-
+    assert "refresh_token" in response.get_json()
     # Test for wrong username
     response = client.post("/auth/login", json={"username": "wrong_user", "password": "admin"})
     assert response.status_code != 200  # Should not be successful

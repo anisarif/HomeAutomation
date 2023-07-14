@@ -1,11 +1,12 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { Context } from "../../../store/appContext";
 
-const ButtonAddUser = () => {
+const ButtonAddUser = ({update}) => {
     const { actions } = useContext(Context)
     const handleClick = () => {
         actions.addUser(username, role)
         setToggleIsOn(!toggleIsOn)
+
     }
     const [username, setUsername] = useState([])
     const [role, setRole] = useState([])
@@ -25,7 +26,10 @@ const ButtonAddUser = () => {
                     <button type="submit" onClick={handleClick} > ADD </button>
                 </div>
             ) : (
-                <button onClick={() => { setToggleIsOn(!toggleIsOn) }} > + </button>
+                <button onClick={() => { 
+                    setToggleIsOn(!toggleIsOn)
+                    update()                           
+                }} > + </button>
             )}
 
         </>
