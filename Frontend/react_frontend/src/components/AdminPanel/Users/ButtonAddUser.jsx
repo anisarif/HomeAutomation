@@ -6,7 +6,7 @@ const ButtonAddUser = ({update}) => {
     const handleClick = () => {
         actions.addUser(username, role)
         setToggleIsOn(!toggleIsOn)
-
+        update()
     }
     const [username, setUsername] = useState([])
     const [role, setRole] = useState([])
@@ -28,7 +28,7 @@ const ButtonAddUser = ({update}) => {
             ) : (
                 <button onClick={() => { 
                     setToggleIsOn(!toggleIsOn)
-                    update()                           
+                                               
                 }} > + </button>
             )}
 

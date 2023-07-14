@@ -287,7 +287,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
             getCurrentWeather: () => {
-                const url = "https://api.open-meteo.com/v1/forecast?latitude=52.49&longitude=13.43&current_weather=true&forecast_days=1&timezone=Europe%2FBerlin"
+                const url = "https://api.open-meteo.com/v1/forecast?latitude=36.845128&longitude=10.163944&current_weather=true&forecast_days=1&timezone=Europe%2FBerlin"
                 return fetch(url)
                     .then(res => res.json())
                     .catch(error => console.log(error)) 
