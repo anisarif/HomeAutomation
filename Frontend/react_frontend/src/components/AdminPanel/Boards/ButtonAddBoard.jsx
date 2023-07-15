@@ -21,11 +21,13 @@ const ButtonAddBoard = () => {
     );
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = ({update}) => {
     if (privacy === "private" && selectedUsers.length === 0) {
       alert("Please select at least one user.");
     } else {
-      actions.addBoard(name, privacy, selectedUsers);
+      actions.addBoard(name, privacy, selectedUsers).then(() => {
+        update();
+    });
       setName("");
       setPrivacy("");
       setSelectedUsers([]);

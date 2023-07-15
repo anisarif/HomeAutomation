@@ -6,7 +6,13 @@ import "./Board.css"
 
 const Boards = () => {
     const [boards, setBoards] = useState([])
-
+    const [boardsCount, setBoardsCount] = useState(1)
+    const updateState = () => {
+        setBoardsCount(boardsCount+1)
+    }
+    const updateStateDelete = () => {
+        setBoardsCount(boardsCount-1)
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -15,7 +21,7 @@ const Boards = () => {
             setBoards(loaded_boards)
         }
         fetchData().catch(console.error)
-    }, [])
+    }, [boardsCount])
 
     return (
         <div>
@@ -24,10 +30,10 @@ const Boards = () => {
                 <div key={board.id} class="Board">
                     <h4>{board.id}</h4>
                     <h4>{board.name}</h4>
-                    <ButtonDeleteBoard id={board.id} />
+                    <ButtonDeleteBoard id={board.id} update={updateStateDelete} />
                 </div>
             ))}
-                <ButtonAddBoard className="ButtonAddBoard"/>
+                <ButtonAddBoard update={updateState} className="ButtonAddBoard"/>
             </div>
         </div>
 

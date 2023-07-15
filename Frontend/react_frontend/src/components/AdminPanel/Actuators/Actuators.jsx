@@ -9,6 +9,7 @@ import ButtonDeleteActuator from "./ButtonDeleteActuator";
 
 const Actuators = () => {
     const [actuators, setActuators] = useState([])
+    const [actuatorsCount, setActuatorsCount] = useState(1)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -16,8 +17,14 @@ const Actuators = () => {
             setActuators(loaded_actuators)
         }
         fetchData().catch(console.error)
-    }, [])
+    }, [actuatorsCount])
 
+    const updateState = () => {
+        setActuatorsCount(actuatorsCount+1)
+    }
+    const updateStateDelete = () => {
+        setActuatorsCount(actuatorsCount-1)
+    }
 
     return (
         <div>
@@ -29,10 +36,10 @@ const Actuators = () => {
                     <h5>{actuator.board_id}</h5>
                     <h5>{actuator.type}</h5>
                     <h5>{actuator.state}</h5>
-                    <ButtonDeleteActuator id={actuator.id} />
+                    <ButtonDeleteActuator id={actuator.id} update={updateStateDelete} />
                 </div>
             ))}
-                <ButtonAddActuator className="ButtonAddUser"/>
+                <ButtonAddActuator update={updateState} className="ButtonAddUser"/>
             </div>
         </div>
 

@@ -5,9 +5,12 @@ import ButtonAddUser from "./ButtonAddUser";
 
 const UsersBoard = () => {
     const [users, setUsers] = useState([])
-    const [usersCount, setUsersCount] = useState(0)
+    const [usersCount, setUsersCount] = useState(1)
     const updateState = () => {
         setUsersCount(usersCount+1)
+    }
+    const updateStateDelete = () => {
+        setUsersCount(usersCount-1)
     }
 
     useEffect(() => {
@@ -26,7 +29,7 @@ const UsersBoard = () => {
                     <h4>{user.id}</h4>
                     <h4>{user.username}</h4>
                     <h4>{user.role} </h4>
-                    <ButtonDeleteUser id={user.id} />
+                    <ButtonDeleteUser id={user.id} update={updateStateDelete} />
                 </div>
             ))}
                 <ButtonAddUser update={updateState} className="ButtonAddUser"/>

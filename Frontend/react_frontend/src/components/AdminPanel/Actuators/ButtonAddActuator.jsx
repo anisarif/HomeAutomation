@@ -3,10 +3,12 @@ import { Context } from "../../../store/appContext";
 import { getBoards } from "../../../utils/api";
 
 
-const ButtonAddActuator = () => {
+const ButtonAddActuator = ({update}) => {
     const { actions } = useContext(Context)
     const handleClick = () => {
-        actions.addActuator(name, pin, board_id, type)
+        actions.addActuator(name, pin, board_id, type).then(() => {
+            update();
+        });
         setToggleIsOn(!toggleIsOn)
     }
     const [name, setName] = useState("")

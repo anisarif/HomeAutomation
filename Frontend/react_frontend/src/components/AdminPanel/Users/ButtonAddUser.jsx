@@ -4,9 +4,10 @@ import { Context } from "../../../store/appContext";
 const ButtonAddUser = ({update}) => {
     const { actions } = useContext(Context)
     const handleClick = () => {
-        actions.addUser(username, role)
+        actions.addUser(username, role).then(() => {
+            update();
+          });
         setToggleIsOn(!toggleIsOn)
-        update()
     }
     const [username, setUsername] = useState([])
     const [role, setRole] = useState([])
