@@ -1,8 +1,9 @@
 from flask_mqtt import Mqtt
+from flask_caching import Cache
 
 
 mqtt = Mqtt()
-
+cache = Cache(config={'CACHE_TYPE': 'simple'})
 
 @mqtt.on_connect()
 def handle_connect(client, userdata, flags, rc):
@@ -22,11 +23,10 @@ def handle_mqtt_message(client, userdata, message):
         'payload': message.payload.decode('utf-8')
     }
     if message.topic == 't':
-        print("room_temp", message.payload.decode('utf-8'))
+        cache.set("room_temp", message.payload.decode('utf-8'))
 
     if message.topic == 'h':
-        print("room_humidity", message.payload.decode('utf-8'))
+        cache.set("room_humidity", message.payload.decode('utf-8'))
 
-    print(
-        'Received message on topic: {topic} with payload: {payload}'.format(**data))
+    print('Received message on topic: {topic} with payload: {payload}'.format(**data))
 

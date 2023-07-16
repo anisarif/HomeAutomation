@@ -4,8 +4,7 @@ from flask import Flask, request, jsonify
 from .models import db
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, get_jwt, verify_jwt_in_request, create_access_token, get_jwt_identity, set_access_cookies
-from .mqtt_client import mqtt
-from flask_caching import Cache
+from .mqtt_client import mqtt, cache
 from werkzeug.security import generate_password_hash
 from datetime import timedelta, datetime, timezone
 from .utils import admin_required
@@ -71,10 +70,9 @@ def create_app(test_config=None):
     app.config['MQTT_TLS_ENABLED'] = False
 
     mqtt.init_app(app)
+    cache.init_app(app)
 
-    app.config['CACHE_TYPE'] = 'simple'
        
-    cache = Cache(app)
 
      
 

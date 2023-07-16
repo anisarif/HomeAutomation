@@ -294,6 +294,23 @@ const getState = ({ getStore, getActions, setStore }) => {
                     .catch(error => console.log(error)) 
             },
 
+            getRoomSensor: async () => {
+                const store = getStore();
+                const opts = {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': "Bearer " + store.token
+                    },
+                };
+                const url = "http://127.0.0.1:500/api/sensor/temp_hum/"
+                const res = await fetch(url, opts);
+                return res
+                    .then(res => res.json())
+                    .catch(error => console.log(error)) 
+            },
+
             refreshToken: async () => {
                 try {
                     const refresh_token = sessionStorage.getItem("refresh_token")

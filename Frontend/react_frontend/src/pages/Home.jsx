@@ -6,6 +6,7 @@ import LogoutButton from "../components/LogoutButton";
 import Locks from "../components/Dashboard/Lockers/Locks";
 import Lights from "../components/Dashboard/Lights/Lights";
 import Weather from "../components/Dashboard/Weather/Weather";
+import Sensor from "../components/Dashboard/Weather/Sensor";
 import './Home.css'
 
 const Home = () => {
@@ -39,6 +40,7 @@ const Home = () => {
          <Locks />
          <Lights />
          <Weather />
+         <Sensor />
       </div>
 
    )

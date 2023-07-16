@@ -3,10 +3,9 @@ from flask import request, Blueprint, jsonify, current_app
 from .models import db, UserHome, Boards, Actuators, LockActions
 from werkzeug.security import generate_password_hash
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from flask_mqtt import Mqtt
 from .utils import Action
+from .mqtt_client import mqtt, cache
 
-mqtt = Mqtt()
 bp = Blueprint('api', __name__, url_prefix='/api')
 
 
@@ -310,8 +309,17 @@ def deletactuator():
         db.session.commit()
     return "actuator deleted"
 
+# Action MQTT
 
 @bp.route("/act/<int:id>", methods=['POST'])
 def actionmqtt(id):
     Action(id)
     return "Action triggered for ID: " + str(id)
+
+# Sensor Temperature humidity
+
+@bp.route("/sensor/temp_hum/", methods=['GET'])
+def sensor_temp_hum():
+    temp = cache.get('room_temp')
+    hum = cache.get('room_humidity')
+    return jsonify({"temp": temp, "hum": hum})
