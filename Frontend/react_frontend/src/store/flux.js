@@ -304,7 +304,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         'Authorization': "Bearer " + store.token
                     },
                 };
-                const url = "http://127.0.0.1:500/api/sensor/temp_hum/"
+                const url = "http://127.0.0.1:5000/api/sensor/temp_hum/"
                 const res = await fetch(url, opts);
                 return res
                     .then(res => res.json())
