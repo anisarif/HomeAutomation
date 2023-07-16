@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../../store/appContext";
 
-const ButtonAddBoard = () => {
+const ButtonAddBoard = ({update}) => {
   const { actions } = useContext(Context);
   const [name, setName] = useState("");
   const [privacy, setPrivacy] = useState("");
@@ -21,7 +21,7 @@ const ButtonAddBoard = () => {
     );
   };
 
-  const handleSubmit = ({update}) => {
+  const handleSubmit = () => {
     if (privacy === "private" && selectedUsers.length === 0) {
       alert("Please select at least one user.");
     } else {

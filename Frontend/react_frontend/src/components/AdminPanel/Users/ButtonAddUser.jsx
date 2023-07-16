@@ -4,12 +4,13 @@ import { Context } from "../../../store/appContext";
 const ButtonAddUser = ({update}) => {
     const { actions } = useContext(Context)
     const handleClick = () => {
-        actions.addUser(username, role).then(() => {
+        actions.addUser(username, password, role).then(() => {
             update();
           });
         setToggleIsOn(!toggleIsOn)
     }
     const [username, setUsername] = useState([])
+    const [password, setPassword] = useState([])
     const [role, setRole] = useState([])
     const [toggleIsOn, setToggleIsOn] = useState(false)
 
@@ -19,6 +20,7 @@ const ButtonAddUser = ({update}) => {
                 <div>
                     <button onClick={() => { setToggleIsOn(!toggleIsOn) }} > + </button>
                     <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
+                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />    
                     <select value={role} onChange={(e) => setRole(e.target.value)} placeholder="Role">
                         <option value="">-- Select --</option>
                         <option value="admin">Admin</option>

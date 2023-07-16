@@ -64,7 +64,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
 
-            addUser: (username, role) => {
+            addUser: (username, password, role) => {
                 const store = getStore();
                 const opts = {
                     method: 'POST',
@@ -76,6 +76,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     },
                     body: JSON.stringify({
                         "username": username,
+                        "password": password,
                         "role": role,
                     }),
                 };

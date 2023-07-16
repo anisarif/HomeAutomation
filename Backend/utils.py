@@ -1,10 +1,9 @@
 from functools import wraps
 from flask_jwt_extended import get_jwt, verify_jwt_in_request
-from flask_mqtt import Mqtt
+from .mqtt_client import mqtt
 from flask import request
 
   
-mqtt = Mqtt()
 
 # Creating a custom decorator @admin_required to check user.role in the jwt access token as additional claims
 

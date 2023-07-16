@@ -15,8 +15,6 @@ def app():
         "TESTING": True,
     })
 
-    """     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin_db:password_db@localhost:5432/test_home_db'
-    """
     with app.app_context():
         # Setup: create the database tables
         db.create_all()

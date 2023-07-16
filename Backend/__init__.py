@@ -4,13 +4,12 @@ from flask import Flask, request, jsonify
 from .models import db
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, get_jwt, verify_jwt_in_request, create_access_token, get_jwt_identity, set_access_cookies
-from flask_mqtt import Mqtt
+from .mqtt_client import mqtt
 from flask_caching import Cache
 from werkzeug.security import generate_password_hash
 from datetime import timedelta, datetime, timezone
 from .utils import admin_required
 
-mqtt = Mqtt()
 
 
 def create_app(test_config=None):
@@ -72,33 +71,6 @@ def create_app(test_config=None):
     app.config['MQTT_TLS_ENABLED'] = False
 
     mqtt.init_app(app)
-
-
-    @mqtt.on_connect()
-    def handle_connect(client, userdata, flags, rc):
-        if rc == 0:
-            print('Connected successfully')
-            mqtt.subscribe('t')
-            mqtt.subscribe('h')
-            mqtt.subscribe('1')
-
-        else:
-            print('Bad connection. Code:', rc)
-
-    @mqtt.on_message()
-    def handle_mqtt_message(client, userdata, message):
-        data = {
-            'topic': message.topic,
-            'payload': message.payload.decode('utf-8')
-        }
-        if message.topic == 't':
-            cache.set("room_temp", message.payload.decode('utf-8'))
-
-        if message.topic == 'h':
-            cache.set("room_humidity", message.payload.decode('utf-8'))
-
-        print(
-            'Received message on topic: {topic} with payload: {payload}'.format(**data))
 
     app.config['CACHE_TYPE'] = 'simple'
        

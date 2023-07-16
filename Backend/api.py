@@ -23,7 +23,7 @@ def adduser():
     data = request.get_json()
 
     username = data['username']
-    password = data['username']
+    password = data['password']
     role = data['role']
     user = UserHome(username=username,
                     password=generate_password_hash(password), role=role)
@@ -110,7 +110,9 @@ def get_user_boards(current_id):
     if not user:
         return jsonify({'error': 'User not found'})
 
-    boards = user.boards
+    boards = []
+    boards.extend(Boards.query.filter_by(privacy='public').all())
+    boards.extend(user.boards)
     board_list = [{'id': board.id, 'name': board.name} for board in boards]
     return jsonify(board_list)
 
