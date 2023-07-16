@@ -294,7 +294,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     .catch(error => console.log(error)) 
             },
 
-            getRoomSensor: async () => {
+            getRoomSensor: () => {
                 const store = getStore();
                 const opts = {
                     method: 'GET',
@@ -305,8 +305,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     },
                 };
                 const url = "http://127.0.0.1:5000/api/sensor/temp_hum/"
-                const res = await fetch(url, opts);
-                return res
+                return fetch(url, opts)
                     .then(res => res.json())
                     .catch(error => console.log(error)) 
             },

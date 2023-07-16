@@ -24,7 +24,7 @@ const Sensor = () => {
     
     return (
         <>
-         <h1 >External Weather</h1>
+         <h1 >Room</h1>
          <div >   
             <h1>Temperature : {temperature}° C</h1>
             <h1>Humidity : {humidity} %</h1>
