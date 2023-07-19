@@ -318,7 +318,7 @@ def updateactuator(id):
         actuator.board_id = data['board_id']
         actuator.type = data['type']
         db.session.commit()
-    return "actuator" + str(id) + "updated"
+    return "actuator id: " + str(id) + " updated"
     
 # DELETE ACTUATOR BY ID
 

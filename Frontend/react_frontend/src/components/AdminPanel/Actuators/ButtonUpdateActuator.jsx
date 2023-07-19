@@ -31,7 +31,7 @@ const UpdateActuator = ({id, actuator, update}) => {
 
     useEffect(() => {
         setName(actuator.name)
-        setPin(actuator.role)
+        setPin(actuator.pin)
         setBoard_id(actuator.board_id)
         setType(actuator.type)
     }, [actuator])
