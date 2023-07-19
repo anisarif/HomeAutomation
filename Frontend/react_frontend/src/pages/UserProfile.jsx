@@ -18,7 +18,7 @@ const UserProfile = ({ id }) => {
         setCurrent_user(current)
         setUsername(current_user.username)
         setRole(current_user.role)
-    }, [current_user])
+    }, [current])
 
     return (
         <>
