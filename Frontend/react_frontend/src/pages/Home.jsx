@@ -21,7 +21,7 @@ const Home = () => {
          if (store.token && store.token !== undefined && store.token !== null) {
             const myDecodedToken = decodeToken(store.token);
             const current = myDecodedToken.current_user
-            sessionStorage.setItem("current_User", current)
+            sessionStorage.setItem("current_User", JSON.stringify(current))
             const checkrole = myDecodedToken.is_administrator
             setCurrent_user(current)
             setCurrent_username(current.username)

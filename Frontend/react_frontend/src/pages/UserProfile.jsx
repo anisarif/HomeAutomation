@@ -9,7 +9,7 @@ const UserProfile = ({ id }) => {
 
     const { actions } = useContext(Context)
 
-    const current = sessionStorage.getItem("current_User")
+    const current = JSON.parse(sessionStorage.getItem("current_User"))
     const handleClick = () => {
         actions.updateUser(id, username, password, role)        
     }
