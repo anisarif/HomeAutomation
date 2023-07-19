@@ -8,6 +8,7 @@ import Lights from "../components/Dashboard/Lights/Lights";
 import Weather from "../components/Dashboard/Weather/Weather";
 import Sensor from "../components/Dashboard/Weather/Sensor";
 import UserProfileButton from "../components/UserProfileButton";
+import ActionsHistory from "../components/ActionsHistory";
 import './Home.css'
 
 const Home = () => {
@@ -46,6 +47,7 @@ const Home = () => {
          <Lights />
          <Weather />
          <Sensor />
+         <ActionsHistory />
       </div>
 
    )

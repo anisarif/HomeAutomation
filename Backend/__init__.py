@@ -85,11 +85,5 @@ def create_app(test_config=None):
     from . import api
     app.register_blueprint(api.bp)
 
-    @app.route('/')
-    @admin_required()
-    def index():
-        return 'Hello, World!'
-
     
-
     return app

@@ -22,7 +22,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 };
 
                 try {
-                    
+
                     const res = await fetch("http://127.0.0.1:5000/auth/login", opts)
                     if (res.status !== 200) {
                         alert(res);
@@ -96,7 +96,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             'Content-Type': 'application/json',
                             'Authorization': "Bearer " + store.token
                         },
-                         body: JSON.stringify({
+                        body: JSON.stringify({
                             "username": username,
                             "role": role,
                         }),
@@ -129,7 +129,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             'Content-Type': 'application/json',
                             'Authorization': "Bearer " + store.token
                         },
-                         body: JSON.stringify({
+                        body: JSON.stringify({
                             "password": password,
                             "newPassword": newPassword,
                         }),
@@ -162,7 +162,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             'Content-Type': 'application/json',
                             'Authorization': "Bearer " + store.token
                         },
-                         body: JSON.stringify({
+                        body: JSON.stringify({
                             "username": username,
                         }),
                     };
@@ -182,6 +182,40 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error(error)
                 }
             },
+
+            getHistory: async () => {
+                try {
+                    const store = getStore();
+                    const actions = getActions();
+                    const opts = {
+                        method: 'GET',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+
+                        },
+                    };
+                    const url = `http://127.0.0.1:5000/api/getHistory`
+                    const res = await fetch(url, opts)
+                    if (res.status !== 200) {
+                        alert("update 1 res.status !== 200");
+                        actions.refreshToken();
+                        return false;
+                    }
+
+                    const data = await res.json();
+                    const history = JSON.stringify(data)
+                    return history;
+                }
+                catch (error) {
+
+                    console.error(error)
+                }
+            },
+
+
+
+
 
 
             deleteUser: (id) => {
@@ -252,7 +286,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             'Content-Type': 'application/json',
                             'Authorization': "Bearer " + store.token
                         },
-                         body: JSON.stringify({
+                        body: JSON.stringify({
                             "name": name,
                             "privacy": privacy,
                             "users": users,
@@ -353,7 +387,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            updateState: async ({lockId, state}) => {
+            updateState: async ({ lockId, state }) => {
                 try {
                     const store = getStore();
                     const actions = getActions();
@@ -364,7 +398,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             'Content-Type': 'application/json',
                             'Authorization': "Bearer " + store.token
                         },
-                         body: JSON.stringify({
+                        body: JSON.stringify({
                             "state": state,
                         }),
                     };
@@ -376,7 +410,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         return false;
                     }
 
-                    const res2 = actions.act({lockId, state})
+                    const res2 = actions.act({ lockId, state })
 
                     if (res2 === true) {
                         alert("update 2 res.status !== 200");
@@ -403,7 +437,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             'Content-Type': 'application/json',
                             'Authorization': "Bearer " + store.token
                         },
-                         body: JSON.stringify({
+                        body: JSON.stringify({
                             "name": name,
                             "pin": pin,
                             "board_id": board_id,
@@ -460,7 +494,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 const url = "https://api.open-meteo.com/v1/forecast?latitude=36.845128&longitude=10.163944&current_weather=true&forecast_days=1&timezone=Europe%2FBerlin"
                 return fetch(url)
                     .then(res => res.json())
-                    .catch(error => console.log(error)) 
+                    .catch(error => console.log(error))
             },
 
             getRoomSensor: () => {
@@ -476,7 +510,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 const url = "http://127.0.0.1:5000/api/sensor/temp_hum/"
                 return fetch(url, opts)
                     .then(res => res.json())
-                    .catch(error => console.log(error)) 
+                    .catch(error => console.log(error))
             },
 
             refreshToken: async () => {
@@ -490,16 +524,16 @@ const getState = ({ getStore, getActions, setStore }) => {
                             'Authorization': "Bearer " + refresh_token
                         },
                     };
-            
+
                     const url = "http://127.0.0.1:5000/auth/refresh";
                     const response = await fetch(url, opts);
                     const data = await response.json();
-            
+
                     if (response.status !== 200) {
                         alert(data);
                         return false;
                     }
-            
+
                     sessionStorage.setItem("token", data.access_token);
                     setStore({ token: data.access_token });
                     return true;

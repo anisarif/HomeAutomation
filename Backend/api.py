@@ -18,7 +18,7 @@ bp = Blueprint('api', __name__, url_prefix='/api')
 
 
 @bp.route("/user/add", methods=['POST'])
-@admin_required()
+@admin_required
 def adduser():
     data = request.get_json()
 
@@ -80,6 +80,7 @@ def getuser_username(username):
 
 
 @bp.route("/user/update/<int:id>", methods=['PUT'])
+@admin_required
 def updateuser(id):
     user = UserHome.query.filter_by(id=id).first()
     if user:
@@ -90,6 +91,7 @@ def updateuser(id):
     return str("user {user.username} updated")
 
 @bp.route("/user/updateUsername/<int:id>", methods=['PUT'])
+@jwt_required()
 def updateusername(id):
     user = UserHome.query.filter_by(id=id).first()
     if user:
@@ -115,6 +117,7 @@ def modifypassword(id):
 # DELETE USER BY ID
 
 @bp.route("/user/delete", methods=['DELETE'])
+@admin_required
 def deleteuser():
     data = request.get_json()
     id = data['id']['id']
@@ -146,6 +149,7 @@ def get_user_boards(current_id):
 # ADD A BOARD
 
 @bp.route("/board/add", methods=['POST'])
+@admin_required
 def addboard():
     data = request.get_json()
 
@@ -192,6 +196,7 @@ def getboard(id):
 
 
 @bp.route("/board/update/<int:id>", methods=['PUT'])
+@admin_required
 def updateBoard(id):
     board = Boards.query.filter_by(id=id).first()
     if board:
@@ -212,6 +217,7 @@ def updateBoard(id):
 
 
 @bp.route("/board/delete", methods=['DELETE'])
+@admin_required
 def deleteboard():
     data = request.get_json()
     id = data['id']['id']
@@ -231,6 +237,7 @@ def deleteboard():
 # ADD AN ACTUATOR
 
 @bp.route("/actuator/add", methods=['POST'])
+@admin_required
 def addactuator():
     data = request.get_json()
 
@@ -287,7 +294,6 @@ def getactuator(id):
 
 @bp.route("/actuator/updateState/<int:id>", methods=['PUT'])
 @jwt_required()
-@admin_required()
 def update_actuator_state(id):
     # Extracting the user_id from the JWT token
     user_id = get_jwt_identity()
@@ -333,6 +339,7 @@ def update_actuator_state(id):
 # UPDATE AN ACTUATOR BY ID
 
 @bp.route("/actuator/update/<int:id>", methods=['PUT'])
+@admin_required
 def updateactuator(id):
     actuator = Actuators.query.filter_by(id=id).first()
     if actuator:
@@ -348,6 +355,7 @@ def updateactuator(id):
 
 
 @bp.route("/actuator/delete", methods=['DELETE'])
+@admin_required
 def deletactuator():
     data = request.get_json()
     id = data['id']['id']
@@ -360,7 +368,7 @@ def deletactuator():
 # Action MQTT
 
 @bp.route("/act/<int:id>", methods=['POST'])
-@admin_required
+@jwt_required()
 def actionmqtt(id):
     Action(id)
     return "Action triggered for ID: " + str(id)
@@ -372,3 +380,21 @@ def sensor_temp_hum():
     temp = cache.get('room_temp')
     hum = cache.get('room_humidity')
     return jsonify({"temp": temp, "hum": hum})
+
+# Get History of Locks
+
+@bp.route("/getHistory", methods=['GET'])
+def getHistory():
+    res = LockActions.query.all()
+    list = []
+    for action in res:
+        actions = {
+            "id": action.id,
+            "user_id": action.user_id,
+            "board_id": action.board_id,
+            "actuator_id": action.actuator_id,
+            "state": action.state,
+            "date": action.time,
+        }
+        list.append(actions)
+    return jsonify(list)
