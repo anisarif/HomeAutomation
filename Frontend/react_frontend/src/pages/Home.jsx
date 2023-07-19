@@ -36,7 +36,7 @@ const Home = () => {
       <div>
          <div class="Home-title">
             <h1>Hi {current_username} ! Welcome back !</h1>
-            <UserProfileButton id={current_user.id} user={current_user} />
+            <UserProfileButton id={current_user.id} />
             <LogoutButton />
          </div>
          {(isAdminView) ?
