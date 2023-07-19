@@ -88,8 +88,26 @@ def updateuser(id):
         db.session.commit()
     return str("user {user.username} updated")
 
-# DELETE USER BY ID
+@bp.route("/user/updateUsername/<int:id>", methods=['PUT'])
+def updateusername(id):
+    user = UserHome.query.filter_by(id=id).first()
+    if user:
+        data = request.get_json()
+        user.username = data['username']
+        db.session.commit()
+    return str("username {user.username} updated")
 
+@bp.route("/user/modifyPassword/<int:id>", methods=['PUT'])
+def modifypassword(id):
+    user = UserHome.query.filter_by(id=id).first()
+    if user:
+        data = request.get_json()
+        newPassword = data['password']
+        user.password=generate_password_hash(newPassword)
+        db.session.commit()
+    return str("password modified")
+
+# DELETE USER BY ID
 
 @bp.route("/user/delete", methods=['DELETE'])
 def deleteuser():

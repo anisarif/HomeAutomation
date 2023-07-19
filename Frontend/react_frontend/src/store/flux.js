@@ -118,6 +118,71 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
+            modifyPassword: async (id, password) => {
+                try {
+                    const store = getStore();
+                    const actions = getActions();
+                    const opts = {
+                        method: 'PUT',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': "Bearer " + store.token
+                        },
+                         body: JSON.stringify({
+                            "password": password,
+                        }),
+                    };
+                    const url = `http://127.0.0.1:5000/api/user/modifyPassword/${id}`
+                    const res = await fetch(url, opts)
+                    if (res.status !== 200) {
+                        alert("update 1 res.status !== 200");
+                        actions.refreshToken();
+                        return false;
+                    }
+
+                    console.log("user updated")
+                    return true;
+                }
+
+                catch (error) {
+                    console.error(error)
+                }
+            },
+
+            updateUserProfile: async (id, username) => {
+                try {
+                    const store = getStore();
+                    const actions = getActions();
+                    const opts = {
+                        method: 'PUT',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': "Bearer " + store.token
+                        },
+                         body: JSON.stringify({
+                            "username": username,
+                        }),
+                    };
+                    const url = `http://127.0.0.1:5000/api/user/updateUsername/${id}`
+                    const res = await fetch(url, opts)
+                    if (res.status !== 200) {
+                        alert("update 1 res.status !== 200");
+                        actions.refreshToken();
+                        return false;
+                    }
+
+                    console.log("user updated")
+                    return true;
+                }
+
+                catch (error) {
+                    console.error(error)
+                }
+            },
+
+
             deleteUser: (id) => {
                 const store = getStore();
                 const opts = {
