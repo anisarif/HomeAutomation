@@ -8,7 +8,6 @@ const UserProfile = ({ id }) => {
     const [current_user, setCurrent_user] = useState({})
 
     const { actions } = useContext(Context)
-
     const current = JSON.parse(sessionStorage.getItem("current_User"))
     const handleClick = () => {
         actions.updateUser(id, username, password, role)        
@@ -19,9 +18,7 @@ const UserProfile = ({ id }) => {
         setCurrent_user(current)
         setUsername(current_user.username)
         setRole(current_user.role)
-        console.log(current_user.current_user)
-        console.log(current_user.username)
-    }, [current])
+    }, [current_user])
 
     return (
         <>
