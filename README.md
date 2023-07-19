@@ -34,7 +34,13 @@ This project is a home automation system built using Flask for the backend, Reac
 - Control IoT devices in real-time 
 - User authentication and authorization (Role Based Access Control)
 - Real-time updates via MQTT
+- Sensors data monitoring
 
 ## Testing
 
+### Backend
+
 To run the tests, navigate to the backend directory and run `pytest`.
+
+### Frontend
+

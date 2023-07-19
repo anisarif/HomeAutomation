@@ -78,13 +78,12 @@ def getuser_username(username):
 # UPDATE A USER BY ID
 
 
-@bp.route("/user/update", methods=['PUT'])
+@bp.route("/user/update/<int:id>", methods=['PUT'])
 def updateuser(id):
     user = UserHome.query.filter_by(id=id).first()
     if user:
         data = request.get_json()
         user.username = data['username']
-        user.password = data['password']
         user.role = data['role']
         db.session.commit()
     return str("user {user.username} updated")
@@ -169,12 +168,19 @@ def getboard(id):
 # UPDATE A BOARD BY ID
 
 
-@bp.route("/board/update", methods=['PUT'])
-def updateboard(id):
+@bp.route("/board/update/<int:id>", methods=['PUT'])
+def updateBoard(id):
     board = Boards.query.filter_by(id=id).first()
     if board:
-
-        return
+        data = request.get_json()
+        board.name = data['name']
+        board.privacy = data['privacy']
+        if board.privacy == "public":
+            board.users = UserHome.query.all()
+        else:
+            board.users = data['users']
+        db.session.commit()
+    return str("board {board.name} updated")
 
 # DELETE BOARD BY ID
 

@@ -63,7 +63,7 @@ def create_app(test_config=None):
 
     # Setup the Flask-MQTT
 
-    app.config['MQTT_BROKER_URL'] = '192.168.1.12'
+    app.config['MQTT_BROKER_URL'] = '192.168.100.115'
     app.config['MQTT_BROKER_PORT'] = 1883
     app.config['MQTT_KEEPALIVE'] = 5  # Set KeepAlive time in seconds
     # If your server supports TLS, set it True
@@ -73,10 +73,6 @@ def create_app(test_config=None):
     cache.init_app(app)
 
        
-
-     
-
-
     # ensure the instance folder exists
     try:
         os.makedirs(app.instance_path)

@@ -85,6 +85,39 @@ const getState = ({ getStore, getActions, setStore }) => {
                 return data;
             },
 
+            updateUser: async (id, username, role) => {
+                try {
+                    const store = getStore();
+                    const actions = getActions();
+                    const opts = {
+                        method: 'PUT',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': "Bearer " + store.token
+                        },
+                         body: JSON.stringify({
+                            "username": username,
+                            "role": role,
+                        }),
+                    };
+                    const url = `http://127.0.0.1:5000/api/user/update/${id}`
+                    const res = await fetch(url, opts)
+                    if (res.status !== 200) {
+                        alert("update 1 res.status !== 200");
+                        actions.refreshToken();
+                        return false;
+                    }
+
+                    console.log("user updated")
+                    return true;
+                }
+
+                catch (error) {
+                    console.error(error)
+                }
+            },
+
             deleteUser: (id) => {
                 const store = getStore();
                 const opts = {
@@ -140,6 +173,40 @@ const getState = ({ getStore, getActions, setStore }) => {
 
                 const data = fetch("http://127.0.0.1:5000/api/board/add", opts)
                 return data;
+            },
+
+            updateBoard: async (id, name, privacy, users) => {
+                try {
+                    const store = getStore();
+                    const actions = getActions();
+                    const opts = {
+                        method: 'PUT',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': "Bearer " + store.token
+                        },
+                         body: JSON.stringify({
+                            "name": name,
+                            "privacy": privacy,
+                            "users": users,
+                        }),
+                    };
+                    const url = `http://127.0.0.1:5000/api/board/update/${id}`
+                    const res = await fetch(url, opts)
+                    if (res.status !== 200) {
+                        alert("update 1 res.status !== 200");
+                        actions.refreshToken();
+                        return false;
+                    }
+
+                    console.log("board updated")
+                    return true;
+                }
+
+                catch (error) {
+                    console.error(error)
+                }
             },
 
             deleteBoard: (id) => {
