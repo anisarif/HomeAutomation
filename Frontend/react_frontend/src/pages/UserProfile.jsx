@@ -1,13 +1,15 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { Context } from '../store/appContext';
+import ModifyPassword from '../components/ModifyPassword';
 
-const UserProfile = ({ id }) => {
+const UserProfile = () => {
     const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
     const [current_user, setCurrent_user] = useState({})
+    const [id, setId] = useState("")
     const [trigger, setTrigger] = useState(false)
 
     const { actions } = useContext(Context)
+    
 
     const handleClick = () => {
         actions.updateUserProfile(id, username)
@@ -16,6 +18,7 @@ const UserProfile = ({ id }) => {
     useEffect(() => {
         const current = JSON.parse(sessionStorage.getItem("current_User"))
         setCurrent_user(current)
+        setId(current.id)
     }, [])
 
     useEffect(() => {

@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import request, Blueprint, jsonify, current_app
 from .models import db, UserHome, Boards, Actuators, LockActions
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from .utils import Action
 from .mqtt_client import mqtt, cache
@@ -98,11 +98,15 @@ def updateusername(id):
     return str("username {user.username} updated")
 
 @bp.route("/user/modifyPassword/<int:id>", methods=['PUT'])
+@jwt_required()
 def modifypassword(id):
     user = UserHome.query.filter_by(id=id).first()
     if user:
         data = request.get_json()
-        newPassword = data['password']
+        password = data['password']
+        newPassword = data['newPassword']
+        if not check_password_hash(user.password, password):
+            return str("incorrect password", 400)
         user.password=generate_password_hash(newPassword)
         db.session.commit()
     return str("password modified")

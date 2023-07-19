@@ -118,7 +118,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            modifyPassword: async (id, password) => {
+            modifyPassword: async (id, password, newPassword) => {
                 try {
                     const store = getStore();
                     const actions = getActions();
@@ -131,12 +131,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                          body: JSON.stringify({
                             "password": password,
+                            "newPassword": newPassword,
                         }),
                     };
                     const url = `http://127.0.0.1:5000/api/user/modifyPassword/${id}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
-                        alert("update 1 res.status !== 200");
+                        alert("Token expired, press ok to refresh token");
                         actions.refreshToken();
                         return false;
                     }
