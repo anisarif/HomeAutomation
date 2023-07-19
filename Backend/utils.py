@@ -1,25 +1,19 @@
 from functools import wraps
 from flask_jwt_extended import get_jwt, verify_jwt_in_request
 from .mqtt_client import mqtt
-from flask import request
+from flask import request, jsonify
 
   
 
 # Creating a custom decorator @admin_required to check user.role in the jwt access token as additional claims
-
-def admin_required():
-    def wrapper(fn):
-        @wraps(fn)
-        def decorator(*args, **kwargs):
-            verify_jwt_in_request()
-            claims = get_jwt()
-            if claims["is_administrator"]:
-                return fn(*args, **kwargs)
-            else:
-                return 'admin only', 403
-
-        return decorator
-
+def admin_required(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        claims = get_jwt()
+        if not claims["is_administrator"]:
+            return jsonify(msg='Admins only!'), 403
+        else:
+            return fn(*args, **kwargs)
     return wrapper
 
 # Mqtt Action function

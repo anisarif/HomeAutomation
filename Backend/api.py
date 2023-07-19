@@ -3,7 +3,7 @@ from flask import request, Blueprint, jsonify, current_app
 from .models import db, UserHome, Boards, Actuators, LockActions
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from .utils import Action
+from .utils import Action, admin_required
 from .mqtt_client import mqtt, cache
 
 bp = Blueprint('api', __name__, url_prefix='/api')
@@ -18,6 +18,7 @@ bp = Blueprint('api', __name__, url_prefix='/api')
 
 
 @bp.route("/user/add", methods=['POST'])
+@admin_required()
 def adduser():
     data = request.get_json()
 
@@ -286,6 +287,7 @@ def getactuator(id):
 
 @bp.route("/actuator/updateState/<int:id>", methods=['PUT'])
 @jwt_required()
+@admin_required()
 def update_actuator_state(id):
     # Extracting the user_id from the JWT token
     user_id = get_jwt_identity()
@@ -358,6 +360,7 @@ def deletactuator():
 # Action MQTT
 
 @bp.route("/act/<int:id>", methods=['POST'])
+@admin_required
 def actionmqtt(id):
     Action(id)
     return "Action triggered for ID: " + str(id)
