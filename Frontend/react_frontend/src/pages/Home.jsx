@@ -7,11 +7,13 @@ import Locks from "../components/Dashboard/Lockers/Locks";
 import Lights from "../components/Dashboard/Lights/Lights";
 import Weather from "../components/Dashboard/Weather/Weather";
 import Sensor from "../components/Dashboard/Weather/Sensor";
+import UserProfileButton from "../components/UserProfileButton";
 import './Home.css'
 
 const Home = () => {
    const { store } = useContext(Context)
    const [current_username, setCurrent_username] = useState("")
+   const [current_user, setCurrent_user] = useState([])
    const [isAdminView, setIsAdminView] = useState("")
 
    useEffect(() => {
@@ -19,7 +21,9 @@ const Home = () => {
          if (store.token && store.token !== undefined && store.token !== null) {
             const myDecodedToken = decodeToken(store.token);
             const current = myDecodedToken.current_user
+            sessionStorage.setItem("current_User", current)
             const checkrole = myDecodedToken.is_administrator
+            setCurrent_user(current)
             setCurrent_username(current.username)
             setIsAdminView(checkrole)
             sessionStorage.setItem("current_user", current)
@@ -32,6 +36,7 @@ const Home = () => {
       <div>
          <div class="Home-title">
             <h1>Hi {current_username} ! Welcome back !</h1>
+            <UserProfileButton id={current_user.id} user={current_user} />
             <LogoutButton />
          </div>
          {(isAdminView) ?
