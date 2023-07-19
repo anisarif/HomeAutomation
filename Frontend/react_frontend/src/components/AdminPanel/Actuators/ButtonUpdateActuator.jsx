@@ -6,7 +6,7 @@ import { getBoards } from "../../../utils/api";
 const UpdateActuator = ({id, actuator, update}) => {
     const { actions } = useContext(Context)
     const handleClick = () => {
-        actions.update.Actuator(id, name, pin, board_id, type).then(() => {
+        actions.updateActuator(id, name, pin, board_id, type).then(() => {
             update();
         });
         setToggleIsOn(!toggleIsOn)

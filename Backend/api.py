@@ -178,7 +178,10 @@ def updateBoard(id):
         if board.privacy == "public":
             board.users = UserHome.query.all()
         else:
-            board.users = data['users']
+            user_ids = data['users']
+            users = UserHome.query.filter(UserHome.id.in_(user_ids)).all()
+            board.users = users
+
         db.session.commit()
     return str("board {board.name} updated")
 
@@ -257,11 +260,11 @@ def getactuator(id):
         return actuator
 
 
-# UPDATE A ACTUATOR STATE BY ID
+# UPDATE AN ACTUATOR STATE BY ID
 
-@bp.route("/actuator/update/<int:id>", methods=['PUT'])
+@bp.route("/actuator/updateState/<int:id>", methods=['PUT'])
 @jwt_required()
-def update_actuator(id):
+def update_actuator_state(id):
     # Extracting the user_id from the JWT token
     user_id = get_jwt_identity()
 
@@ -281,7 +284,7 @@ def update_actuator(id):
             db.session.add(lock_action)
             db.session.commit()
 
-            return "updated to false " + str(id)
+            return "Actuator id: " + str(id) + "updated to false "
         
         elif state['state'] == True:
             actuator.state = 1
@@ -295,12 +298,27 @@ def update_actuator(id):
             db.session.add(lock_action)
             db.session.commit()
 
-            return "updated to true " + str(id)
+            return "Actuator id: " + str(id) + "updated to true "
         
         return ("error while updating actuator state", 400) 
 
     else:
         return "actuator not found"
+    
+
+# UPDATE AN ACTUATOR BY ID
+
+@bp.route("/actuator/update/<int:id>", methods=['PUT'])
+def updateactuator(id):
+    actuator = Actuators.query.filter_by(id=id).first()
+    if actuator:
+        data = request.get_json()
+        actuator.name = data['name']
+        actuator.pin = data['pin']
+        actuator.board_id = data['board_id']
+        actuator.type = data['type']
+        db.session.commit()
+    return "actuator" + str(id) + "updated"
     
 # DELETE ACTUATOR BY ID
 

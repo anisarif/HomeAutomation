@@ -302,7 +302,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             "state": state,
                         }),
                     };
-                    const url = `http://127.0.0.1:5000/api/actuator/update/${lockId}`
+                    const url = `http://127.0.0.1:5000/api/actuator/updateState/${lockId}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
                         alert("update 1 res.status !== 200");
@@ -325,7 +325,43 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error(error)
                 }
             },
-            
+
+            updateActuator: async (id, name, pin, board_id, type) => {
+                try {
+                    const store = getStore();
+                    const actions = getActions();
+                    const opts = {
+                        method: 'PUT',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': "Bearer " + store.token
+                        },
+                         body: JSON.stringify({
+                            "name": name,
+                            "pin": pin,
+                            "board_id": board_id,
+                            "type": type,
+                        }),
+                    };
+                    const url = `http://127.0.0.1:5000/api/actuator/update/${id}`
+                    const res = await fetch(url, opts)
+                    if (res.status !== 200) {
+                        alert("Token expired, Press OK to refresh token");
+                        actions.refreshToken();
+                        return false;
+                    }
+
+                    console.log("Actuator " + id + " updated")
+                    return true;
+                }
+
+                catch (error) {
+                    console.error(error)
+                }
+            },
+
+
             act: async ({ lockId, state }) => {
                 try {
                     const store = getStore();

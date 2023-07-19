@@ -16,11 +16,15 @@ const UpdateBoard = ({id, board, update}) => {
 
   const handleUserChange = (e) => {
     const { value } = e.target;
-    setSelectedUsers((prev) =>
-      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
-    );
+    setSelectedUsers((prev) => {
+      if (!Array.isArray(prev)) {
+        console.error('prev is not an array:', prev);
+        prev = [];
+      }
+      return prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value];
+    });
   };
-
+  
   const handleSubmit = () => {
     if (privacy === "private" && selectedUsers.length === 0) {
       alert("Please select at least one user.");
