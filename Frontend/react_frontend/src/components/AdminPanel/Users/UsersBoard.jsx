@@ -1,26 +1,20 @@
-import { getUsers } from "../../../utils/api";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import ButtonDeleteUser from "./ButtonDeleteUser";
 import ButtonAddUser from "./ButtonAddUser";
 import ButtonUpdateUser from "./ButtonUpdateUser";
+import { Context } from "../../../store/appContext";
 
-const UsersBoard = () => {
+const UsersBoard = ({userCount, addUsersCount, deleteUsersCount }) => {
     const [users, setUsers] = useState([])
-    const [usersCount, setUsersCount] = useState(1)
-    const updateState = () => {
-        setUsersCount(usersCount + 1)
-    }
-    const updateStateDelete = () => {
-        setUsersCount(usersCount - 1)
-    }
-
+    const { actions } = useContext(Context);
     useEffect(() => {
         const fetchData = async () => {
-            const loaded_users = await getUsers()
-            setUsers(loaded_users)
+            const loaded_users = await actions.getUsers()
+
+            setUsers(JSON.parse(loaded_users))
         }
         fetchData().catch(console.error)
-    }, [usersCount])
+    }, [userCount])
 
     return (
         <div >
@@ -31,12 +25,12 @@ const UsersBoard = () => {
                     <h4>{user.username}</h4>
                     <h4>{user.role} </h4>
                     <div>
-                        <ButtonUpdateUser user={user} id={user.id} update={updateState} />
-                        <ButtonDeleteUser id={user.id} update={updateStateDelete} />
+                        <ButtonUpdateUser user={user} id={user.id} update={addUsersCount} />
+                        <ButtonDeleteUser id={user.id} update={deleteUsersCount} />
                     </div>
                 </div>
             ))}
-                <ButtonAddUser update={updateState} className="ButtonAddUser" />
+                <ButtonAddUser update={addUsersCount} className="ButtonAddUser" />
             </div>
         </div>
 

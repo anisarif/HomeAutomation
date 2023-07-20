@@ -5,15 +5,8 @@ import ButtonDeleteBoard from "./ButtonDeleteBoard";
 import UpdateBoard from "./ButtonUpdateBoard";
 import "./Board.css"
 
-const Boards = () => {
+const Boards = ({ userCount, boardCount, addBoardsCount, deleteBoardsCount }) => {
     const [boards, setBoards] = useState([])
-    const [boardsCount, setBoardsCount] = useState(1)
-    const updateState = () => {
-        setBoardsCount(boardsCount + 1)
-    }
-    const updateStateDelete = () => {
-        setBoardsCount(boardsCount - 1)
-    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -22,7 +15,7 @@ const Boards = () => {
                 setBoards(loaded_boards)
         }
         fetchData().catch(console.error)
-    }, [boardsCount])
+    }, [boardCount])
 
     return (
         <div>
@@ -32,12 +25,12 @@ const Boards = () => {
                     <h4>{board.id}</h4>
                     <h4>{board.name}</h4>
                     <div>
-                        <UpdateBoard id={board.id} board={board} update={updateState} />
-                        <ButtonDeleteBoard id={board.id} update={updateStateDelete} />
+                        <UpdateBoard id={board.id} board={board} update={addBoardsCount} userCount={userCount} />
+                        <ButtonDeleteBoard id={board.id} update={deleteBoardsCount} />
                     </div>
                 </div>
             ))}
-                <ButtonAddBoard update={updateState} className="ButtonAddBoard" />
+                <ButtonAddBoard update={addBoardsCount} userCount={userCount} className="ButtonAddBoard" />
             </div>
         </div>
 

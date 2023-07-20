@@ -393,7 +393,7 @@ def getHistory():
             "user_id": action.user_id,
             "board_id": action.board_id,
             "actuator_id": action.actuator_id,
-            "state": action.state,
+            "state": str(action.state),
             "date": action.time,
         }
         list.append(actions)

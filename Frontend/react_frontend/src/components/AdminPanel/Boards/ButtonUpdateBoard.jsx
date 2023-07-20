@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../../store/appContext";
 
-const UpdateBoard = ({id, board, update}) => {
+const UpdateBoard = ({id, board, update, userCount}) => {
   const { actions } = useContext(Context);
   const [name, setName] = useState("");
   const [privacy, setPrivacy] = useState("");
@@ -56,7 +56,7 @@ const UpdateBoard = ({id, board, update}) => {
         console.log("users is not an array");
       }
     }
-  }, []);
+  }, [userCount]);
 
   return (
     <>

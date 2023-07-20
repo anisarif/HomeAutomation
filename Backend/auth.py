@@ -1,6 +1,6 @@
 from flask import request, Blueprint, jsonify, make_response
 from .models import db, UserHome
-from flask_jwt_extended import create_access_token,jwt_required, get_jwt_identity, get_jwt, create_refresh_token
+from flask_jwt_extended import create_access_token,jwt_required, get_jwt_identity, get_jwt, create_refresh_token, unset_jwt_cookies
 from werkzeug.security import check_password_hash
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -66,4 +66,13 @@ def refresh():
     current_user = claims["current_user"]
     access_token = create_access_token(identity=identity, additional_claims={"is_administrator": is_admin, "current_user":current_user})
     return jsonify(access_token=access_token)
+
+# Logout Route
+
+@bp.route('/logout', methods=['POST'])
+@jwt_required()
+def logout():
+    resp = jsonify({'logout': True})
+    unset_jwt_cookies(resp)
+    return resp, 200
 

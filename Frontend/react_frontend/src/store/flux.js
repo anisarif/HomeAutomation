@@ -57,8 +57,22 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
             logout: () => {
+                const store = getStore();
+                const opts = {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': "Bearer " + store.token,
+                    },
+                };
+                fetch("http://127.0.0.1:5000/auth/logout", opts)
                 sessionStorage.removeItem("token");
                 sessionStorage.removeItem("current_user");
+                sessionStorage.removeItem("current_User");
+                sessionStorage.removeItem("refresh_token");
+
                 setStore({ token: null });
                 console.log("logged out");
             },
@@ -185,7 +199,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             getHistory: async () => {
                 try {
-                    const store = getStore();
                     const actions = getActions();
                     const opts = {
                         method: 'GET',
@@ -203,8 +216,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         return false;
                     }
 
-                    const data = await res.json();
-                    const history = JSON.stringify(data)
+                    const history = await res.json();
                     return history;
                 }
                 catch (error) {
