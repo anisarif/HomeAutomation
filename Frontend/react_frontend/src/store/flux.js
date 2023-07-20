@@ -244,7 +244,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }),
                 };
 
-                const data = fetch("http://127.0.0.1:5000/api/user/delete", opts)
+                const data = fetch(`http://127.0.0.1:5000/api/user/delete/${id}`, opts)
                 return data;
             },
 
@@ -253,13 +253,12 @@ const getState = ({ getStore, getActions, setStore }) => {
                     const res = await fetch("http://127.0.0.1:5000/api/user/getall")
                     if (res.status !== 200) {
                         alert("There has been an error");
-                        return false;
                     }
 
                     const data = await res.json();
                     const users = JSON.stringify(data)
                     if (users && users !== undefined && users !== "[]" && users !== "") sessionStorage.setItem("users", users);
-                    return true;
+                    return users;
                 }
                 catch (error) {
                     console.error(error)
@@ -335,7 +334,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }),
                 };
 
-                const data = fetch("http://127.0.0.1:5000/api/board/delete", opts)
+                const data = fetch(`http://127.0.0.1:5000/api/board/delete/${id}`, opts)
                 return data;
             },
 
@@ -374,7 +373,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }),
                 };
 
-                const data = fetch("http://127.0.0.1:5000/api/actuator/delete", opts)
+                const data = fetch(`http://127.0.0.1:5000/api/actuator/delete/${id}`, opts)
                 return data;
             },
 

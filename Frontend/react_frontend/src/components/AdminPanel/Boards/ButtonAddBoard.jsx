@@ -41,7 +41,6 @@ const ButtonAddBoard = ({update, userCount}) => {
       const parsed_users = JSON.parse(session_users);
       if (Array.isArray(parsed_users)) {
         setUsers(parsed_users);
-        console.log("users is an array");
       } else {
         console.log("users is not an array");
       }
@@ -52,7 +51,10 @@ const ButtonAddBoard = ({update, userCount}) => {
     <>
       {toggleIsOn ? (
         <div>
-          <button onClick={() => setToggleIsOn(!toggleIsOn)}>+</button>
+          <button onClick={() => {
+          setToggleIsOn(!toggleIsOn)
+          }
+          }>+</button>
           <input
             type="text"
             value={name}

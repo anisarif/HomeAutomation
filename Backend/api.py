@@ -116,11 +116,9 @@ def modifypassword(id):
 
 # DELETE USER BY ID
 
-@bp.route("/user/delete", methods=['DELETE'])
+@bp.route("/user/delete/<int:id>", methods=['DELETE'])
 @admin_required
-def deleteuser():
-    data = request.get_json()
-    id = data['id']['id']
+def deleteuser(id):
     user = UserHome.query.filter_by(id=id).first()
     if user:
         db.session.delete(user)
@@ -216,12 +214,9 @@ def updateBoard(id):
 # DELETE BOARD BY ID
 
 
-@bp.route("/board/delete", methods=['DELETE'])
+@bp.route("/board/delete/<int:id>", methods=['DELETE'])
 @admin_required
-def deleteboard():
-    data = request.get_json()
-    id = data['id']['id']
-
+def deleteboard(id):
     board = Boards.query.filter_by(id=id).first()
     if board:
         db.session.delete(board)
@@ -354,16 +349,14 @@ def updateactuator(id):
 # DELETE ACTUATOR BY ID
 
 
-@bp.route("/actuator/delete", methods=['DELETE'])
+@bp.route("/actuator/delete/<int:id>", methods=['DELETE'])
 @admin_required
-def deletactuator():
-    data = request.get_json()
-    id = data['id']['id']
+def deletactuator(id):
     actuator = Actuators.query.filter_by(id=id).first()
     if actuator:
         db.session.delete(actuator)
         db.session.commit()
-    return "actuator deleted"
+    return "actuator " + str(id) + " deleted"
 
 # Action MQTT
 

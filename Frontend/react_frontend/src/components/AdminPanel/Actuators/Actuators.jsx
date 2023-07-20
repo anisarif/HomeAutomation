@@ -8,24 +8,17 @@ import ButtonUpdateActuator from "./ButtonUpdateActuator";
 
 
 
-const Actuators = () => {
+const Actuators = ({boardCount, actuatorCount, addActuatorsCount, deleteActuatorsCount} ) => {
     const [actuators, setActuators] = useState([])
-    const [actuatorsCount, setActuatorsCount] = useState(1)
 
     useEffect(() => {
         const fetchData = async () => {
             const loaded_actuators = await getActuators()
             setActuators(loaded_actuators)
+            console.log(actuatorCount)
         }
         fetchData().catch(console.error)
-    }, [actuatorsCount])
-
-    const updateState = () => {
-        setActuatorsCount(actuatorsCount + 1)
-    }
-    const updateStateDelete = () => {
-        setActuatorsCount(actuatorsCount - 1)
-    }
+    }, [actuatorCount])
 
     return (
         <div>
@@ -38,12 +31,12 @@ const Actuators = () => {
                     <h5>{actuator.type}</h5>
                     <h5>{actuator.state}</h5>
                     <div>
-                        <ButtonUpdateActuator id={actuator.id} actuator={actuator} update={updateState} />
-                        <ButtonDeleteActuator id={actuator.id} update={updateStateDelete} />
+                        <ButtonUpdateActuator id={actuator.id} actuator={actuator} update={addActuatorsCount} />
+                        <ButtonDeleteActuator id={actuator.id} update={deleteActuatorsCount} />
                     </div>
                 </div>
             ))}
-                <ButtonAddActuator update={updateState} className="ButtonAddUser" />
+                <ButtonAddActuator update={addActuatorsCount} boardCount={boardCount} className="ButtonAddUser" />
             </div>
         </div>
 

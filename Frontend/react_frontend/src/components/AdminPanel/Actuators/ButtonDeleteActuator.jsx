@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Context } from "../../../store/appContext";
 
-const ButtonDeleteActuator = (id, {update}) => {
+const ButtonDeleteActuator = ({id, update}) => {
     const { actions } = useContext(Context)
     const handleClick = () => {
         actions.deleteActuator(id).then(() => {

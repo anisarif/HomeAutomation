@@ -3,11 +3,12 @@ import { Context } from "../../../store/appContext";
 import { getBoards } from "../../../utils/api";
 
 
-const ButtonAddActuator = ({update}) => {
+const ButtonAddActuator = ({update, boardCount}) => {
     const { actions } = useContext(Context)
     const handleClick = () => {
         actions.addActuator(name, pin, board_id, type).then(() => {
             update();
+            
         });
         setToggleIsOn(!toggleIsOn)
     }
@@ -27,7 +28,7 @@ const ButtonAddActuator = ({update}) => {
                 setBoards(loaded_boards)
         }
         fetchData().catch(console.error)
-    }, [])
+    }, [boardCount])
 
 
 

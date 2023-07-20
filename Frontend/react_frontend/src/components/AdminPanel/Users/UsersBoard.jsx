@@ -10,7 +10,7 @@ const UsersBoard = ({userCount, addUsersCount, deleteUsersCount }) => {
     useEffect(() => {
         const fetchData = async () => {
             const loaded_users = await actions.getUsers()
-
+            console.log(userCount)
             setUsers(JSON.parse(loaded_users))
         }
         fetchData().catch(console.error)
