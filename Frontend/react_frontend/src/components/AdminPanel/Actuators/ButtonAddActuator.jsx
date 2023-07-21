@@ -37,7 +37,7 @@ const ButtonAddActuator = ({update, boardCount}) => {
         <>
             {toggleIsOn ? (
                 <div>
-                    <button onClick={() => { setToggleIsOn(!toggleIsOn) }} > + </button>
+                    <button className=" text-center" onClick={() => { setToggleIsOn(!toggleIsOn) }} > + </button>
                     <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
                     <input type="text" value={pin} onChange={(e) => setPin(e.target.value)} placeholder="Pin" />
                     <select value={board_id} onChange={(e) => setBoard_id(e.target.value)} placeholder="Board">

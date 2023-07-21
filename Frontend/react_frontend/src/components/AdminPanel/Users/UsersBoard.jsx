@@ -4,7 +4,7 @@ import ButtonAddUser from "./ButtonAddUser";
 import ButtonUpdateUser from "./ButtonUpdateUser";
 import { Context } from "../../../store/appContext";
 
-const UsersBoard = ({userCount, addUsersCount, deleteUsersCount }) => {
+const UsersBoard = ({ userCount, addUsersCount, deleteUsersCount }) => {
     const [users, setUsers] = useState([])
     const { actions } = useContext(Context);
     useEffect(() => {
@@ -18,10 +18,13 @@ const UsersBoard = ({userCount, addUsersCount, deleteUsersCount }) => {
 
     return (
         <div className="p-4 bg-slate-200 rounded-md" >
-            <h3 className=" text-slate-700 font-medium text-center text-3xl mb-8">Users</h3>
-            <ButtonAddUser update={addUsersCount} className="ButtonAddUser" />
+            <div className=" grid grid-cols-3">
+                <div></div>
+                <h3 className=" text-slate-700 font-medium text-center text-3xl mb-8">Users</h3>
+                <ButtonAddUser update={addUsersCount} className="ButtonAddUser" />
+            </div>
             <div className=" justify-center"> {users.map((user) => (
-                <div key={user.id} className="grid grid-cols-4" >
+                <div key={user.id} className="grid grid-cols-4 items-center my-4 text-center" >
                     <h4>{user.id}</h4>
                     <h4>{user.username}</h4>
                     <h4>{user.role} </h4>
@@ -31,7 +34,7 @@ const UsersBoard = ({userCount, addUsersCount, deleteUsersCount }) => {
                     </div>
                 </div>
             ))}
-                
+
             </div>
         </div>
 

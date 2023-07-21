@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { Context } from "../../../store/appContext";
+import addUser from "../../../images/addUser.png";
 
 const ButtonAddUser = ({ update }) => {
     const { actions } = useContext(Context)
@@ -15,7 +16,7 @@ const ButtonAddUser = ({ update }) => {
     const [toggleIsOn, setToggleIsOn] = useState(false)
 
     return (
-        <div className="flex w-full">
+        <div className="flex w-full justify-end">
             {toggleIsOn ? (
                 <div>
                     <button onClick={() => { setToggleIsOn(!toggleIsOn) }} > + </button>
@@ -29,10 +30,12 @@ const ButtonAddUser = ({ update }) => {
                     <button type="submit" onClick={handleClick} > ADD </button>
                 </div>
             ) : (
-                <button className=" flex flex-shrink w-full" onClick={() => {
+                <button className=" hover:bg-slate-300 rounded-full" onClick={() => {
                     setToggleIsOn(!toggleIsOn)
 
-                }} > New User </button>
+                }} >
+                    <img className=" h-12 w-12" src={addUser} alt="addUser" />
+                </button>
             )}
 
         </div>

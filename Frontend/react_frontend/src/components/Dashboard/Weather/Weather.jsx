@@ -32,10 +32,10 @@ const Weather = () => {
         <h1 className=' font-bold text-8xl m-4 mb-5'>Tunis</h1>
         <div></div>
         <div className='flex'>
-          <img className="h-20 w-20" src={thermometer} alt="thermometer"/><h1 className='text-6xl text-center align-text-center'>{temperature}°C</h1>
+          <img className="h-20 w-20" src={thermometer} alt="thermometer"/><h1 className='text-5xl text-center align-text-center'>{temperature}°C</h1>
         </div>
         <div className='flex'>
-        <img className="h-20 w-20" src={wind} alt="wind"/><h1 className='text-6xl'> {windspeed} Km/h</h1>
+        <img className="h-20 w-20" src={wind} alt="wind"/><h1 className='text-5xl text-center align-text-center'> {windspeed} Km/h</h1>
         </div>
       </div>
     </div>
