@@ -8,13 +8,14 @@ import ButtonUpdateActuator from "./ButtonUpdateActuator";
 
 
 
-const Actuators = ({boardCount, actuatorCount, addActuatorsCount, deleteActuatorsCount} ) => {
+const Actuators = ({id, boardCount, actuatorCount, addActuatorsCount, deleteActuatorsCount} ) => {
     const [actuators, setActuators] = useState([])
 
     useEffect(() => {
         const fetchData = async () => {
             const loaded_actuators = await getActuators()
-            setActuators(loaded_actuators)
+            const filtered_actuators = loaded_actuators.filter(actuator => actuator.board_id === id)
+            setActuators(filtered_actuators)
             console.log(actuatorCount)
         }
         fetchData().catch(console.error)

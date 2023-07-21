@@ -2,20 +2,16 @@ import AdminPanel from "../components/AdminPanel/AdminPanel";
 import { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 import { decodeToken } from "react-jwt";
-import LogoutButton from "../components/LogoutButton";
-import Locks from "../components/Dashboard/Lockers/Locks";
-import Lights from "../components/Dashboard/Lights/Lights";
-import Weather from "../components/Dashboard/Weather/Weather";
-import Sensor from "../components/Dashboard/Weather/Sensor";
-import UserProfileButton from "../components/UserProfileButton";
-import ActionsHistory from "../components/ActionsHistory";
 import './Home.css'
+import Navbar from "../components/Navbar";
+import Dashboard from "../components/Dashboard/Dashboard";
 
 const Home = () => {
    const { store } = useContext(Context)
    const [current_username, setCurrent_username] = useState("")
    const [current_user, setCurrent_user] = useState([])
    const [isAdminView, setIsAdminView] = useState("")
+   const [toggle, setToggle] = useState(false)
 
    useEffect(() => {
       const getRole = () => {
@@ -34,20 +30,12 @@ const Home = () => {
    }, [store.token]);
 
    return (
-      <div>
-         <div class="Home-title">
-            <h1>Hi {current_username} ! Welcome back !</h1>
-            <UserProfileButton id={current_user.id} />
-            <LogoutButton />
-         </div>
+      <div className=" bg-slate-600">
+         <Navbar isAdminView={isAdminView}/>
+         <Dashboard />
          {(isAdminView) ?
             <h1><AdminPanel /></h1> :
             <h1>{current_username} is not admin</h1>}
-         <Locks />
-         <Lights />
-         <Weather />
-         <Sensor />
-         <ActionsHistory />
       </div>
 
    )

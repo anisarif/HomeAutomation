@@ -40,12 +40,12 @@ const Locks = () => {
     const boardIds = boardsList.map(board => board.id);
   
     return (
-      <div>
-        <h1>Lockers</h1>
+      <div className="p-4 bg-slate-200 rounded-md">
+        <h1 className=" text-slate-700 font-medium text-center text-3xl mb-8">Lockers</h1>
         {boardsList.length > 0 && locks.map((lock) => {
           if (boardIds.includes(lock.board_id)) {
             return (
-              <div key={lock.id}>
+              <div className="p-4" key={lock.id}>
                 <Lock name={lock.name} id={lock.id} state={lock.state} />
               </div>
             );

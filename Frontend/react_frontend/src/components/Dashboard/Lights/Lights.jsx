@@ -42,8 +42,8 @@ const Lights = () => {
     const boardIds = boardsList.map(board => board.id);
   
     return (
-      <div>
-        <h1>Lights</h1>
+      <div className="p-4 bg-slate-200 rounded-md">
+        <h1 className=" text-slate-700 font-medium text-center text-3xl mb-8">Lights</h1>
         {boardsList.length > 0 && lights.map((light) => {
           if (boardIds.includes(light.board_id)) {
             return (

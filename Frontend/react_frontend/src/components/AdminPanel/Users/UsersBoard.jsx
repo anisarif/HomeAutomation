@@ -18,7 +18,7 @@ const UsersBoard = ({userCount, addUsersCount, deleteUsersCount }) => {
 
     return (
         <div >
-            <h1>Users</h1>
+            <h3>Users</h3>
             <div > {users.map((user) => (
                 <div key={user.id} className="Board" >
                     <h4>{user.id}</h4>

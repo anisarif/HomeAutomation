@@ -1,8 +1,7 @@
 import { useState } from "react";
 import UsersBoard from "./Users/UsersBoard";
 import Boards from "./Boards/Boards";
-import Actuators from "./Actuators/Actuators";
-import './AdminPanel.css'
+import ActionsHistory from "../ActionsHistory"
 
 const AdminPanel = () => {
 
@@ -36,15 +35,15 @@ const AdminPanel = () => {
 
 
    return (
-      <div >
-         <div class="AdminPanel_title">
+      <div className=" flex flex-row justify-items-center justify-evenly ">
+         <div className=" flex flex-row justify-items-center justify-evenly ">
             <h1>Admin Panel</h1>
          </div>
-         <div class="grid-container">
+         <div className=" grid p-10 ">
             <UsersBoard userCount={userCount} addUsersCount={addUsersCount} deleteUsersCount={deleteUsersCount}  />
-            <Boards userCount={userCount} boardCount={boardCount} addBoardsCount={addBoardsCount} deleteBoardsCount={deleteBoardsCount} />
-            <Actuators boardCount={boardCount} actuatorCount={actuatorCount} addActuatorsCount={addActuatorsCount} deleteActuatorsCount={deleteActuatorsCount} />
+            <Boards userCount={userCount} boardCount={boardCount} addBoardsCount={addBoardsCount} deleteBoardsCount={deleteBoardsCount} actuatorCount={actuatorCount} addActuatorsCount={addActuatorsCount} deleteActuatorsCount={deleteActuatorsCount} />
          </div>
+         <ActionsHistory />
       </div>
    )
 }
