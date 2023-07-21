@@ -17,20 +17,21 @@ const UsersBoard = ({userCount, addUsersCount, deleteUsersCount }) => {
     }, [userCount])
 
     return (
-        <div >
-            <h3>Users</h3>
-            <div > {users.map((user) => (
-                <div key={user.id} className="Board" >
+        <div className="p-4 bg-slate-200 rounded-md" >
+            <h3 className=" text-slate-700 font-medium text-center text-3xl mb-8">Users</h3>
+            <ButtonAddUser update={addUsersCount} className="ButtonAddUser" />
+            <div className=" justify-center"> {users.map((user) => (
+                <div key={user.id} className="grid grid-cols-4" >
                     <h4>{user.id}</h4>
                     <h4>{user.username}</h4>
                     <h4>{user.role} </h4>
-                    <div>
+                    <div className=" flex flex-col">
                         <ButtonUpdateUser user={user} id={user.id} update={addUsersCount} />
                         <ButtonDeleteUser id={user.id} update={deleteUsersCount} />
                     </div>
                 </div>
             ))}
-                <ButtonAddUser update={addUsersCount} className="ButtonAddUser" />
+                
             </div>
         </div>
 

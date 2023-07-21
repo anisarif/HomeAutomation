@@ -15,7 +15,7 @@ const ButtonAddUser = ({ update }) => {
     const [toggleIsOn, setToggleIsOn] = useState(false)
 
     return (
-        <>
+        <div className="flex w-full">
             {toggleIsOn ? (
                 <div>
                     <button onClick={() => { setToggleIsOn(!toggleIsOn) }} > + </button>
@@ -29,13 +29,13 @@ const ButtonAddUser = ({ update }) => {
                     <button type="submit" onClick={handleClick} > ADD </button>
                 </div>
             ) : (
-                <button onClick={() => {
+                <button className=" flex flex-shrink w-full" onClick={() => {
                     setToggleIsOn(!toggleIsOn)
 
-                }} > + </button>
+                }} > New User </button>
             )}
 
-        </>
+        </div>
     )
 }
 

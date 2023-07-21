@@ -28,14 +28,18 @@ const Navbar = () => {
     }
         , [store.token]);
 
-    return (    
+    return (
         <div className=" sticky top-0 flex items-center justify-items-center justify-between h-12 bg-slate-200  rounded-b-xl">
             <div className="object-center mx-40 place-items-center">
                 <h1 className=" text-slate-700 font-medium">Hi {current_username} ! Welcome back !</h1>
             </div>
             <div className="mx-20 justify-evenly">
-            {(isAdminView) ? (toggle ? <button onClick={setToggle(true)} className="mx-5 rounded-lg px-3 py-2 text-slate-700 font-medium hover:bg-slate-100 hover:text-slate-900">Dashboard</button> : <button onClick={setToggle(false)} className="rounded-lg px-3 py-2 text-slate-700 font-medium hover:bg-slate-100 hover:text-slate-900">Admin Panel</button>) : null}
-                <UserProfileButton  id={current_user.id} />
+                {(isAdminView) ? (toggle ?
+                    <button onClick={() => setToggle(true)} className="mx-5 rounded-lg px-3 py-2 text-slate-700 font-medium hover:bg-slate-100 hover:text-slate-900">Dashboard</button>
+                    :
+                    <button onClick={() => setToggle(false)} className="rounded-lg px-3 py-2 text-slate-700 font-medium hover:bg-slate-100 hover:text-slate-900">Admin Panel</button>)
+                    : null}
+                <UserProfileButton id={current_user.id} />
                 <LogoutButton />
             </div>
         </div>
