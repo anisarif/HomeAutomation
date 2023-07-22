@@ -13,6 +13,9 @@ def handle_connect(client, userdata, flags, rc):
         mqtt.subscribe('h')
         mqtt.subscribe('3')
         mqtt.subscribe('2')
+        mqtt.subscribe('14')
+        mqtt.subscribe('13')
+        mqtt.subscribe('11')
     else:
         print('Bad connection. Code:', rc)
 
@@ -22,6 +25,7 @@ def handle_mqtt_message(client, userdata, message):
         'topic': message.topic,
         'payload': message.payload.decode('utf-8')
     }
+    
     if message.topic == 't':
         cache.set("room_temp", message.payload.decode('utf-8'))
 

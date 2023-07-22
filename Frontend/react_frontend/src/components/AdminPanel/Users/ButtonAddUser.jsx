@@ -34,7 +34,7 @@ const ButtonAddUser = ({ update }) => {
                     setToggleIsOn(!toggleIsOn)
 
                 }} >
-                    <img className=" h-12 w-12" src={addUser} alt="addUser" />
+                    <img title="Add New User" className=" h-12 w-12" src={addUser} alt="addUser" />
                 </button>
             )}
 

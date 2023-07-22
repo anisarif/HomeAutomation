@@ -40,7 +40,7 @@ const UpdateActuator = ({id, actuator, update}) => {
 
     return (
         <>
-            {toggleIsOn ? (
+            {toggleIsOn && (
                 <div>
                     <button onClick={() => { setToggleIsOn(!toggleIsOn) }} > close </button>
                     <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder={actuator.name} />
@@ -60,9 +60,9 @@ const UpdateActuator = ({id, actuator, update}) => {
                     </select>
                     <button type="submit" onClick={handleClick} > update </button>
                 </div>
-            ) : (
-                <button onClick={() => { setToggleIsOn(!toggleIsOn) }} > edit </button>
             )}
+                <button onClick={() => { setToggleIsOn(!toggleIsOn) }} > edit </button>
+            
 
         </>
     )

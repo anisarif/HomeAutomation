@@ -13,10 +13,9 @@ const History = () => {
         const res = actions.getHistory().then((res) => {
             setHistory(res)
             setLast_items(history.slice(Math.max(history.length - 10, 0)))
-            console.log(typeof res)
         }
         )
-    }, []);
+    }, [history]);
 
     return (
         <div className="p-4 bg-slate-200 rounded-md m-2">

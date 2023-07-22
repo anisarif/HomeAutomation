@@ -21,15 +21,13 @@ def admin_required(fn):
 def Action(id):
     data = request.get_json()
     state = data['state']
-    if state:
-
+    if state != None:
         if state == False:
             action = "0"
 
-        if state == True:
+        elif state == True:
             action = "1"
 
-    # Publish and get the MQTTMessageInfo object
-        info = mqtt.publish(str(id), action)
+        mqtt.publish(str(id), action)
         return (action + " " + str(id) + " is done", 200)
     return ("No state in data", 400)

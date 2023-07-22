@@ -23,6 +23,7 @@ const Actuators = ({ id, boardCount, actuatorCount, addActuatorsCount, deleteAct
 
     return (
         <div className=" bg-slate-200 rounded-md">
+            <h1 className=" text-center font-medium text-xl text-slate-500 my-4">Actuators</h1>
             <div className=" grid grid-col-4"> {actuators.map((actuator) => (
                 <div key={actuator.id} className="grid grid-cols-12 justify-evenly text-center col-span-4">
                     <h5 className=" col-span-2">{actuator.id}</h5>
@@ -34,7 +35,7 @@ const Actuators = ({ id, boardCount, actuatorCount, addActuatorsCount, deleteAct
                     </div>
                 </div>
             ))}
-                <div className=" col-span-4 text-center items-center bg-slate-100">
+                <div className=" col-span-4 text-center items-center bg-slate-400 m-4 mx-20 rounded-lg">
                     <ButtonAddActuator update={addActuatorsCount} boardCount={boardCount} className="ButtonAddUser" />
                 </div>
             </div>

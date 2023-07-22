@@ -13,6 +13,10 @@ const Home = () => {
    const [isAdminView, setIsAdminView] = useState("")
    const [toggle, setToggle] = useState(false)
 
+   const handleClick = () => {
+      setToggle(!toggle)
+   }
+
    useEffect(() => {
       const getRole = () => {
          if (store.token && store.token !== undefined && store.token !== null) {
@@ -30,12 +34,11 @@ const Home = () => {
    }, [store.token]);
 
    return (
-      <div className=" bg-slate-600">
-         <Navbar isAdminView={isAdminView}/>
-         <Dashboard />
-         {(isAdminView) ?
-            <h1><AdminPanel /></h1> :
-            <h1>{current_username} is not admin</h1>}
+      <div className=" bg-slate-600 pb-10">
+         <Navbar handleClick={handleClick} isAdminView={isAdminView} />
+         {toggle ? <AdminPanel />
+            : <Dashboard />}
+
       </div>
 
    )

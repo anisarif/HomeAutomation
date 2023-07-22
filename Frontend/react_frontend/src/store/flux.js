@@ -416,7 +416,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     const url = `http://127.0.0.1:5000/api/actuator/updateState/${lockId}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
-                        alert("update 1 res.status !== 200");
+                        alert("An error has occured, refreshing token, please try again");
                         actions.refreshToken();
                         return false;
                     }

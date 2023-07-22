@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../../store/appContext";
 
-const ButtonAddBoard = ({update, userCount}) => {
+const ButtonAddBoard = ({ update, userCount }) => {
   const { actions } = useContext(Context);
   const [name, setName] = useState("");
   const [privacy, setPrivacy] = useState("");
@@ -27,7 +27,7 @@ const ButtonAddBoard = ({update, userCount}) => {
     } else {
       actions.addBoard(name, privacy, selectedUsers).then(() => {
         update();
-    });
+      });
       setName("");
       setPrivacy("");
       setSelectedUsers([]);
@@ -45,14 +45,14 @@ const ButtonAddBoard = ({update, userCount}) => {
         console.log("users is not an array");
       }
     }
-  }, [userCount]);
+  }, [userCount, toggleIsOn]);
 
   return (
     <>
       {toggleIsOn ? (
         <div>
           <button onClick={() => {
-          setToggleIsOn(!toggleIsOn)
+            setToggleIsOn(!toggleIsOn)
           }
           }>+</button>
           <input
