@@ -13,6 +13,7 @@ const UserProfile = () => {
 
     const handleClick = () => {
         actions.updateUserProfile(id, username)
+
     }
 
     useEffect(() => {
@@ -23,6 +24,7 @@ const UserProfile = () => {
 
     useEffect(() => {
         setUsername(current_user.username)
+        sessionStorage.setItem("current_User", JSON.stringify(current_user))
     }, [current_user])
 
     return (
