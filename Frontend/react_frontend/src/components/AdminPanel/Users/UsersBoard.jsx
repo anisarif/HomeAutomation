@@ -29,7 +29,7 @@ const UsersBoard = ({ userCount, addUsersCount, deleteUsersCount, setShowModal, 
                     <h4>{user.username}</h4>
                     <h4>{user.role} </h4>
                     <div className=" flex flex-col">
-                        <ButtonUpdateUser  id={user.id} user={user} setShowModal={setShowModal()} setEdit={setEdit} />
+                        <ButtonUpdateUser  id={user.id} user={user} setShowModal={setShowModal} setEdit={setEdit} />
                         <ButtonDeleteUser id={user.id} update={deleteUsersCount} />
                     </div>
                 </div>
