@@ -7,13 +7,12 @@ import injectContext from "./store/appContext";
 import UserProfile from "./pages/UserProfile";
 
 const Layout = () => {
-    const users = sessionStorage.getItem("users")
     const token = sessionStorage.getItem("token")
     return (
         <div>
             <BrowserRouter>
                     <Routes>
-                        <Route path="/"  element={users ? <Home /> : <Navigate replace to={"/login"} />}/>
+                        <Route path="/"  element={ token ? <Home /> : <Navigate replace to={"/login"} />}/>
                         <Route path="/login" element={ token ? <Navigate replace to={"/"} /> : <Login /> }/>
                         <Route path="/user/profile/:id" element={<UserProfile />}/>
                     </Routes>

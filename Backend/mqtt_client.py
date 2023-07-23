@@ -9,13 +9,9 @@ cache = Cache(config={'CACHE_TYPE': 'simple'})
 def handle_connect(client, userdata, flags, rc):
     if rc == 0:
         print('Connected successfully')
-        mqtt.subscribe('t')
-        mqtt.subscribe('h')
-        mqtt.subscribe('3')
-        mqtt.subscribe('2')
-        mqtt.subscribe('14')
-        mqtt.subscribe('13')
-        mqtt.subscribe('11')
+        mqtt.subscribe('t',1)
+        mqtt.subscribe('h',2)
+        mqtt.subscribe('#')
     else:
         print('Bad connection. Code:', rc)
 
@@ -25,7 +21,7 @@ def handle_mqtt_message(client, userdata, message):
         'topic': message.topic,
         'payload': message.payload.decode('utf-8')
     }
-    
+
     if message.topic == 't':
         cache.set("room_temp", message.payload.decode('utf-8'))
 
@@ -34,3 +30,6 @@ def handle_mqtt_message(client, userdata, message):
 
     print('Received message on topic: {topic} with payload: {payload}'.format(**data))
 
+@mqtt.on_subscribe()
+def on_subscribe(client, userdata, mid, granted_qos):
+    print('Subscribed userdata mid {} with QoS: {}'.format( mid, granted_qos))
