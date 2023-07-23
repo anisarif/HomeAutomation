@@ -4,7 +4,7 @@ import ButtonAddUser from "./ButtonAddUser";
 import ButtonUpdateUser from "./ButtonUpdateUser";
 import { Context } from "../../../store/appContext";
 
-const UsersBoard = ({ userCount, addUsersCount, deleteUsersCount }) => {
+const UsersBoard = ({ userCount, addUsersCount, deleteUsersCount, setShowModal, setEdit }) => {
     const [users, setUsers] = useState([])
     const { actions } = useContext(Context);
     useEffect(() => {
@@ -29,7 +29,7 @@ const UsersBoard = ({ userCount, addUsersCount, deleteUsersCount }) => {
                     <h4>{user.username}</h4>
                     <h4>{user.role} </h4>
                     <div className=" flex flex-col">
-                        <ButtonUpdateUser user={user} id={user.id} update={addUsersCount} />
+                        <ButtonUpdateUser  id={user.id} user={user} setShowModal={setShowModal} setEdit={setEdit} />
                         <ButtonDeleteUser id={user.id} update={deleteUsersCount} />
                     </div>
                 </div>

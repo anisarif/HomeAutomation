@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../../store/appContext";
 
-const UpdateBoard = ({id, board, update, userCount}) => {
+const ButtonUpdateBoard = ({id, board, update, userCount}) => {
   const { actions } = useContext(Context);
   const [name, setName] = useState("");
   const [privacy, setPrivacy] = useState("");
@@ -94,4 +94,4 @@ const UpdateBoard = ({id, board, update, userCount}) => {
   );
 };
 
-export default UpdateBoard;
+export default ButtonUpdateBoard;

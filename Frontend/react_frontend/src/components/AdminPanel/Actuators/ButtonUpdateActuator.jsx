@@ -3,7 +3,7 @@ import { Context } from "../../../store/appContext";
 import { getBoards } from "../../../utils/api";
 
 
-const UpdateActuator = ({id, actuator, update}) => {
+const ButtonUpdateActuator = ({id, actuator, update}) => {
     const { actions } = useContext(Context)
     const handleClick = () => {
         actions.updateActuator(id, name, pin, board_id, type).then(() => {
@@ -68,4 +68,4 @@ const UpdateActuator = ({id, actuator, update}) => {
     )
 }
 
-export default UpdateActuator;
+export default ButtonUpdateActuator;
