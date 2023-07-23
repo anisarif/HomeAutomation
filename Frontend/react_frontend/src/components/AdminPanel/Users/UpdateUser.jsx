@@ -3,7 +3,7 @@ import { Context } from '../../../store/appContext';
 
 
 
-const UpdateUser = (user, update, setShowModal) => {
+const UpdateUser = ({user, update, setShowModal}) => {
     const [username, setUsername] = useState("")
     const [role, setRole] = useState("")
     const [id, setId] = useState("")
