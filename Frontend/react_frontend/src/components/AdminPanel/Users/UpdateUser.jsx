@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../../store/appContext';
 
-
-
 const UpdateUserId = ({ user, update, setShowModal }) => {
     const [username, setUsername] = useState("")
     const [role, setRole] = useState("")
@@ -29,6 +27,7 @@ const UpdateUserId = ({ user, update, setShowModal }) => {
 
     return (
         <div className='flex flex-col items-center justify-center align-middle content-around place-content-center'>
+            <h1 classname=' font-medium text-2xl text-slate-400'>Edit User</h1>
             <input className='flex mt-10 text-slate-700 rounded-lg items-center justify-center' type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder={username} />
             <select className='mt-10 text-slate-700 rounded-lg' value={role} onChange={(e) => setRole(e.target.value)} placeholder={role}>
                 <option value="">-- Select --</option>
@@ -36,7 +35,6 @@ const UpdateUserId = ({ user, update, setShowModal }) => {
                 <option value="user">User</option>
             </select>
             <button className='mt-10 bg-slate-300 text-slate-800 rounded-lg px-3 py-1' type="submit" onClick={handleClick}> Update </button>
-
         </div>
     )
 }

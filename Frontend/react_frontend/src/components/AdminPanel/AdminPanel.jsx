@@ -3,6 +3,7 @@ import UsersBoard from "./Users/UsersBoard";
 import Boards from "./Boards/Boards";
 import ActionsHistory from "../ActionsHistory"
 import Modal from "../Modal";
+import AddModal from "../AddModal";
 
 const AdminPanel = () => {
 
@@ -10,7 +11,9 @@ const AdminPanel = () => {
    const [boardCount, setBoardCount] = useState(0)
    const [actuatorCount, setActuatorCount] = useState(0)
    const [showModal, setShowModal] = useState(false);
+   const [showAddModal, setShowAddModal] = useState(false);
    const [edit, setEdit] = useState([]);
+   const [add, setAdd] = useState("");
    console.log(setShowModal)
 
    const addUsersCount = () => {
@@ -41,18 +44,23 @@ const AdminPanel = () => {
    return (
       <div className=" grid grid-col-2 gap-4 m-8 ">
          <div className="">
-            <UsersBoard userCount={userCount} addUsersCount={addUsersCount} deleteUsersCount={deleteUsersCount} setShowModal={setShowModal} setEdit={setEdit} />
+            <UsersBoard userCount={userCount} addUsersCount={addUsersCount} deleteUsersCount={deleteUsersCount} setShowModal={setShowModal} setEdit={setEdit} setShowAddModal={setShowAddModal} setAdd={setAdd} />
          </div>
          <div className="">
-            <Boards userCount={userCount} boardCount={boardCount} addBoardsCount={addBoardsCount} deleteBoardsCount={deleteBoardsCount} actuatorCount={actuatorCount} addActuatorsCount={addActuatorsCount} deleteActuatorsCount={deleteActuatorsCount} setShowModal={setShowModal} setEdit={setEdit} />
+            <Boards userCount={userCount} boardCount={boardCount} addBoardsCount={addBoardsCount} deleteBoardsCount={deleteBoardsCount} actuatorCount={actuatorCount} addActuatorsCount={addActuatorsCount} deleteActuatorsCount={deleteActuatorsCount} setShowModal={setShowModal} setEdit={setEdit} setShowAddModal={setShowAddModal} setAdd={setAdd}/>
          </div>
          <div className=" col-span-2">
             <ActionsHistory />
          </div>
-         {showModal ? ( // if showModal[0] is true, then show the modal
+         {showModal ? (
             <Modal  edit={edit} setShowModal={setShowModal} addUsersCount={addUsersCount} addBoardsCount={addBoardsCount} addActuatorsCount={addActuatorsCount} userCount={userCount}/>
          ) : null
                }
+         {showAddModal ? ( 
+            <AddModal  add={add} setShowAddModal={setShowAddModal} addUsersCount={addUsersCount} addBoardsCount={addBoardsCount} addActuatorsCount={addActuatorsCount} userCount={userCount}/>
+         ) : null
+               }
+
       </div>
    )
 }

@@ -8,7 +8,7 @@ import ButtonUpdateActuator from "./ButtonUpdateActuator";
 
 
 
-const Actuators = ({ id, boardCount, actuatorCount, addActuatorsCount, deleteActuatorsCount, setShowModal, setEdit }) => {
+const Actuators = ({ id, boardCount, actuatorCount, addActuatorsCount, deleteActuatorsCount, setShowModal, setEdit, setShowAddModal, setAdd }) => {
     const [actuators, setActuators] = useState([])
 
     useEffect(() => {
@@ -36,7 +36,7 @@ const Actuators = ({ id, boardCount, actuatorCount, addActuatorsCount, deleteAct
                 </div>
             ))}
                 <div className=" col-span-4 text-center items-center bg-slate-400 m-4 mx-20 rounded-lg">
-                    <ButtonAddActuator update={addActuatorsCount} boardCount={boardCount}  />
+                    <ButtonAddActuator update={addActuatorsCount} boardCount={boardCount} setShowAddModal={setShowAddModal} setAdd={setAdd} />
                 </div>
             </div>
         </div>

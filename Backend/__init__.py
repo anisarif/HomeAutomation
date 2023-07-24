@@ -7,7 +7,6 @@ from flask_jwt_extended import JWTManager, get_jwt, verify_jwt_in_request, creat
 from .mqtt_client import mqtt, cache
 from werkzeug.security import generate_password_hash
 from datetime import timedelta, datetime, timezone
-from .utils import admin_required
 
 
 
@@ -63,7 +62,7 @@ def create_app(test_config=None):
 
     # Setup the Flask-MQTT
 
-    app.config['MQTT_BROKER_URL'] = '192.168.1.22'
+    app.config['MQTT_BROKER_URL'] = '192.168.1.13'
     app.config['MQTT_BROKER_PORT'] = 1883
     app.config['MQTT_KEEPALIVE'] = 5  # Set KeepAlive time in seconds
     # If your server supports TLS, set it True

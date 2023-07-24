@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../../store/appContext";
 
-const UpdateBoard = ({ id, board, update, userCount, setShowModal }) => {
+const AddBoard = ({ update, userCount, setShowAddModal }) => {
     const { actions } = useContext(Context);
     const [name, setName] = useState("");
     const [privacy, setPrivacy] = useState("");
@@ -15,34 +15,25 @@ const UpdateBoard = ({ id, board, update, userCount, setShowModal }) => {
 
     const handleUserChange = (e) => {
         const { value } = e.target;
-        setSelectedUsers((prev) => {
-            if (!Array.isArray(prev)) {
-                console.error('prev is not an array:', prev);
-                prev = [];
-            }
-            return prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value];
-        });
+        setSelectedUsers((prev) =>
+            prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
+        );
     };
 
     const handleSubmit = () => {
         if (privacy === "private" && selectedUsers.length === 0) {
             alert("Please select at least one user.");
         } else {
-            actions.updateBoard(id, name, privacy, selectedUsers).then(() => {
+            actions.addBoard(name, privacy, selectedUsers).then(() => {
                 update();
+                alert("Board added successfully");
             });
-            setName(board.name);
-            setPrivacy(board.privacy);
-            setSelectedUsers(board.users);
-            setShowModal(false);
+            setName("");
+            setPrivacy("");
+            setSelectedUsers([]);
+            setShowAddModal(false);
         }
     };
-
-    useEffect(() => {
-        setName(board.name);
-        setPrivacy(board.privacy);
-        setSelectedUsers(board.users);
-    }, [board])
 
     useEffect(() => {
         const session_users = sessionStorage.getItem("users");
@@ -57,9 +48,8 @@ const UpdateBoard = ({ id, board, update, userCount, setShowModal }) => {
     }, [userCount]);
 
     return (
-
         <div className='flex flex-col items-center justify-center align-middle content-around place-content-center'>
-            <h1 classname=' font-medium text-2xl text-slate-400'>Edit Board</h1>
+            <h1 classname=' font-medium text-2xl text-slate-400'>New Board</h1>
             <input
                 className='flex mt-10 text-slate-700 rounded-lg items-center justify-center'
                 type="text"
@@ -82,14 +72,11 @@ const UpdateBoard = ({ id, board, update, userCount, setShowModal }) => {
                     </select>
                 </>
             )}
-            <button className='mt-10 bg-slate-300 text-slate-800 rounded-lg px-3 py-1'
-                type="submit"
-                onClick={handleSubmit}>
-                update
+            <button className='mt-10 bg-slate-300 text-slate-800 rounded-lg px-3 py-1' type="submit" onClick={handleSubmit}>
+                ADD
             </button>
         </div>
-
     );
 };
 
-export default UpdateBoard;
+export default AddBoard;
