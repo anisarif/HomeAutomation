@@ -29,7 +29,7 @@ const Weather = () => {
       <h1 className=" text-slate-700 font-medium text-center text-3xl mb-8">External Weather</h1>
       <div className='grid grid-cols-2 gap-4'>
         
-        <h1 className=' font-bold text-8xl m-4 mb-5'>Tunis</h1>
+        <h1 className=' font-medium text-6xl m-4 mb-8'>Tunis</h1>
         <div></div>
         <div className='flex'>
           <img className="h-20 w-20" src={thermometer} alt="thermometer"/><h1 className='text-5xl text-center align-text-center'>{temperature}°C</h1>

@@ -8,7 +8,7 @@ import ButtonUpdateActuator from "./ButtonUpdateActuator";
 
 
 
-const Actuators = ({boardCount, actuatorCount, addActuatorsCount, deleteActuatorsCount} ) => {
+const Actuators = ({boardCount, actuatorCount, addActuatorsCount, deleteActuatorsCount, setShowModal, setEdit} ) => {
     const [actuators, setActuators] = useState([])
 
     useEffect(() => {
@@ -29,8 +29,8 @@ const Actuators = ({boardCount, actuatorCount, addActuatorsCount, deleteActuator
                     <h5>{actuator.board_id}</h5>
                     <h5>{actuator.type}</h5>
                     <h5>{actuator.state}</h5>
-                    <div>
-                        <ButtonUpdateActuator id={actuator.id} actuator={actuator} update={addActuatorsCount} />
+                    <div className=" flex flex-col">
+                        <ButtonUpdateActuator id={actuator.id} actuator={actuator} setShowModal={setShowModal} setEdit={setEdit} />
                         <ButtonDeleteActuator id={actuator.id} update={deleteActuatorsCount} />
                     </div>
                 </div>

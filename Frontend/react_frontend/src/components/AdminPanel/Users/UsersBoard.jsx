@@ -15,6 +15,7 @@ const UsersBoard = ({ userCount, addUsersCount, deleteUsersCount, setShowModal, 
         }
         fetchData().catch(console.error)
     }, [userCount])
+    console.log(setShowModal)
 
     return (
         <div className="p-4 bg-slate-200 rounded-md" >

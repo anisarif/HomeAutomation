@@ -3,16 +3,22 @@ import { Context } from '../../../store/appContext';
 
 
 
-const UpdateUser = ({user, update, setShowModal}) => {
+const UpdateUserId = ({ user, update, setShowModal }) => {
     const [username, setUsername] = useState("")
     const [role, setRole] = useState("")
     const [id, setId] = useState("")
     const { actions } = useContext(Context)
 
     const handleClick = () => {
-        actions.updateUser(id, username, role).then(() => {
-            update();
-        });
+        actions.updateUser(id, username, role)
+            .then(() => {
+                update();
+                alert("User updated");
+                setShowModal(false);
+            })
+            .catch(error => {
+                console.error("Error updating user:", error);
+            });
     }
 
     useEffect(() => {
@@ -22,18 +28,17 @@ const UpdateUser = ({user, update, setShowModal}) => {
     }, [user])
 
     return (
-        <div>
-        <button onClick={() => { setShowModal(false) }} > CLOSE </button>
-        <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder={username} />
-        <select value={role} onChange={(e) => setRole(e.target.value)} placeholder={role}>
-            <option value="">-- Select --</option>
-            <option value="admin">Admin</option>
-            <option value="user">User</option>
-        </select>
-        <button type="submit" onClick={handleClick} > Update </button>
+        <div className='flex flex-col items-center justify-center align-middle content-around place-content-center'>
+            <input className='flex mt-10 text-slate-700 rounded-lg items-center justify-center' type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder={username} />
+            <select className='mt-10 text-slate-700 rounded-lg' value={role} onChange={(e) => setRole(e.target.value)} placeholder={role}>
+                <option value="">-- Select --</option>
+                <option value="admin">Admin</option>
+                <option value="user">User</option>
+            </select>
+            <button className='mt-10 bg-slate-300 text-slate-800 rounded-lg px-3 py-1' type="submit" onClick={handleClick}> Update </button>
 
-    </div>
-)
+        </div>
+    )
 }
 
-export default UpdateUser
+export default UpdateUserId

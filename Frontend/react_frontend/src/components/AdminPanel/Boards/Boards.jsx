@@ -2,11 +2,11 @@ import { getBoards } from "../../../utils/api";
 import { useState, useEffect } from "react";
 import ButtonAddBoard from "./ButtonAddBoard";
 import ButtonDeleteBoard from "./ButtonDeleteBoard";
-import UpdateBoard from "./ButtonUpdateBoard";
+import ButtonUpdateBoard from "./ButtonUpdateBoard";
 import FilteredActuators from "../Actuators/FilteredActuators";
 import "./Board.css"
 
-const Boards = ({ userCount, boardCount, addBoardsCount, deleteBoardsCount, actuatorCount, addActuatorsCount, deleteActuatorsCount }) => {
+const Boards = ({ userCount, boardCount, addBoardsCount, deleteBoardsCount, actuatorCount, addActuatorsCount, deleteActuatorsCount, setShowModal, setEdit }) => {
     const [boards, setBoards] = useState([])
 
     useEffect(() => {
@@ -28,17 +28,17 @@ const Boards = ({ userCount, boardCount, addBoardsCount, deleteBoardsCount, actu
                 <h1 className=" text-center font-medium text-3xl text-slate-500 mb-2">Boards</h1>
                 {boards.map((board) => (
                     <div key={board.id} className="grid grid-cols-12">
-                        <div className="grid grid-cols-12 col-span-12 justify-evenly text-center my-4 bg-slate-500 text-slate-200 m-4 rounded-lg">
+                        <div className="grid grid-cols-12 col-span-12 justify-evenly items-center text-center my-4 bg-slate-500 text-slate-200 m-4 rounded-lg">
                             <h4 className=" col-span-2">{board.id}</h4>
                             <h4 className=" col-span-4">{board.name}</h4>
                             <h4 className=" col-span-4">{board.privacy}</h4>
-                            <div className=" col-span-2">
-                                <UpdateBoard id={board.id} board={board} update={addBoardsCount} userCount={userCount} />
+                            <div className=" flex flex-col col-span-2"> 
+                                <ButtonUpdateBoard id={board.id} board={board} update={addBoardsCount} userCount={userCount} setShowModal={setShowModal} setEdit={setEdit} />
                                 <ButtonDeleteBoard id={board.id} update={deleteBoardsCount} />
                             </div>
                         </div>
                         <div className=" col-start-2 col-end-12">
-                            <FilteredActuators id={board.id} boardCount={boardCount} actuatorCount={actuatorCount} addActuatorsCount={addActuatorsCount} deleteActuatorsCount={deleteActuatorsCount} />
+                            <FilteredActuators id={board.id} boardCount={boardCount} actuatorCount={actuatorCount} addActuatorsCount={addActuatorsCount} deleteActuatorsCount={deleteActuatorsCount} setShowModal={setShowModal} setEdit={setEdit} />
                         </div>
                     </div>
 
