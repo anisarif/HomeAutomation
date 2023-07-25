@@ -47,7 +47,7 @@ const Lights = () => {
         {boardsList.length > 0 && lights.map((light) => {
           if (boardIds.includes(light.board_id)) {
             return (
-              <div key={light.id}>
+              <div  key={light.id}>
                 <Light name={light.name} id={light.id} state={light.state} />
               </div>
             );
