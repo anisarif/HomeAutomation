@@ -80,7 +80,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             addUser: (username, password, role) => {
                 const store = getStore();
-                const actions = getActions();
                 const opts = {
                     method: 'POST',
                     mode: 'cors',
@@ -97,11 +96,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                 };
 
                 const data = fetch("http://127.0.0.1:5000/api/user/add", opts)
-                if (data.status !== 200) {
-                    alert("Token expired, press ok to refresh token");
-                    actions.refreshToken();
-                    return false;
-                }
 
                 return data;
             },
@@ -249,7 +243,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             deleteUser: (id) => {
                 const store = getStore();
-                const actions = getActions();
                 const opts = {
                     method: 'DELETE',
                     mode: 'cors',
@@ -264,11 +257,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                 };
 
                 const data = fetch(`http://127.0.0.1:5000/api/user/delete/${id}`, opts)
-                if (data.status !== 200) {
-                    alert("Token expired, press ok to refresh token");
-                    actions.refreshToken();
-                    return false;
-                }
                 console.log("user deleted")
                 return data;
             },
@@ -291,7 +279,6 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
             addBoard: (name, privacy, users) => {
-                const actions = getActions();
                 const store = getStore();
                 const opts = {
                     method: 'POST',
@@ -309,11 +296,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                 };
 
                 const data = fetch("http://127.0.0.1:5000/api/board/add", opts)
-                if (data.status !== 200) {
-                    alert("Token expired, press ok to refresh token");
-                    actions.refreshToken();
-                    return false;
-                }
                 console.log("board added")
                 return data;
             },
@@ -354,7 +336,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             deleteBoard: (id) => {
                 const store = getStore();
-                const actions = getActions();
                 const opts = {
                     method: 'DELETE',
                     mode: 'cors',
@@ -368,18 +349,12 @@ const getState = ({ getStore, getActions, setStore }) => {
                 };
 
                 const data = fetch(`http://127.0.0.1:5000/api/board/delete/${id}`, opts)
-                if (data.status !== 200) {
-                    alert("Token expired, press ok to refresh token");
-                    actions.refreshToken();
-                    return false;
-                }
                 console.log("board deleted")
                 return data;
             },
 
             addActuator: (name, pin, board_id, type) => {
                 const store = getStore();
-                const actions = getActions();
                 const opts = {
                     method: 'POST',
                     mode: 'cors',
@@ -396,11 +371,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                 };
 
                 const data = fetch("http://127.0.0.1:5000/api/actuator/add", opts)
-                if (data.status !== 200) {
-                    alert("Token expired, press ok to refresh token");
-                    actions.refreshToken();
-                    return false;
-                }
 
                 console.log("actuator added")
                 return data;
@@ -408,7 +378,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             deleteActuator: (id) => {
                 const store = getStore();
-                const actions = getActions();
                 const opts = {
                     method: 'DELETE',
                     mode: 'cors',
@@ -422,12 +391,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                 };
 
                 const data = fetch(`http://127.0.0.1:5000/api/actuator/delete/${id}`, opts)
-                if (data.status !== 200) {
-                    alert("Token expired, press ok to refresh token");
-                    actions.refreshToken();
-                    return false;
-                }
-
                 return data;
             },
 

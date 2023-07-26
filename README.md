@@ -1,4 +1,4 @@
-This project is a home automation system built using Flask for the backend, React for the frontend, and MQTT for real-time communication. The system allows users to control various IoT devices in their home.
+This project is a home automation system built using Python Flask for the backend, React and TailwindCss for the frontend, HTTP and MQTT for real-time communication. The system allows users to control various IoT devices in their home. 
 
 ## Installation
 
@@ -40,7 +40,9 @@ This project is a home automation system built using Flask for the backend, Reac
 
 ### Backend
 
-To run the tests, navigate to the backend directory and run `pytest`.
+To run the tests, navigate to the backend directory 
+Set up the database: `python create_test_db.py` and run `pytest`.
 
 ### Frontend
 
+To run the tests, navigate to the frontend directory

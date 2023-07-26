@@ -23,16 +23,21 @@ const AddBoard = ({ update, userCount, setShowAddModal }) => {
     const handleSubmit = () => {
         if (privacy === "private" && selectedUsers.length === 0) {
             alert("Please select at least one user.");
-        } else {
-            actions.addBoard(name, privacy, selectedUsers).then(() => {
-                update();
-                alert("Board added successfully");
-            });
+        }
+
+        if (!name || !privacy || !selectedUsers) {
+            alert('Please fill all fields');
+            return;
+        }
+
+        actions.addBoard(name, privacy, selectedUsers).then(() => {
+            update();
+            alert("Board added successfully");
             setName("");
             setPrivacy("");
             setSelectedUsers([]);
             setShowAddModal(false);
-        }
+        });
     };
 
     useEffect(() => {

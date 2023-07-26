@@ -8,6 +8,12 @@ const AddUser = ({ update, setAddShowModal }) => {
     const { actions } = useContext(Context)
 
     const handleClick = () => {
+        
+        if (!username || !password || !role) {
+            alert('Please fill all fields');
+            return;
+        }
+
         actions.addUser(username, password, role).then(() => {
             update();
             alert("User added");
