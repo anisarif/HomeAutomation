@@ -2,7 +2,6 @@ import AdminPanel from "../components/AdminPanel/AdminPanel";
 import { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 import { decodeToken } from "react-jwt";
-import './Home.css'
 import Navbar from "../components/Navbar";
 import Dashboard from "../components/Dashboard/Dashboard";
 
@@ -34,7 +33,7 @@ const Home = () => {
    }, [store.token]);
 
    return (
-      <div className=" bg-slate-600 pb-10">
+      <div className=" bg-slate-600 h-min-screen pb-20 ">
          <Navbar handleClick={handleClick} isAdminView={isAdminView} />
          {toggle ? <AdminPanel />
             : <Dashboard />}

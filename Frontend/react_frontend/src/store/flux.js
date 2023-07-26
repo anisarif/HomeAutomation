@@ -80,6 +80,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             addUser: (username, password, role) => {
                 const store = getStore();
+                const actions = getActions();
                 const opts = {
                     method: 'POST',
                     mode: 'cors',
@@ -96,6 +97,12 @@ const getState = ({ getStore, getActions, setStore }) => {
                 };
 
                 const data = fetch("http://127.0.0.1:5000/api/user/add", opts)
+                if (data.status !== 200) {
+                    alert("Token expired, press ok to refresh token");
+                    actions.refreshToken();
+                    return false;
+                }
+
                 return data;
             },
 
@@ -118,7 +125,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     const url = `http://127.0.0.1:5000/api/user/update/${id}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
-                        alert("update 1 res.status !== 200");
+                        alert("Token expired, press ok to refresh token");
                         actions.refreshToken();
                         return false;
                     }
@@ -156,7 +163,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         return false;
                     }
 
-                    console.log("user updated")
+                    console.log("password updated")
                     return true;
                 }
 
@@ -183,7 +190,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     const url = `http://127.0.0.1:5000/api/user/updateUsername/${id}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
-                        alert("update 1 res.status !== 200");
+                        alert("Token expired, press ok to refresh token");
                         actions.refreshToken();
                         return false;
                     }
@@ -211,7 +218,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     const url = `http://127.0.0.1:5000/api/getHistory`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
-                        alert("update 1 res.status !== 200");
+                        alert("error getting history");
                         actions.refreshToken();
                         return false;
                     }
@@ -225,13 +232,24 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-
+            getUserbyId: async (id) => {
+                try {
+                    const url = `http://127.0.0.1:5000/api/user/get/${id}`
+                    const data = await fetch(url)
+                    return data;
+                }
+                catch (error) {
+                    console.log(error)
+                }
+            },
+            
 
 
 
 
             deleteUser: (id) => {
                 const store = getStore();
+                const actions = getActions();
                 const opts = {
                     method: 'DELETE',
                     mode: 'cors',
@@ -242,9 +260,16 @@ const getState = ({ getStore, getActions, setStore }) => {
                     body: JSON.stringify({
                         "id": id,
                     }),
+                    
                 };
 
                 const data = fetch(`http://127.0.0.1:5000/api/user/delete/${id}`, opts)
+                if (data.status !== 200) {
+                    alert("Token expired, press ok to refresh token");
+                    actions.refreshToken();
+                    return false;
+                }
+                console.log("user deleted")
                 return data;
             },
 
@@ -266,6 +291,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
             addBoard: (name, privacy, users) => {
+                const actions = getActions();
                 const store = getStore();
                 const opts = {
                     method: 'POST',
@@ -283,6 +309,12 @@ const getState = ({ getStore, getActions, setStore }) => {
                 };
 
                 const data = fetch("http://127.0.0.1:5000/api/board/add", opts)
+                if (data.status !== 200) {
+                    alert("Token expired, press ok to refresh token");
+                    actions.refreshToken();
+                    return false;
+                }
+                console.log("board added")
                 return data;
             },
 
@@ -306,7 +338,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     const url = `http://127.0.0.1:5000/api/board/update/${id}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
-                        alert("update 1 res.status !== 200");
+                        alert("Token expired, press ok to refresh token");
                         actions.refreshToken();
                         return false;
                     }
@@ -322,6 +354,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             deleteBoard: (id) => {
                 const store = getStore();
+                const actions = getActions();
                 const opts = {
                     method: 'DELETE',
                     mode: 'cors',
@@ -335,11 +368,18 @@ const getState = ({ getStore, getActions, setStore }) => {
                 };
 
                 const data = fetch(`http://127.0.0.1:5000/api/board/delete/${id}`, opts)
+                if (data.status !== 200) {
+                    alert("Token expired, press ok to refresh token");
+                    actions.refreshToken();
+                    return false;
+                }
+                console.log("board deleted")
                 return data;
             },
 
             addActuator: (name, pin, board_id, type) => {
                 const store = getStore();
+                const actions = getActions();
                 const opts = {
                     method: 'POST',
                     mode: 'cors',
@@ -356,11 +396,19 @@ const getState = ({ getStore, getActions, setStore }) => {
                 };
 
                 const data = fetch("http://127.0.0.1:5000/api/actuator/add", opts)
+                if (data.status !== 200) {
+                    alert("Token expired, press ok to refresh token");
+                    actions.refreshToken();
+                    return false;
+                }
+
+                console.log("actuator added")
                 return data;
             },
 
             deleteActuator: (id) => {
                 const store = getStore();
+                const actions = getActions();
                 const opts = {
                     method: 'DELETE',
                     mode: 'cors',
@@ -374,6 +422,12 @@ const getState = ({ getStore, getActions, setStore }) => {
                 };
 
                 const data = fetch(`http://127.0.0.1:5000/api/actuator/delete/${id}`, opts)
+                if (data.status !== 200) {
+                    alert("Token expired, press ok to refresh token");
+                    actions.refreshToken();
+                    return false;
+                }
+
                 return data;
             },
 
@@ -424,7 +478,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     const res2 = actions.act({ lockId, state })
 
                     if (res2 === true) {
-                        alert("update 2 res.status !== 200");
+                        alert("actions.act res.status !== 200");
                         return false;
                     }
 

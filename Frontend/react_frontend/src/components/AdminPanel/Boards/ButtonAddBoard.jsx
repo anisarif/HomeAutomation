@@ -3,7 +3,7 @@ const ButtonAddBoard = ({ setAdd, setShowAddModal }) => {
 
   return (
     <div className="flex w-full justify-end">
-      <button className=" hover:bg-slate-300 rounded-full" onClick={() => {
+      <button className=" bg-slate-400 hover:bg-slate-500 rounded-full" onClick={() => {
         setShowAddModal(true)
         setAdd("board")
       }}>

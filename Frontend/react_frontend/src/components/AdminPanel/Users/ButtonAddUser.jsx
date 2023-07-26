@@ -5,7 +5,7 @@ const ButtonAddUser = ({ setShowAddModal, setAdd }) => {
 
     return (
         <div className="flex w-full justify-end">
-            <button className=" hover:bg-slate-300 rounded-full" onClick={() => {
+            <button className=" bg-slate-300 rounded-full hover:bg-slate-400" onClick={() => {
                 setShowAddModal(true)
                 setAdd("user")
             }}>

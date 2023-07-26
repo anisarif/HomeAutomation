@@ -5,14 +5,14 @@ const ButtonAddActuator = ({setShowAddModal, setAdd }) => {
 
 
     return (
-        <>
-            <button onClick={() => {
-                setShowAddModal(true)
+        <div className="flex w-full justify-end my-2">
+        <button className=" bg-slate-400 hover:bg-slate-500 rounded-full" onClick={() => {
+                  setShowAddModal(true)
                 setAdd("actuator")
             }} >
-                +
-            </button>
-        </>
+        <img title="Add New Actuator" className=" h-12 w-12" src={addActuator} alt="addactuator" />
+      </button>
+    </div>
     )
 }
 

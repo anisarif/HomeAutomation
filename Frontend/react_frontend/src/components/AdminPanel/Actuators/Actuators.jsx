@@ -23,7 +23,7 @@ const Actuators = ({boardCount, actuatorCount, addActuatorsCount, deleteActuator
     return (
         <div>
             <div> {actuators.map((actuator) => (
-                <div key={actuator.id} class="Board">
+                <div key={actuator.id}>
                     <h5>{actuator.id}</h5>
                     <h5>{actuator.name}</h5>
                     <h5>{actuator.board_id}</h5>

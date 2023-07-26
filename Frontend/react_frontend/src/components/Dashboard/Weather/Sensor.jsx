@@ -30,11 +30,13 @@ const Sensor = () => {
       <h1 className=" text-slate-700 font-medium text-center text-3xl mb-8">Room</h1>
       <div className='grid grid-cols-2 gap-4'>
         <h1 className=' font-medium text-6xl m-4 mb-8 col-span-2'>Living Room</h1>
-        <div className='flex'>
-          <img className="h-20 w-20" src={thermometer} alt="thermometer" /><h1 className='text-6xl text-center align-text-center'>{temperature}°C</h1>
+        <div className='flex items-center mb-4'>
+          <img className=" h-12 w-12" src={thermometer} alt="thermometer" />
+          <h1 className='text-4xl '>{temperature}°C</h1>
         </div>
-        <div className='flex'>
-          <img className="h-20 w-20" src={humidityimg} alt="humidity" /><h1 className='text-6xl text-center align-text-center'>{humidity} %</h1>
+        <div className='flex items-center mb-4'>
+          <img className="h-12 w-12" src={humidityimg} alt="humidity" />
+          <h1 className='text-4xl '>{humidity} %</h1>
         </div>
       </div>
     </div>

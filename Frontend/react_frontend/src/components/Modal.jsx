@@ -28,11 +28,14 @@ const Modal = ({ edit, setShowModal, addUsersCount, addBoardsCount, addActuators
     }
 
     return (
-        <div className=" bg-slate-800 text-slate-200 fixed z-10 inset-0 overflow-y-auto items-center m-20" >
-            {ComponentToRender}
-            <button className=" text-white items-center" onClick={ ()=>{setShowModal(false)} }>CLOSE</button>
-        </div>
-    )
+        <div className='fixed inset-0 flex items-center justify-center'>
+            <div className="max-w-xs bg-slate-800 text-slate-200 z-10 overflow-y-auto px-2 p-2 rounded-lg ">
+                <button className="text-white items-center" onClick={() => { setShowModal(false) }}> X CLOSE</button>
+                <div className=" p-10">
+                {ComponentToRender}
+                </div>
+            </div>
+        </div>    )
 }
 
 export default Modal;

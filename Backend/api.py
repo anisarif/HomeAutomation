@@ -50,7 +50,7 @@ def getusers():
 # GET USER BY ID
 
 
-@bp.route("/user/get_id")
+@bp.route("/user/get/<int:id>")
 def getuser_id(id):
     user = UserHome.query.filter_by(id=id).first()
     return jsonify({
@@ -59,22 +59,6 @@ def getuser_id(id):
         "role": user.role
     })
 
-# GET USER BY USERNAME
-
-
-@bp.route("/user/get_username")
-def getuser_username(username):
-    user = UserHome.query.filter_by(username=username).first()
-
-    if user is None:
-        error = 'Incorrect username.'
-
-    return jsonify({
-        "id": user.id,
-        "username": user.username,
-        "password": user.password,
-        "role": user.role
-    })
 
 # UPDATE A USER BY ID
 
