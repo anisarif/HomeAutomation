@@ -20,7 +20,7 @@ This project is a home automation system built using Python Flask for the backen
 1. Clone the repository: `git clone https://github.com/anisarif/HomeAutomation.git`
 2. Navigate to the backend directory: `cd HomeAutomation/Backend`
 3. Install the Python dependencies: `pip install -r requirements.txt`
-4. Set up the database: `python create_test_db.py` `python create_db.py`
+4. Set up the database: `python create_db.py`
 5. Run the backend: `flask run`
 
 ### Frontend
