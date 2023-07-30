@@ -8,7 +8,7 @@ def start_postgresql_server():
 
 
 def run_flask_app():
-    subprocess.run("flask --app Backend run --debug", shell=True)
+    subprocess.run("flask --app Backend run --host='0.0.0.0' --debug --cert='cert.pem'  --key='priv_key.pem' ", shell=True)
 
 if __name__ == "__main__":
     start_postgresql_server()

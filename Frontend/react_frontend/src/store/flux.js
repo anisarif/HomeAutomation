@@ -23,7 +23,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
                 try {
 
-                    const res = await fetch("http://127.0.0.1:5000/auth/login", opts)
+                    const res = await fetch("https://127.0.0.1:5000/auth/login", opts)
                     if (res.status !== 200) {
                         alert(res);
                         actions.refreshToken();
@@ -67,7 +67,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         'Authorization': "Bearer " + store.token,
                     },
                 };
-                fetch("http://127.0.0.1:5000/auth/logout", opts)
+                fetch("https://127.0.0.1:5000/auth/logout", opts)
                 sessionStorage.removeItem("token");
                 sessionStorage.removeItem("current_user");
                 sessionStorage.removeItem("current_User");
@@ -95,7 +95,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }),
                 };
 
-                const data = fetch("http://127.0.0.1:5000/api/user/add", opts)
+                const data = fetch("https://127.0.0.1:5000/api/user/add", opts)
 
                 return data;
             },
@@ -116,7 +116,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             "role": role,
                         }),
                     };
-                    const url = `http://127.0.0.1:5000/api/user/update/${id}`
+                    const url = `https://127.0.0.1:5000/api/user/update/${id}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
                         alert("Token expired, press ok to refresh token");
@@ -149,7 +149,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             "newPassword": newPassword,
                         }),
                     };
-                    const url = `http://127.0.0.1:5000/api/user/modifyPassword/${id}`
+                    const url = `https://127.0.0.1:5000/api/user/modifyPassword/${id}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
                         alert("Token expired, press ok to refresh token");
@@ -181,7 +181,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             "username": username,
                         }),
                     };
-                    const url = `http://127.0.0.1:5000/api/user/updateUsername/${id}`
+                    const url = `https://127.0.0.1:5000/api/user/updateUsername/${id}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
                         alert("Token expired, press ok to refresh token");
@@ -209,7 +209,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
                         },
                     };
-                    const url = `http://127.0.0.1:5000/api/getHistory`
+                    const url = `https://127.0.0.1:5000/api/getHistory`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
                         alert("error getting history");
@@ -228,7 +228,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             getUserbyId: async (id) => {
                 try {
-                    const url = `http://127.0.0.1:5000/api/user/get/${id}`
+                    const url = `https://127.0.0.1:5000/api/user/get/${id}`
                     const data = await fetch(url)
                     return data;
                 }
@@ -256,14 +256,14 @@ const getState = ({ getStore, getActions, setStore }) => {
                     
                 };
 
-                const data = fetch(`http://127.0.0.1:5000/api/user/delete/${id}`, opts)
+                const data = fetch(`https://127.0.0.1:5000/api/user/delete/${id}`, opts)
                 console.log("user deleted")
                 return data;
             },
 
             getUsers: async () => {
                 try {
-                    const res = await fetch("http://127.0.0.1:5000/api/user/getall")
+                    const res = await fetch("https://127.0.0.1:5000/api/user/getall")
                     if (res.status !== 200) {
                         alert("There has been an error");
                     }
@@ -295,7 +295,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }),
                 };
 
-                const data = fetch("http://127.0.0.1:5000/api/board/add", opts)
+                const data = fetch("https://127.0.0.1:5000/api/board/add", opts)
                 console.log("board added")
                 return data;
             },
@@ -317,7 +317,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             "users": users,
                         }),
                     };
-                    const url = `http://127.0.0.1:5000/api/board/update/${id}`
+                    const url = `https://127.0.0.1:5000/api/board/update/${id}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
                         alert("Token expired, press ok to refresh token");
@@ -348,7 +348,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }),
                 };
 
-                const data = fetch(`http://127.0.0.1:5000/api/board/delete/${id}`, opts)
+                const data = fetch(`https://127.0.0.1:5000/api/board/delete/${id}`, opts)
                 console.log("board deleted")
                 return data;
             },
@@ -370,7 +370,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }),
                 };
 
-                const data = fetch("http://127.0.0.1:5000/api/actuator/add", opts)
+                const data = fetch("https://127.0.0.1:5000/api/actuator/add", opts)
 
                 console.log("actuator added")
                 return data;
@@ -390,13 +390,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }),
                 };
 
-                const data = fetch(`http://127.0.0.1:5000/api/actuator/delete/${id}`, opts)
+                const data = fetch(`https://127.0.0.1:5000/api/actuator/delete/${id}`, opts)
                 return data;
             },
 
             getBoardsByUserId: (currentId) => {
                 const id = Object.stringify(currentId.id)
-                const url = "http://127.0.0.1:5000/api/user/boards/" + { id }
+                const url = "https://127.0.0.1:5000/api/user/boards/" + { id }
                 const data = fetch(url)
                 return data;
             },
@@ -406,7 +406,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const id = Object.values(lockId)
                     console.log(id)
-                    const url = `http://127.0.0.1:5000/api/actuator/get/${id}`
+                    const url = `https://127.0.0.1:5000/api/actuator/get/${id}`
                     const data = await fetch(url)
                     return data;
                 }
@@ -430,7 +430,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             "state": state,
                         }),
                     };
-                    const url = `http://127.0.0.1:5000/api/actuator/updateState/${lockId}`
+                    const url = `https://127.0.0.1:5000/api/actuator/updateState/${lockId}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
                         alert("An error has occured, refreshing token, please try again");
@@ -472,7 +472,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             "type": type,
                         }),
                     };
-                    const url = `http://127.0.0.1:5000/api/actuator/update/${id}`
+                    const url = `https://127.0.0.1:5000/api/actuator/update/${id}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
                         alert("Token expired, Press OK to refresh token");
@@ -504,7 +504,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             "state": state,
                         }),
                     };
-                    const url = `http://127.0.0.1:5000/api/act/${lockId}`;
+                    const url = `https://127.0.0.1:5000/api/act/${lockId}`;
                     const response = await fetch(url, opts);
 
                     if (response.status !== 200) {
@@ -535,7 +535,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         'Authorization': "Bearer " + store.token
                     },
                 };
-                const url = "http://127.0.0.1:5000/api/sensor/temp_hum/"
+                const url = "https://127.0.0.1:5000/api/sensor/temp_hum/"
                 return fetch(url, opts)
                     .then(res => res.json())
                     .catch(error => console.log(error))
@@ -553,7 +553,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                     };
 
-                    const url = "http://127.0.0.1:5000/auth/refresh";
+                    const url = "https://127.0.0.1:5000/auth/refresh";
                     const response = await fetch(url, opts);
                     const data = await response.json();
 

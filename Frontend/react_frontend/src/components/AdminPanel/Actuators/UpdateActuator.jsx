@@ -8,8 +8,8 @@ const UpdateActuator = ({id, actuator, update, setShowModal }) => {
     const handleClick = () => {
         actions.updateActuator(id, name, pin, board_id, type).then(() => {
             update();
-        });
-        setShowModal(false)
+            setShowModal(false)
+        })    
     }
     const [name, setName] = useState("")
     const [pin, setPin] = useState("")

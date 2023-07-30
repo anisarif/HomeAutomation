@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { Context } from "../../../store/appContext";
 
-const AddUser = ({ update, setAddShowModal }) => {
+const AddUser = ({ update, setShowAddModal }) => {
     const [username, setUsername] = useState([])
     const [password, setPassword] = useState([])
     const [role, setRole] = useState([])
@@ -17,7 +17,7 @@ const AddUser = ({ update, setAddShowModal }) => {
         actions.addUser(username, password, role).then(() => {
             update();
             alert("User added");
-            setAddShowModal(false)
+            setShowAddModal(false);
         })
             .catch(error => {
                 console.error("Error adding user:", error);

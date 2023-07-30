@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Enum, event
+from sqlalchemy import Enum
 from datetime import datetime
 
 db = SQLAlchemy()
@@ -40,8 +40,7 @@ class Actuators(db.Model):
         'boards.id'), nullable=False)
     type = db.Column(Enum("Light", "Lock", "Sensor",
                      name="actuator_type"), nullable=False)
-    """ light, locker .. different output switcher time """
-    state = db.Column(db.Boolean)
+    state = db.Column(db.Boolean, index=True, nullable=False, default=False)
 
 
 class LockActions(db.Model):

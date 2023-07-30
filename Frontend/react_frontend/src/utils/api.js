@@ -41,19 +41,19 @@ export const RegisterApi = (opts) => {
 /* GET ALL USERS API */
 
 export const getUsers = () => {
-    return fetch('http://127.0.0.1:5000/api/user/getall')
+    return fetch('https://127.0.0.1:5000/api/user/getall')
         .then(res => res.json())
         .catch(error => console.log(error))
 }
 
 export const getBoards = () => {
-    return fetch('http://127.0.0.1:5000/api/board/getall')
+    return fetch('https://127.0.0.1:5000/api/board/getall')
         .then(res => res.json())
         .catch(error => console.log(error))
 }
 
 export const getActuators = () => {
-    return fetch('http://127.0.0.1:5000/api/actuator/getall')
+    return fetch('https://127.0.0.1:5000/api/actuator/getall')
         .then(res => res.json())
         .catch(error => console.log(error))
 }

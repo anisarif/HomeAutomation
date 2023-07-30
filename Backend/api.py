@@ -1,10 +1,9 @@
-from functools import wraps
-from flask import request, Blueprint, jsonify, current_app
+from flask import request, Blueprint, jsonify
 from .models import db, UserHome, Boards, Actuators, LockActions
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from .utils import Action, admin_required
-from .mqtt_client import mqtt, cache
+from .mqtt_client import cache
 
 bp = Blueprint('api', __name__, url_prefix='/api')
 

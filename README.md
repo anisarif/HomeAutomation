@@ -4,7 +4,7 @@ This project is a home automation system built using Python Flask for the backen
 
 ### Hardware
 
-- Rpi
+- Raspberry Pi
 - Esp8266
 - Solid State Relay
 - Sensor (Temperature and Humidity)
@@ -14,6 +14,7 @@ This project is a home automation system built using Python Flask for the backen
 - Python 3.8+
 - Node.js and npm
 - PostgreSQL
+- Arduino IDE
 
 ### Backend
 
@@ -28,6 +29,13 @@ This project is a home automation system built using Python Flask for the backen
 1. Navigate to the frontend directory: `cd HomeAutomation/Frontend/react_frontend/`
 2. Install the Node.js dependencies: `npm install`
 3. Run the frontend: `npm start`
+
+### Devices
+
+1. Navigate to the devices directory: `cd HomeAutomation/Devices`
+2. Open the files in the Arduino IDE
+3. Connect the board
+4. Run the backend: `flask run`
 
 ## Features
 

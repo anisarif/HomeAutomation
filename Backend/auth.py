@@ -5,22 +5,6 @@ from werkzeug.security import check_password_hash
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-""" # First connection Admin registration 
-
-@bp.route('/register', methods=["POST"])
-def register():
-    username = request.json.get("username", None)
-    password = request.json.get("password", None)
-    role = 'admin'
-    error = None
-    user = UserHome(username=username, password=generate_password_hash(password), role=role)
-    db.session.add(user)
-    db.session.commit()
-    if error is None:
-        username = {"username":user.username}
-        return "Admin {username} registred"
-    return error
- """
 
 # Login Route
 

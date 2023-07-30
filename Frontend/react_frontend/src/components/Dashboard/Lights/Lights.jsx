@@ -30,7 +30,7 @@ const Lights = () => {
           const currentActuators = await getActuators()
           const filteredActuators = currentActuators.filter(actuator => actuator.type === "Light")
           setLights(filteredActuators)
-          const url = `http://127.0.0.1:5000/api/user/boards/${currentId}`
+          const url = `https://127.0.0.1:5000/api/user/boards/${currentId}`
           const res = await fetch(url)
           const boardsAuth = await res.json();
           setBoardsList(boardsAuth)

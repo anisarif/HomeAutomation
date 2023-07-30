@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Context } from '../../../store/appContext';
 
 const UpdateUserId = ({ user, update, setShowModal }) => {

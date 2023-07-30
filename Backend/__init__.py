@@ -1,12 +1,11 @@
 import os
-from functools import wraps
-from flask import Flask, request, jsonify
+from flask import Flask
 from .models import db
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager, get_jwt, verify_jwt_in_request, create_access_token, get_jwt_identity, set_access_cookies
+from flask_jwt_extended import JWTManager
 from .mqtt_client import mqtt, cache
 from werkzeug.security import generate_password_hash
-from datetime import timedelta, datetime, timezone
+from datetime import timedelta
 
 
 
@@ -64,7 +63,7 @@ def create_app(test_config=None):
 
     app.config['MQTT_BROKER_URL'] = '192.168.1.111'
     app.config['MQTT_BROKER_PORT'] = 1883
-    app.config['MQTT_KEEPALIVE'] = 5  # Set KeepAlive time in seconds
+    app.config['MQTT_KEEPALIVE'] = 5  # in seconds
     # If your server supports TLS, set it True
     app.config['MQTT_TLS_ENABLED'] = False
 

@@ -1,5 +1,3 @@
-// Desc: Modal component for editing user, board, or actuator
-
 import UpdateUser from "./AdminPanel/Users/UpdateUser";
 import UpdateBoard from "./AdminPanel/Boards/UpdateBoard";
 import UpdateActuator from "./AdminPanel/Actuators/UpdateActuator";

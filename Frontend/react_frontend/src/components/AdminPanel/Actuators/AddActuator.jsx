@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import { Context } from "../../../store/appContext";
 import { getBoards } from "../../../utils/api";
 
-const AddActuator = ({update, boardCount, setShowAddModal, setAdd}) => {
+const AddActuator = ({ update, boardCount, setShowAddModal, setAdd }) => {
     const { actions } = useContext(Context)
     const [name, setName] = useState("")
     const [pin, setPin] = useState("")
@@ -24,7 +24,7 @@ const AddActuator = ({update, boardCount, setShowAddModal, setAdd}) => {
         actions.addActuator(name, pin, board_id, type).then(() => {
             update();
             setShowAddModal(false)
-        });
+        })
     }
 
     useEffect(() => {
@@ -35,6 +35,8 @@ const AddActuator = ({update, boardCount, setShowAddModal, setAdd}) => {
         }
         fetchData().catch(console.error)
     }, [boardCount])
+
+
 
     return (
         <div className='flex flex-col items-center justify-center align-middle content-around place-content-center'>
