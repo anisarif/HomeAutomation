@@ -54,3 +54,9 @@ Set up the database: `python create_test_db.py` and run `pytest`.
 ### Frontend
 
 To run the tests, navigate to the frontend directory
+
+
+
+## Architecture Diagram
+
+[Architecture Diagram.pdf](https://github.com/anisarif/HomeAutomation/files/12208517/Architecture.Diagram.pdf)
