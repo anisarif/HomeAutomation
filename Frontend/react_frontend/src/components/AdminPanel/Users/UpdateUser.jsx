@@ -9,7 +9,7 @@ const UpdateUserId = ({ user, update, setShowModal }) => {
 
     const handleClick = () => {
 
-        if (!username || !password || !role) {
+        if (!username || !role) {
             alert('Please fill all fields');
             return;
         }
