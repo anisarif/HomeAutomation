@@ -1,4 +1,4 @@
-This project is a home automation system built using Python Flask for the backend, React and TailwindCss for the frontend, HTTP and MQTT for real-time communication. The system allows users to control various IoT devices in their home. 
+This project is a home automation system built using Python Flask for the backend, React and TailwindCss for the frontend, HTTPS and MQTT for real-time communication. The system allows users to control various IoT devices in their home. 
 
 ## Installation
 
@@ -6,7 +6,7 @@ This project is a home automation system built using Python Flask for the backen
 
 - Raspberry Pi
 - Esp8266
-- Solid State Relay
+- Relays
 - Sensor (Temperature and Humidity)
 
 ### Prerequisites
@@ -22,7 +22,7 @@ This project is a home automation system built using Python Flask for the backen
 2. Navigate to the backend directory: `cd HomeAutomation/Backend`
 3. Install the Python dependencies: `pip install -r requirements.txt`
 4. Set up the database: `python create_db.py`
-5. Run the backend: `flask run`
+5. Run the backend: `python app_run.py`
 
 ### Frontend
 
@@ -33,9 +33,9 @@ This project is a home automation system built using Python Flask for the backen
 ### Devices
 
 1. Navigate to the devices directory: `cd HomeAutomation/Devices`
-2. Open the files in the Arduino IDE
-3. Connect the board
-4. Run the backend: `flask run`
+2. Connect the board to setup
+3. Open the files in the Arduino IDE
+4. Compile and Upload the sketch into the board 
 
 ## Features
 
@@ -60,3 +60,17 @@ To run the tests, navigate to the frontend directory
 ## Architecture Diagram
 
 [Architecture Diagram.pdf](https://github.com/anisarif/HomeAutomation/files/12208517/Architecture.Diagram.pdf)
+
+
+## Database Backup Script
+
+1. Open the script ‘HomeAutomation/Backend/backup.sh’ 
+2. Replace "your_password", "your_username", "localhost", "your_database", and "/path/to/backup/directory" 
+3. Make the script executable: `chmod +x backup.sh`
+4. Test the script by running it: `./backup.sh`
+
+### Set up a cron job to run the script at regular intervals 
+
+1. Open the crontab file with `crontab -e` 
+2. Add this to run the script every day at 3 AM: `0 3 * * * /path/to/your/backup/script.sh`
+3. Replace  "/path/to/your/backup/script.sh"  with the actual path to the script
