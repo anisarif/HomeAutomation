@@ -38,7 +38,7 @@ const AddBoard = ({ update, userCount, setShowAddModal }) => {
             setSelectedUsers([]);
             setShowAddModal(false);
         });
-    };
+    }
 
     useEffect(() => {
         const session_users = sessionStorage.getItem("users");

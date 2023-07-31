@@ -16,6 +16,11 @@ const AddActuator = ({ update, boardCount, setShowAddModal, setAdd }) => {
             return;
         }
 
+        if (!Number.isInteger(Number(pin))) {
+            alert('Pin must be an integer');
+            return;
+        }
+        
         if (!['Light', 'Lock', 'Sensor'].includes(type)) {
             alert('Invalid type');
             return;

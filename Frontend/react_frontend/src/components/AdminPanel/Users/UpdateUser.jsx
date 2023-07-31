@@ -8,6 +8,17 @@ const UpdateUserId = ({ user, update, setShowModal }) => {
     const { actions } = useContext(Context)
 
     const handleClick = () => {
+
+        if (!username || !password || !role) {
+            alert('Please fill all fields');
+            return;
+        }
+
+        if (!['admin', 'user'].includes(role)) {
+            alert('Invalid role');
+            return;
+        }
+
         actions.updateUser(id, username, role)
             .then(() => {
                 update();

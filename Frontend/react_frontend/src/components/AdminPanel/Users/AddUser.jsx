@@ -14,6 +14,11 @@ const AddUser = ({ update, setShowAddModal }) => {
             return;
         }
 
+        if (!['admin', 'user'].includes(role)) {
+            alert('Invalid role');
+            return;
+        }
+
         actions.addUser(username, password, role).then(() => {
             update();
             alert("User added");

@@ -28,7 +28,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                     const res = await fetch("https://197.240.120.86:5000/auth/login", opts)
                     if (res.status !== 200) {
                         alert(res);
-                        actions.refreshToken();
                         return false;
                     }
             

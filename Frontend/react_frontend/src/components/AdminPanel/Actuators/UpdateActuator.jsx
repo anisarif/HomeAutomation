@@ -6,6 +6,21 @@ import { getBoards } from "../../../utils/api";
 const UpdateActuator = ({id, actuator, update, setShowModal }) => {
     const { actions } = useContext(Context)
     const handleClick = () => {
+        if (!name || !pin || !board_id || !type) {
+            alert('Please fill all fields');
+            return;
+        }
+
+        if (!Number.isInteger(Number(pin))) {
+            alert('Pin must be an integer');
+            return;
+        }
+        
+        if (!['Light', 'Lock', 'Sensor'].includes(type)) {
+            alert('Invalid type');
+            return;
+        }
+
         actions.updateActuator(id, name, pin, board_id, type).then(() => {
             update();
             setShowModal(false)
