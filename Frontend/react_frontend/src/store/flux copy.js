@@ -1,7 +1,5 @@
-import CryptoJS from "crypto-js";
 
 const getState = ({ getStore, getActions, setStore }) => {
-    const secretKey = "homeautomation"; // Key used to encrypt and decrypt tokens
     return {
         store: {
             users: null,
@@ -10,7 +8,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         actions: {
             login: async (username, password) => {
                 const actions = getActions();
-                
                 const opts = {
                     method: 'POST',
                     mode: 'cors',
@@ -23,26 +20,20 @@ const getState = ({ getStore, getActions, setStore }) => {
                         "password": password,
                     }),
                 };
-            
+
                 try {
-                    const res = await fetch("https://197.240.120.86:5000/auth/login", opts)
+
+                    const res = await fetch("https://127.0.0.1:5000/auth/login", opts)
                     if (res.status !== 200) {
                         alert(res);
                         actions.refreshToken();
                         return false;
                     }
-            
+
                     const data = await res.json();
-            
-                    // Encrypt tokens using AES
-                    const encryptedAccessToken = CryptoJS.AES.encrypt(data.access_token, secretKey).toString();
-                    const encryptedRefreshToken = CryptoJS.AES.encrypt(data.refresh_token, secretKey).toString();
-            
-                    sessionStorage.setItem("token", encryptedAccessToken);
-                    sessionStorage.setItem("refresh_token", encryptedRefreshToken);
-            
+                    sessionStorage.setItem("token", data.access_token);
+                    sessionStorage.setItem("refresh_token", data.refresh_token);
                     setStore({ token: data.access_token });
-            
                     return true;
                 }
                 catch (error) {
@@ -51,24 +42,18 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
             syncTokenFromSessionStore: () => {
-                const encryptedToken = sessionStorage.getItem("token");
-                if (encryptedToken && encryptedToken !== "" && encryptedToken !== undefined) {
-                    const decryptedToken = CryptoJS.AES.decrypt(encryptedToken, secretKey).toString(CryptoJS.enc.Utf8);
-                    setStore({ token: decryptedToken });
-                }
+                const token = sessionStorage.getItem("token");
+                if (token && token !== "" && token !== undefined) setStore({ token: token });
             },
-            
+
             syncUsersFromSessionStore: () => {
                 const users = sessionStorage.getItem("users");
                 if (users && users !== undefined && users !== "" && users !== []) setStore({ users: users });
             },
-            
+
             syncIdFromSessionStore: () => {
-                const encryptedToken = sessionStorage.getItem("token");
-                if (encryptedToken && encryptedToken !== "" && encryptedToken !== undefined) {
-                    const decryptedToken = CryptoJS.AES.decrypt(encryptedToken, secretKey).toString(CryptoJS.enc.Utf8);
-                    setStore({ currentUserId: decryptedToken });
-                }
+                const token = sessionStorage.getItem("token");
+                if (token && token !== "" && token !== undefined) setStore({ currentUserId: token });
             },
 
             logout: () => {
@@ -82,7 +67,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         'Authorization': "Bearer " + store.token,
                     },
                 };
-                fetch("https://197.240.120.86:5000/auth/logout", opts)
+                fetch("https://127.0.0.1:5000/auth/logout", opts)
                 sessionStorage.removeItem("token");
                 sessionStorage.removeItem("current_user");
                 sessionStorage.removeItem("current_User");
@@ -110,7 +95,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }),
                 };
 
-                const data = fetch("https://197.240.120.86:5000/api/user/add", opts)
+                const data = fetch("https://127.0.0.1:5000/api/user/add", opts)
 
                 return data;
             },
@@ -131,7 +116,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             "role": role,
                         }),
                     };
-                    const url = `https://197.240.120.86:5000/api/user/update/${id}`
+                    const url = `https://127.0.0.1:5000/api/user/update/${id}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
                         alert("Token expired, press ok to refresh token");
@@ -164,7 +149,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             "newPassword": newPassword,
                         }),
                     };
-                    const url = `https://197.240.120.86:5000/api/user/modifyPassword/${id}`
+                    const url = `https://127.0.0.1:5000/api/user/modifyPassword/${id}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
                         alert("Token expired, press ok to refresh token");
@@ -196,7 +181,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             "username": username,
                         }),
                     };
-                    const url = `https://197.240.120.86:5000/api/user/updateUsername/${id}`
+                    const url = `https://127.0.0.1:5000/api/user/updateUsername/${id}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
                         alert("Token expired, press ok to refresh token");
@@ -224,7 +209,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
                         },
                     };
-                    const url = `https://197.240.120.86:5000/api/getHistory`
+                    const url = `https://127.0.0.1:5000/api/getHistory`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
                         alert("error getting history");
@@ -243,7 +228,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             getUserbyId: async (id) => {
                 try {
-                    const url = `https://197.240.120.86:5000/api/user/get/${id}`
+                    const url = `https://127.0.0.1:5000/api/user/get/${id}`
                     const data = await fetch(url)
                     return data;
                 }
@@ -271,14 +256,14 @@ const getState = ({ getStore, getActions, setStore }) => {
                     
                 };
 
-                const data = fetch(`https://197.240.120.86:5000/api/user/delete/${id}`, opts)
+                const data = fetch(`https://127.0.0.1:5000/api/user/delete/${id}`, opts)
                 console.log("user deleted")
                 return data;
             },
 
             getUsers: async () => {
                 try {
-                    const res = await fetch("https://197.240.120.86:5000/api/user/getall")
+                    const res = await fetch("https://127.0.0.1:5000/api/user/getall")
                     if (res.status !== 200) {
                         alert("There has been an error");
                     }
@@ -310,7 +295,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }),
                 };
 
-                const data = fetch("https://197.240.120.86:5000/api/board/add", opts)
+                const data = fetch("https://127.0.0.1:5000/api/board/add", opts)
                 console.log("board added")
                 return data;
             },
@@ -332,7 +317,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             "users": users,
                         }),
                     };
-                    const url = `https://197.240.120.86:5000/api/board/update/${id}`
+                    const url = `https://127.0.0.1:5000/api/board/update/${id}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
                         alert("Token expired, press ok to refresh token");
@@ -363,7 +348,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }),
                 };
 
-                const data = fetch(`https://197.240.120.86:5000/api/board/delete/${id}`, opts)
+                const data = fetch(`https://127.0.0.1:5000/api/board/delete/${id}`, opts)
                 console.log("board deleted")
                 return data;
             },
@@ -385,7 +370,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }),
                 };
 
-                const data = fetch("https://197.240.120.86:5000/api/actuator/add", opts)
+                const data = fetch("https://127.0.0.1:5000/api/actuator/add", opts)
 
                 console.log("actuator added")
                 return data;
@@ -405,13 +390,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }),
                 };
 
-                const data = fetch(`https://197.240.120.86:5000/api/actuator/delete/${id}`, opts)
+                const data = fetch(`https://127.0.0.1:5000/api/actuator/delete/${id}`, opts)
                 return data;
             },
 
             getBoardsByUserId: (currentId) => {
                 const id = Object.stringify(currentId.id)
-                const url = "https://197.240.120.86:5000/api/user/boards/" + { id }
+                const url = "https://127.0.0.1:5000/api/user/boards/" + { id }
                 const data = fetch(url)
                 return data;
             },
@@ -421,7 +406,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 try {
                     const id = Object.values(lockId)
                     console.log(id)
-                    const url = `https://197.240.120.86:5000/api/actuator/get/${id}`
+                    const url = `https://127.0.0.1:5000/api/actuator/get/${id}`
                     const data = await fetch(url)
                     return data;
                 }
@@ -445,7 +430,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             "state": state,
                         }),
                     };
-                    const url = `https://197.240.120.86:5000/api/actuator/updateState/${lockId}`
+                    const url = `https://127.0.0.1:5000/api/actuator/updateState/${lockId}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
                         alert("An error has occured, refreshing token, please try again");
@@ -487,7 +472,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             "type": type,
                         }),
                     };
-                    const url = `https://197.240.120.86:5000/api/actuator/update/${id}`
+                    const url = `https://127.0.0.1:5000/api/actuator/update/${id}`
                     const res = await fetch(url, opts)
                     if (res.status !== 200) {
                         alert("Token expired, Press OK to refresh token");
@@ -519,7 +504,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             "state": state,
                         }),
                     };
-                    const url = `https://197.240.120.86:5000/api/act/${lockId}`;
+                    const url = `https://127.0.0.1:5000/api/act/${lockId}`;
                     const response = await fetch(url, opts);
 
                     if (response.status !== 200) {
@@ -550,7 +535,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         'Authorization': "Bearer " + store.token
                     },
                 };
-                const url = "https://197.240.120.86:5000/api/sensor/temp_hum/"
+                const url = "https://127.0.0.1:5000/api/sensor/temp_hum/"
                 return fetch(url, opts)
                     .then(res => res.json())
                     .catch(error => console.log(error))
@@ -558,35 +543,29 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             refreshToken: async () => {
                 try {
-                    const encryptedRefreshToken = sessionStorage.getItem("refresh_token");
-                    if (encryptedRefreshToken && encryptedRefreshToken !== "" && encryptedRefreshToken !== undefined) {
-                        const decryptedRefreshToken = CryptoJS.AES.decrypt(encryptedRefreshToken, secretKey).toString(CryptoJS.enc.Utf8);
-                        
-                        const opts = {
-                            method: 'POST',
-                            mode: 'cors',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': "Bearer " + decryptedRefreshToken
-                            },
-                        };
-            
-                        const url = "https://197.240.120.86:5000/auth/refresh";
-                        const response = await fetch(url, opts);
-                        const data = await response.json();
-            
-                        if (response.status !== 200) {
-                            alert(data);
-                            return false;
-                        }
-            
-                        // Encrypt the new token before storing it in sessionStorage
-                        const encryptedNewToken = CryptoJS.AES.encrypt(data.access_token, secretKey).toString();
-                        sessionStorage.setItem("token", encryptedNewToken);
-                        setStore({ token: data.access_token }); // You might want to set the store with the decrypted token instead
-                        return true;
+                    const refresh_token = sessionStorage.getItem("refresh_token")
+                    const opts = {
+                        method: 'POST',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': "Bearer " + refresh_token
+                        },
+                    };
+
+                    const url = "https://127.0.0.1:5000/auth/refresh";
+                    const response = await fetch(url, opts);
+                    const data = await response.json();
+
+                    if (response.status !== 200) {
+                        alert(data);
+                        return false;
                     }
-            
+
+                    sessionStorage.setItem("token", data.access_token);
+                    setStore({ token: data.access_token });
+                    return true;
+
                 } catch (error) {
                     console.error(error);
                 }
