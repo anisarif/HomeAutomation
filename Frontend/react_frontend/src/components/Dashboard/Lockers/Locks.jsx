@@ -28,7 +28,7 @@ const Locks = () => {
           const currentActuators = await getActuators()
           const filteredActuators = currentActuators.filter(actuator => actuator.type === "Lock")
           setLocks(filteredActuators)
-          const url = `https://197.240.120.86:5000/api/user/boards/${currentId}`
+          const url = `https://197.240.170.142:5000/api/user/boards/${currentId}`
           const res = await fetch(url)
           const boardsAuth = await res.json();
           setBoardsList(boardsAuth)
