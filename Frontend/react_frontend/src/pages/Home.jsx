@@ -33,7 +33,7 @@ const Home = () => {
    }, [store.token]);
 
    return (
-      <div className=" bg-slate-600 h-min-screen pb-20 ">
+      <div className=" bg-slate-600 h-full h-min-screen pb-20 ">
          <Navbar handleClick={handleClick} isAdminView={isAdminView} />
          {toggle ? <AdminPanel />
             : <Dashboard />}
