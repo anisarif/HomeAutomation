@@ -15,6 +15,7 @@ This project is a home automation system built using Python Flask for the backen
 - Node.js and npm
 - PostgreSQL
 - Arduino IDE
+- Mosquitto MQTT Broker on Raspberry Pi
 
 ### Backend
 
