@@ -3,6 +3,7 @@ import { getActuators } from "../../../utils/api";
 import { useState, useEffect, useContext } from 'react';
 import { decodeToken } from "react-jwt";
 import { Context } from "../../../store/appContext";
+const backendurl = 'https://197.240.48.101:5000/'
 
 const Locks = () => {
     const [locks, setLocks] = useState([]);
@@ -28,7 +29,7 @@ const Locks = () => {
           const currentActuators = await getActuators()
           const filteredActuators = currentActuators.filter(actuator => actuator.type === "Lock")
           setLocks(filteredActuators)
-          const url = `https://197.240.170.142:5000/api/user/boards/${currentId}`
+          const url = backendurl + `api/user/boards/${currentId}`
           const res = await fetch(url)
           const boardsAuth = await res.json();
           setBoardsList(boardsAuth)
