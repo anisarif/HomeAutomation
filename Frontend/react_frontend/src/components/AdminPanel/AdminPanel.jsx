@@ -14,7 +14,6 @@ const AdminPanel = () => {
    const [showAddModal, setShowAddModal] = useState(false);
    const [edit, setEdit] = useState([]);
    const [add, setAdd] = useState("");
-   console.log(setShowModal)
 
    const addUsersCount = () => {
       setUserCount(userCount + 1)
