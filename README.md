@@ -54,7 +54,7 @@ Set up the database: `python create_test_db.py` and run `pytest`.
 
 ### Frontend
 
-To run the tests, navigate to the frontend directory
+To run the tests, navigate to the frontend directory and run `npm test`
 
 
 
