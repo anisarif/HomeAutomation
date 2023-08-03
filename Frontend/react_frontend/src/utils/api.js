@@ -1,4 +1,4 @@
-const backendurl = 'https://197.240.48.101:5000/'
+const backendurl = 'https://www.soloproject.pro:5000/'
 
 export const getUsers = () => {
     return fetch(backendurl + 'api/user/getall')

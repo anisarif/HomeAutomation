@@ -3,7 +3,7 @@ import { getActuators } from "../../../utils/api";
 import { useState, useEffect, useContext } from 'react';
 import { decodeToken } from "react-jwt";
 import { Context } from "../../../store/appContext";
-const backendurl = 'https://197.240.48.101:5000/'
+const backendurl = 'https://www.soloproject.pro:5000/'
 
 const Locks = () => {
     const [locks, setLocks] = useState([]);

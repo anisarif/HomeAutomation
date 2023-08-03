@@ -1,5 +1,5 @@
 import CryptoJS from "crypto-js";
-const backendurl = "https://197.240.48.101:5000/"
+const backendurl = "https://www.soloproject.pro:5000/"
 
 const getState = ({ getStore, getActions, setStore }) => {
     const secretKey = "homeautomation"; // Key used to encrypt and decrypt tokens

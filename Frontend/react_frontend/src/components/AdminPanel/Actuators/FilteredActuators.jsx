@@ -16,7 +16,6 @@ const Actuators = ({ id, boardCount, actuatorCount, addActuatorsCount, deleteAct
             const loaded_actuators = await getActuators()
             const filtered_actuators = loaded_actuators.filter(actuator => actuator.board_id === id)
             setActuators(filtered_actuators)
-            console.log(actuatorCount)
         }
         fetchData().catch(console.error)
     }, [actuatorCount, id])
