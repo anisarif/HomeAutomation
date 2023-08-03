@@ -15,6 +15,7 @@ This project is a home automation system built using Python Flask for the backen
 - Node.js and npm
 - PostgreSQL
 - Arduino IDE
+- Mosquitto MQTT Broker on Raspberry Pi
 
 ### Backend
 
@@ -53,7 +54,7 @@ Set up the database: `python create_test_db.py` and run `pytest`.
 
 ### Frontend
 
-To run the tests, navigate to the frontend directory
+To run the tests, navigate to the frontend directory and run `npm test`
 
 
 
@@ -72,5 +73,5 @@ To run the tests, navigate to the frontend directory
 ### Set up a cron job to run the script at regular intervals 
 
 1. Open the crontab file with `crontab -e` 
-2. Add this to run the script every day at 3 AM: `0 3 * * * /path/to/your/backup/script.sh`
-3. Replace  "/path/to/your/backup/script.sh"  with the actual path to the script
+2. Add this to run the script every day at 3 AM: `0 3 * * * /path/to/your/backup/backup.sh`
+3. Replace  "/path/to/your/backup/script.sh"  with the actual path to the backup.sh script
