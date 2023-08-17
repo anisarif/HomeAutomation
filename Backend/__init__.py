@@ -53,7 +53,7 @@ def create_app(test_config=None):
     app.config["JWT_SECRET_KEY"] = "super-secret"
     # If true this will only allow the cookies that contain your JWTs to be sent
     # over https. In production, this should always be set to True
-    app.config["JWT_COOKIE_SECURE"] = False
+    app.config["JWT_COOKIE_SECURE"] = True
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=90)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(weeks=4)
     jwt = JWTManager(app)
@@ -65,7 +65,7 @@ def create_app(test_config=None):
     app.config['MQTT_BROKER_PORT'] = 1883
     app.config['MQTT_KEEPALIVE'] = 5  # in seconds
     # If your server supports TLS, set it True
-    app.config['MQTT_TLS_ENABLED'] = False
+    app.config['MQTT_TLS_ENABLED'] = True
 
     mqtt.init_app(app)
     cache.init_app(app)
