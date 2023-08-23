@@ -30,6 +30,11 @@ const AddBoard = ({ update, userCount, setShowAddModal }) => {
             return;
         }
 
+        if (!['public', 'private'].includes(privacy)) {
+            alert('Invalid input for privacy');
+            return;
+        }
+
         actions.addBoard(name, privacy, selectedUsers).then(() => {
             update();
             alert("Board added successfully");

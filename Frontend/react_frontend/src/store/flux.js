@@ -9,8 +9,8 @@ const getState = ({ getStore, getActions, setStore }) => {
             token: null,
         },
         actions: {
-            login: async (username, password) => {
-                
+
+            login: async (username, password) => {                
                 const opts = {
                     method: 'POST',
                     mode: 'cors',
@@ -26,7 +26,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             
                 try {
                     const res = await fetch(backendurl + "auth/login", opts)
-                    if (res.status !== 200) {
+                    if (res.status === 401) {
                         alert(res);
                         return false;
                     }
@@ -132,7 +132,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     };
                     const url = backendurl + `api/user/update/${id}`
                     const res = await fetch(url, opts)
-                    if (res.status !== 200) {
+                    if (res.status === 401) {
                         alert("Token expired, press ok to refresh token");
                         actions.refreshToken();
                         return false;
@@ -197,7 +197,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     };
                     const url = backendurl + `api/user/updateUsername/${id}`
                     const res = await fetch(url, opts)
-                    if (res.status !== 200) {
+                    if (res.status === 401) {
                         alert("Token expired, press ok to refresh token");
                         actions.refreshToken();
                         return false;
@@ -333,7 +333,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     };
                     const url = backendurl + `api/board/update/${id}`
                     const res = await fetch(url, opts)
-                    if (res.status !== 200) {
+                    if (res.status === 401) {
                         alert("Token expired, press ok to refresh token");
                         actions.refreshToken();
                         return false;
@@ -446,7 +446,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     };
                     const url = backendurl + `api/actuator/updateState/${lockId}`
                     const res = await fetch(url, opts)
-                    if (res.status !== 200) {
+                    if (res.status === 401) {
                         alert("An error has occured, refreshing token, please try again");
                         actions.refreshToken();
                         return false;
@@ -488,7 +488,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     };
                     const url = backendurl + `api/actuator/update/${id}`
                     const res = await fetch(url, opts)
-                    if (res.status !== 200) {
+                    if (res.status === 401) {
                         alert("Token expired, Press OK to refresh token");
                         actions.refreshToken();
                         return false;
@@ -582,7 +582,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         // Encrypt the new token before storing it in sessionStorage
                         const encryptedNewToken = CryptoJS.AES.encrypt(data.access_token, secretKey).toString();
                         sessionStorage.setItem("token", encryptedNewToken);
-                        setStore({ token: data.access_token }); // You might want to set the store with the decrypted token instead
+                        setStore({ token: data.access_token }); // Update the store with the new token
                         return true;
                     }
             

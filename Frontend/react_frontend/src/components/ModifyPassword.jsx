@@ -7,7 +7,6 @@ const ModifyPassword = () => {
     const [newPassword, setNewPassword] = useState("")
     const { actions } = useContext(Context)
     const {id} = useParams()
-    console.log(id)
 
     return (
         <div className='flex flex-col items-center justify-center'>

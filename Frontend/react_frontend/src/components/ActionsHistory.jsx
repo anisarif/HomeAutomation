@@ -24,7 +24,7 @@ const History = () => {
     return (
         <div className="p-4 bg-slate-200 rounded-md m-2">
             <h1 className=" text-slate-700 font-medium text-center text-3xl mb-8 ">Actions History</h1>
-            {last_items.toReversed().map((item, index) => {
+            {last_items.reverse().map((item, index) => {
                 return (
 
                     <div className=" flex justify-evenly " key={index}>
