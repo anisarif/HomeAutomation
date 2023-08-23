@@ -75,3 +75,9 @@ To run the tests, navigate to the frontend directory and run `npm test`
 1. Open the crontab file with `crontab -e` 
 2. Add this to run the script every day at 3 AM: `0 3 * * * /path/to/your/backup/backup.sh`
 3. Replace  "/path/to/your/backup/script.sh"  with the actual path to the backup.sh script
+
+## Demo
+
+https://soloprojecthomeautomation.netlify.app/
+username : admin
+password : admin
