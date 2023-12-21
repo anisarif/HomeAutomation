@@ -1,5 +1,8 @@
+from flask import current_app
 from flask_mqtt import Mqtt
 from flask_caching import Cache
+
+from Backend.models import Actuators
 
 
 mqtt = Mqtt()
@@ -29,6 +32,14 @@ def handle_mqtt_message(client, userdata, message):
         cache.set("room_humidity", message.payload.decode('utf-8'))
 
     print('Received message on topic: {topic} with payload: {payload}'.format(**data))
+
+    with current_app.app_context():
+        actuator = Actuators.query.filter_by(id=id).first()
+
+        if actuator:
+            print(actuator);
+
+
 
 @mqtt.on_subscribe()
 def on_subscribe(client, userdata, mid, granted_qos):
