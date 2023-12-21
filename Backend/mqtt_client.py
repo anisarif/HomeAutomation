@@ -34,7 +34,7 @@ def handle_mqtt_message(client, userdata, message):
     print('Received message on topic: {topic} with payload: {payload}'.format(**data))
 
     with current_app.app_context():
-        actuator = Actuators.query.filter_by(id=id).first()
+        actuator = Actuators.query.filter_by(id=message.topic).first()
 
         if actuator:
             print(actuator);
