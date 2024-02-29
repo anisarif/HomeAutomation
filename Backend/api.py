@@ -374,3 +374,31 @@ def getHistory():
         }
         list.append(actions)
     return jsonify(list)
+
+#Get Custom Actions
+
+@bp.route("/getActions", methods=['GET'])
+def getActions():
+    res = LockActions.query.all()
+    actions_list = []
+
+    for action in res:
+        device_id = action.actuator_id
+        timestamp = action.time
+        state = str(action.state)
+
+        if state == 'True':
+            actions_list.append({
+                'id': action.id,
+                'user_id': action.user_id,
+                'board_id': action.board_id,
+                'actuator_id': device_id,
+                'state': state,
+                'start': timestamp,
+            })
+        elif state == 'False' and actions_list:
+            last_action = actions_list[-1]
+            last_action['end'] = timestamp
+
+    # Devolver la lista de acciones directamente como JSON
+    return jsonify(actions_list)
