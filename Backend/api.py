@@ -4,34 +4,33 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from .utils import Action, admin_required
 from .mqtt_client import cache
+from marshmallow import Schema, fields, validate, ValidationError
 
 bp = Blueprint('api', __name__, url_prefix='/api')
 
+##################################
+################################## USERS ##################################
+##################################
 
-##################################            ##################################
-##################################   USERS    ##################################
-##################################            ##################################
-
-
-# ADD A USER  
-
+class UserSchema(Schema):
+    username = fields.String(required=True, validate=validate.Length(min=1))
+    password = fields.String(required=True, validate=validate.Length(min=6))
+    role = fields.String(required=True, validate=validate.OneOf(["admin", "user"]))
 
 @bp.route("/user/add", methods=['POST'])
 @admin_required
 def adduser():
     data = request.get_json()
+    try:
+        validated_data = UserSchema().load(data)
+    except ValidationError as err:
+        return jsonify(err.messages), 400
 
-    username = data['username']
-    password = data['password']
-    role = data['role']
-    user = UserHome(username=username,
-                    password=generate_password_hash(password), role=role)
+    user = UserHome(username=validated_data['username'],
+                    password=generate_password_hash(validated_data['password']), role=validated_data['role'])
     db.session.add(user)
     db.session.commit()
     return 'user added'
-
-
-# GET ALL USERS
 
 @bp.route("/user/getall")
 def getusers():
@@ -46,9 +45,6 @@ def getusers():
         list.append(users)
     return jsonify(list)
 
-# GET USER BY ID
-
-
 @bp.route("/user/get/<int:id>")
 def getuser_id(id):
     user = UserHome.query.filter_by(id=id).first()
@@ -57,10 +53,6 @@ def getuser_id(id):
         "username": user.username,
         "role": user.role
     })
-
-
-# UPDATE A USER BY ID
-
 
 @bp.route("/user/update/<int:id>", methods=['PUT'])
 @admin_required
@@ -71,7 +63,7 @@ def updateuser(id):
         user.username = data['username']
         user.role = data['role']
         db.session.commit()
-    return str("user {user.username} updated")
+    return str(f"user {user.username} updated")
 
 @bp.route("/user/updateUsername/<int:id>", methods=['PUT'])
 @jwt_required()
@@ -81,7 +73,7 @@ def updateusername(id):
         data = request.get_json()
         user.username = data['username']
         db.session.commit()
-    return str("username {user.username} updated")
+    return str(f"username {user.username} updated")
 
 @bp.route("/user/modifyPassword/<int:id>", methods=['PUT'])
 @jwt_required()
@@ -93,11 +85,9 @@ def modifypassword(id):
         newPassword = data['newPassword']
         if not check_password_hash(user.password, password):
             return str("incorrect password", 400)
-        user.password=generate_password_hash(newPassword)
+        user.password = generate_password_hash(newPassword)
         db.session.commit()
     return str("password modified")
-
-# DELETE USER BY ID
 
 @bp.route("/user/delete/<int:id>", methods=['DELETE'])
 @admin_required
@@ -106,8 +96,7 @@ def deleteuser(id):
     if user:
         db.session.delete(user)
         db.session.commit()
-    return "user " + str(id) + " deleted"
-
+    return f"user {id} deleted"
 
 @bp.route('/user/boards/<int:current_id>')
 def get_user_boards(current_id):
@@ -121,22 +110,17 @@ def get_user_boards(current_id):
     board_list = [{'id': board.id, 'name': board.name} for board in boards]
     return jsonify(board_list)
 
-
-##################################            ##################################
-##################################   BOARDS   ##################################
-##################################            ##################################
-
-
-# ADD A BOARD
+##################################
+################################## BOARDS ##################################
+##################################
 
 @bp.route("/board/add", methods=['POST'])
 @admin_required
 def addboard():
     data = request.get_json()
-
     name = data['name']
     privacy = data['privacy']
-    
+
     if privacy == "public":
         users = UserHome.query.all()
         board = Boards(name=name, privacy=privacy, users=users)
@@ -148,9 +132,6 @@ def addboard():
     db.session.add(board)
     db.session.commit()
     return 'board added'
-
-# GET ALL BOARDS
-
 
 @bp.route("/board/getall")
 def getboards():
@@ -165,16 +146,10 @@ def getboards():
         list.append(boards)
     return jsonify(list)
 
-# GET BOARD BY ID
-
-
-@bp.route("/board/get")
+@bp.route("/board/get/<int:id>")
 def getboard(id):
     board = Boards.query.filter_by(id=id).first()
     return board
-
-# UPDATE A BOARD BY ID
-
 
 @bp.route("/board/update/<int:id>", methods=['PUT'])
 @admin_required
@@ -192,10 +167,7 @@ def updateBoard(id):
             board.users = users
 
         db.session.commit()
-    return str("board {board.name} updated")
-
-# DELETE BOARD BY ID
-
+    return str(f"board {board.name} updated")
 
 @bp.route("/board/delete/<int:id>", methods=['DELETE'])
 @admin_required
@@ -204,15 +176,11 @@ def deleteboard(id):
     if board:
         db.session.delete(board)
         db.session.commit()
-    return "Board " + str(id) + " deleted"
+    return f"Board {id} deleted"
 
-
-##################################            ##################################
-################################## ACTUATORS  ##################################
-##################################            ##################################
-
-
-# ADD AN ACTUATOR
+##################################
+################################## ACTUATORS ##################################
+##################################
 
 @bp.route("/actuator/add", methods=['POST'])
 @admin_required
@@ -224,14 +192,10 @@ def addactuator():
     board_id = data['board_id']
     type = data['type']
     state = 0
-    actuator = Actuators(name=name, pin=int(pin), board_id=int(
-        board_id), type=type, state=int(state))
+    actuator = Actuators(name=name, pin=int(pin), board_id=int(board_id), type=type, state=int(state))
     db.session.add(actuator)
     db.session.commit()
     return "actuator added"
-
-
-# GET ALL ACTUATORS
 
 @bp.route("/actuator/getall")
 def getactuators():
@@ -249,12 +213,8 @@ def getactuators():
         list.append(actuators)
     return jsonify(list)
 
-# GET ACTUATOR BY ID
-
-
 @bp.route("/actuator/get/<int:id>")
 def getactuator(id):
-
     actuator = Actuators.query.filter_by(id=id).first()
     if actuator:
         actuator = {
@@ -267,54 +227,30 @@ def getactuator(id):
         }
         return actuator
 
-
-# UPDATE AN ACTUATOR STATE BY ID
-
 @bp.route("/actuator/updateState/<int:id>", methods=['PUT'])
 @jwt_required()
 def update_actuator_state(id):
-    # Extracting the user_id from the JWT token
     user_id = get_jwt_identity()
-
     actuator = Actuators.query.filter_by(id=id).first()
     if actuator:
         state = request.get_json('state')
-        print(state['state'])
         if state['state'] == False:
             actuator.state = 0
             db.session.commit()
-
-            # create a new LockActions entry
-            lock_action = LockActions(user_id=user_id,
-                                      board_id=actuator.board_id,
-                                      actuator_id=id,
-                                      state=0)
+            lock_action = LockActions(user_id=user_id, board_id=actuator.board_id, actuator_id=id, state=0)
             db.session.add(lock_action)
             db.session.commit()
-
-            return "Actuator id: " + str(id) + "updated to false "
-        
+            return f"Actuator id: {id} updated to false"
         elif state['state'] == True:
             actuator.state = 1
             db.session.commit()
-
-            # create a new LockActions entry
-            lock_action = LockActions(user_id=user_id,
-                                      board_id=actuator.board_id,
-                                      actuator_id=id,
-                                      state=1)
+            lock_action = LockActions(user_id=user_id, board_id=actuator.board_id, actuator_id=id, state=1)
             db.session.add(lock_action)
             db.session.commit()
-
-            return "Actuator id: " + str(id) + "updated to true "
-        
-        return ("error while updating actuator state", 400) 
-
+            return f"Actuator id: {id} updated to true"
+        return "error while updating actuator state", 400
     else:
         return "actuator not found"
-    
-
-# UPDATE AN ACTUATOR BY ID
 
 @bp.route("/actuator/update/<int:id>", methods=['PUT'])
 @admin_required
@@ -327,27 +263,22 @@ def updateactuator(id):
         actuator.board_id = data['board_id']
         actuator.type = data['type']
         db.session.commit()
-    return "actuator id: " + str(id) + " updated"
-    
-# DELETE ACTUATOR BY ID
-
+    return f"actuator id: {id} updated"
 
 @bp.route("/actuator/delete/<int:id>", methods=['DELETE'])
 @admin_required
-def deletactuator(id):
+def deleteactuator(id):
     actuator = Actuators.query.filter_by(id=id).first()
     if actuator:
         db.session.delete(actuator)
         db.session.commit()
-    return "actuator " + str(id) + " deleted"
-
-# Action MQTT
+    return f"actuator {id} deleted"
 
 @bp.route("/act/<int:id>", methods=['POST'])
 @jwt_required()
 def actionmqtt(id):
     Action(id)
-    return "Action triggered for ID: " + str(id)
+    return f"Action triggered for ID: {id}"
 
 # Sensor Temperature humidity
 
@@ -400,5 +331,5 @@ def getActions():
             last_action = actions_list[-1]
             last_action['end'] = timestamp
 
-    # Devolver la lista de acciones directamente como JSON
+
     return jsonify(actions_list)
