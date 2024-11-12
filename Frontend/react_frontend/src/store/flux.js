@@ -1,598 +1,569 @@
+// Frontend/react_frontend/src/store/flux.js
 import CryptoJS from "crypto-js";
-const backendurl = "https://www.soloproject.pro:5000/"
+import { jwtDecode } from "jwt-decode";
+
+const backendurl = process.env.REACT_APP_BACKEND_URL || "https://www.soloproject.pro:5000/";
+const API_VERSION = "v1";
 
 const getState = ({ getStore, getActions, setStore }) => {
-    const secretKey = "homeautomation"; // Key used to encrypt and decrypt tokens
+    // Use a more secure key generation method
+    const secretKey = process.env.REACT_APP_ENCRYPTION_KEY || CryptoJS.lib.WordArray.random(256/8).toString();
+    
+    // Security utility functions
+    const securityUtils = {
+        validateToken: (token) => {
+            try {
+                const decoded = jwtDecode(token);
+                return decoded.exp * 1000 > Date.now();
+            } catch {
+                return false;
+            }
+        },
+        
+        encryptData: (data) => {
+            return CryptoJS.AES.encrypt(JSON.stringify(data), secretKey).toString();
+        },
+        
+        decryptData: (encryptedData) => {
+            try {
+                const bytes = CryptoJS.AES.decrypt(encryptedData, secretKey);
+                return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+            } catch {
+                return null;
+            }
+        },
+        
+        sanitizeInput: (input) => {
+            if (typeof input === 'string') {
+                return input.replace(/[<>{}]/g, '');
+            }
+            return input;
+        }
+    };
+
+    // HTTP request wrapper with security headers
+    const secureRequest = async (endpoint, options = {}) => {
+        const store = getStore();
+        const defaultHeaders = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-API-Version': API_VERSION,
+            'X-CSRF-Token': sessionStorage.getItem('csrf_token')
+        };
+
+        if (store.token) {
+            defaultHeaders['Authorization'] = `Bearer ${store.token}`;
+        }
+
+        const requestOptions = {
+            ...options,
+            mode: 'cors',
+            headers: {
+                ...defaultHeaders,
+                ...options.headers
+            },
+            credentials: 'include'
+        };
+
+        try {
+            const response = await fetch(`${backendurl}${endpoint}`, requestOptions);
+            
+            if (response.status === 401) {
+                const refreshed = await getActions().refreshToken();
+                if (refreshed) {
+                    requestOptions.headers['Authorization'] = `Bearer ${getStore().token}`;
+                    return fetch(`${backendurl}${endpoint}`, requestOptions);
+                }
+            }
+            
+            return response;
+        } catch (error) {
+            console.error('Request failed:', error);
+            throw error;
+        }
+    };
+
     return {
         store: {
             users: null,
             token: null,
+            lastActivity: Date.now(),
+            sessionTimeout: 30 * 60 * 1000, // 30 minutes
+            deviceStates: {}, // Store device states
+            weatherData: null,
+            sensorData: null
         },
         actions: {
-
-            login: async (username, password) => {                
-                const opts = {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        "username": username,
-                        "password": password,
-                    }),
-                };
-            
+            // Authentication Actions
+            login: async (username, password) => {
                 try {
-                    const res = await fetch(backendurl + "auth/login", opts)
-                    if (res.status === 401) {
-                        alert(res);
-                        return false;
+                    const sanitizedUsername = securityUtils.sanitizeInput(username);
+                    
+                    const response = await secureRequest('auth/login', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            username: sanitizedUsername,
+                            password
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Authentication failed');
                     }
-            
-                    const data = await res.json();
-            
-                    // Encrypt tokens using AES
-                    const encryptedAccessToken = CryptoJS.AES.encrypt(data.access_token, secretKey).toString();
-                    const encryptedRefreshToken = CryptoJS.AES.encrypt(data.refresh_token, secretKey).toString();
-            
+
+                    const data = await response.json();
+
+                    if (!securityUtils.validateToken(data.access_token)) {
+                        throw new Error('Invalid token received');
+                    }
+
+                    const encryptedAccessToken = securityUtils.encryptData(data.access_token);
+                    const encryptedRefreshToken = securityUtils.encryptData(data.refresh_token);
+
                     sessionStorage.setItem("token", encryptedAccessToken);
                     sessionStorage.setItem("refresh_token", encryptedRefreshToken);
-            
-                    setStore({ token: data.access_token });
-            
+
+                    setStore({ 
+                        token: data.access_token,
+                        lastActivity: Date.now()
+                    });
+
                     return true;
-                }
-                catch (error) {
-                    console.error(error)
-                }
-            },
-
-            syncTokenFromSessionStore: () => {
-                const encryptedToken = sessionStorage.getItem("token");
-                if (encryptedToken && encryptedToken !== "" && encryptedToken !== undefined) {
-                    const decryptedToken = CryptoJS.AES.decrypt(encryptedToken, secretKey).toString(CryptoJS.enc.Utf8);
-                    setStore({ token: decryptedToken });
-                }
-            },
-            
-            syncUsersFromSessionStore: () => {
-                const users = sessionStorage.getItem("users");
-                if (users && users !== undefined && users !== "" && users !== []) setStore({ users: users });
-            },
-            
-            syncIdFromSessionStore: () => {
-                const encryptedToken = sessionStorage.getItem("token");
-                if (encryptedToken && encryptedToken !== "" && encryptedToken !== undefined) {
-                    const decryptedToken = CryptoJS.AES.decrypt(encryptedToken, secretKey).toString(CryptoJS.enc.Utf8);
-                    setStore({ currentUserId: decryptedToken });
+                } catch (error) {
+                    console.error('Login failed:', error);
+                    throw error;
                 }
             },
 
-            logout: () => {
+            logout: async () => {
+                try {
+                    await secureRequest('auth/logout', { method: 'POST' });
+                } catch (error) {
+                    console.error('Logout error:', error);
+                } finally {
+                    sessionStorage.clear();
+                    setStore({ 
+                        token: null,
+                        users: null,
+                        lastActivity: null,
+                        deviceStates: {},
+                        weatherData: null,
+                        sensorData: null
+                    });
+                }
+            },
+
+            // Token Management
+            refreshToken: async () => {
+                try {
+                    const encryptedRefreshToken = sessionStorage.getItem("refresh_token");
+                    if (!encryptedRefreshToken) {
+                        throw new Error('No refresh token available');
+                    }
+
+                    const decryptedRefreshToken = securityUtils.decryptData(encryptedRefreshToken);
+                    if (!decryptedRefreshToken) {
+                        throw new Error('Invalid refresh token');
+                    }
+
+                    const response = await secureRequest('auth/refresh', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${decryptedRefreshToken}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Token refresh failed');
+                    }
+
+                    const data = await response.json();
+                    
+                    if (!securityUtils.validateToken(data.access_token)) {
+                        throw new Error('Invalid token received during refresh');
+                    }
+
+                    const encryptedNewToken = securityUtils.encryptData(data.access_token);
+                    sessionStorage.setItem("token", encryptedNewToken);
+                    setStore({ 
+                        token: data.access_token,
+                        lastActivity: Date.now()
+                    });
+
+                    return true;
+                } catch (error) {
+                    console.error('Token refresh failed:', error);
+                    getActions().logout();
+                    return false;
+                }
+            },
+
+            // Session Management
+            checkSession: () => {
                 const store = getStore();
-                const opts = {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': "Bearer " + store.token,
-                    },
-                };
-                fetch(backendurl + "auth/logout", opts)
-                sessionStorage.removeItem("token");
-                sessionStorage.removeItem("current_user");
-                sessionStorage.removeItem("current_User");
-                sessionStorage.removeItem("refresh_token");
-
-                setStore({ token: null });
-                console.log("logged out");
+                if (store.token && Date.now() - store.lastActivity > store.sessionTimeout) {
+                    getActions().logout();
+                    return false;
+                }
+                setStore({ lastActivity: Date.now() });
+                return true;
             },
 
+            // User Management Actions
+            addUser: async (username, password, role) => {
+                try {
+                    const sanitizedUsername = securityUtils.sanitizeInput(username);
+                    const sanitizedRole = securityUtils.sanitizeInput(role);
 
-            addUser: (username, password, role) => {
-                const store = getStore();
-                const opts = {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': "Bearer " + store.token,
-                    },
-                    body: JSON.stringify({
-                        "username": username,
-                        "password": password,
-                        "role": role,
-                    }),
-                };
+                    const response = await secureRequest('api/user/add', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            username: sanitizedUsername,
+                            password,
+                            role: sanitizedRole
+                        })
+                    });
 
-                const data = fetch(backendurl + "api/user/add", opts)
+                    if (!response.ok) {
+                        throw new Error('Failed to add user');
+                    }
 
-                return data;
+                    return response;
+                } catch (error) {
+                    console.error('Add user failed:', error);
+                    throw error;
+                }
             },
 
             updateUser: async (id, username, role) => {
                 try {
-                    const store = getStore();
-                    const actions = getActions();
-                    const opts = {
+                    const sanitizedUsername = securityUtils.sanitizeInput(username);
+                    const sanitizedRole = securityUtils.sanitizeInput(role);
+
+                    const response = await secureRequest(`api/user/update/${id}`, {
                         method: 'PUT',
-                        mode: 'cors',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': "Bearer " + store.token
-                        },
                         body: JSON.stringify({
-                            "username": username,
-                            "role": role,
-                        }),
-                    };
-                    const url = backendurl + `api/user/update/${id}`
-                    const res = await fetch(url, opts)
-                    if (res.status === 401) {
-                        alert("Token expired, press ok to refresh token");
-                        actions.refreshToken();
-                        return false;
+                            username: sanitizedUsername,
+                            role: sanitizedRole
+                        })
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            await getActions().refreshToken();
+                            return false;
+                        }
+                        throw new Error('Failed to update user');
                     }
 
-                    console.log("user updated")
                     return true;
-                }
-
-                catch (error) {
-                    console.error(error)
+                } catch (error) {
+                    console.error('Update user failed:', error);
+                    throw error;
                 }
             },
 
-            modifyPassword: async (id, password, newPassword) => {
+            deleteUser: async (id) => {
                 try {
-                    const store = getStore();
-                    const actions = getActions();
-                    const opts = {
-                        method: 'PUT',
-                        mode: 'cors',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': "Bearer " + store.token
-                        },
+                    const response = await secureRequest(`api/user/delete/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to delete user');
+                    }
+
+                    return response;
+                } catch (error) {
+                    console.error('Delete user failed:', error);
+                    throw error;
+                }
+            },
+
+            // Board Management Actions
+            addBoard: async (name, privacy, users) => {
+                try {
+                    const sanitizedName = securityUtils.sanitizeInput(name);
+                    const sanitizedPrivacy = securityUtils.sanitizeInput(privacy);
+                    const sanitizedUsers = users.map(user => securityUtils.sanitizeInput(user));
+
+                    const response = await secureRequest('api/board/add', {
+                        method: 'POST',
                         body: JSON.stringify({
-                            "password": password,
-                            "newPassword": newPassword,
-                        }),
-                    };
-                    const url = backendurl + `api/user/modifyPassword/${id}`
-                    const res = await fetch(url, opts)
-                    if (res.status !== 200) {
-                        alert("Token expired, press ok to refresh token");
-                        actions.refreshToken();
-                        return false;
+                            name: sanitizedName,
+                            privacy: sanitizedPrivacy,
+                            users: sanitizedUsers
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to add board');
                     }
 
-                    console.log("password updated")
-                    return true;
+                    return response;
+                } catch (error) {
+                    console.error('Add board failed:', error);
+                    throw error;
                 }
-
-                catch (error) {
-                    console.error(error)
-                }
-            },
-
-            updateUserProfile: async (id, username) => {
-                try {
-                    const store = getStore();
-                    const actions = getActions();
-                    const opts = {
-                        method: 'PUT',
-                        mode: 'cors',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': "Bearer " + store.token
-                        },
-                        body: JSON.stringify({
-                            "username": username,
-                        }),
-                    };
-                    const url = backendurl + `api/user/updateUsername/${id}`
-                    const res = await fetch(url, opts)
-                    if (res.status === 401) {
-                        alert("Token expired, press ok to refresh token");
-                        actions.refreshToken();
-                        return false;
-                    }
-
-                    console.log("user updated")
-                    return true;
-                }
-
-                catch (error) {
-                    console.error(error)
-                }
-            },
-
-            getHistory: async () => {
-                try {
-                    const actions = getActions();
-                    const opts = {
-                        method: 'GET',
-                        mode: 'cors',
-                        headers: {
-                            'Content-Type': 'application/json',
-
-                        },
-                    };
-                    const url = backendurl + `api/getHistory`
-                    const res = await fetch(url, opts)
-                    if (res.status !== 200) {
-                        alert("error getting history");
-                        actions.refreshToken();
-                        return false;
-                    }
-
-                    const history = await res.json();
-                    return history;
-                }
-                catch (error) {
-
-                    console.error(error)
-                }
-            },
-
-            getUserbyId: async (id) => {
-                try {
-                    const url = backendurl + `api/user/get/${id}`
-                    const data = await fetch(url)
-                    return data;
-                }
-                catch (error) {
-                    console.log(error)
-                }
-            },
-            
-
-
-
-
-            deleteUser: (id) => {
-                const store = getStore();
-                const opts = {
-                    method: 'DELETE',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': "Bearer " + store.token
-                    },
-                    body: JSON.stringify({
-                        "id": id,
-                    }),
-                    
-                };
-
-                const data = fetch(backendurl + `api/user/delete/${id}`, opts)
-                console.log("user deleted")
-                return data;
-            },
-
-            getUsers: async () => {
-                try {
-                    const res = await fetch(backendurl + "api/user/getall")
-                    if (res.status !== 200) {
-                        alert("There has been an error");
-                    }
-
-                    const data = await res.json();
-                    const users = JSON.stringify(data)
-                    if (users && users !== undefined && users !== "[]" && users !== "") sessionStorage.setItem("users", users);
-                    return users;
-                }
-                catch (error) {
-                    console.error(error)
-                }
-            },
-
-            addBoard: (name, privacy, users) => {
-                const store = getStore();
-                const opts = {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': "Bearer " + store.token,
-                    },
-                    body: JSON.stringify({
-                        "name": name,
-                        "privacy": privacy,
-                        "users": users,
-                    }),
-                };
-
-                const data = fetch( backendurl + "api/board/add", opts)
-                console.log("board added")
-                return data;
             },
 
             updateBoard: async (id, name, privacy, users) => {
                 try {
-                    const store = getStore();
-                    const actions = getActions();
-                    const opts = {
+                    const sanitizedName = securityUtils.sanitizeInput(name);
+                    const sanitizedPrivacy = securityUtils.sanitizeInput(privacy);
+                    const sanitizedUsers = users.map(user => securityUtils.sanitizeInput(user));
+
+                    const response = await secureRequest(`api/board/update/${id}`, {
                         method: 'PUT',
-                        mode: 'cors',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': "Bearer " + store.token
-                        },
                         body: JSON.stringify({
-                            "name": name,
-                            "privacy": privacy,
-                            "users": users,
-                        }),
-                    };
-                    const url = backendurl + `api/board/update/${id}`
-                    const res = await fetch(url, opts)
-                    if (res.status === 401) {
-                        alert("Token expired, press ok to refresh token");
-                        actions.refreshToken();
-                        return false;
-                    }
+                            name: sanitizedName,
+                            privacy: sanitizedPrivacy,
+                            users: sanitizedUsers
+                        })
+                    });
 
-                    console.log("board updated")
-                    return true;
-                }
-
-                catch (error) {
-                    console.error(error)
-                }
-            },
-
-            deleteBoard: (id) => {
-                const store = getStore();
-                const opts = {
-                    method: 'DELETE',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': "Bearer " + store.token
-                    },
-                    body: JSON.stringify({
-                        "id": id,
-                    }),
-                };
-
-                const data = fetch( backendurl + `api/board/delete/${id}`, opts)
-                console.log("board deleted")
-                return data;
-            },
-
-            addActuator: (name, pin, board_id, type) => {
-                const store = getStore();
-                const opts = {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': "Bearer " + store.token,
-                    },
-                    body: JSON.stringify({
-                        "name": name,
-                        "pin": pin,
-                        "board_id": board_id,
-                        "type": type,
-                    }),
-                };
-
-                const data = fetch( backendurl + "api/actuator/add", opts)
-
-                console.log("actuator added")
-                return data;
-            },
-
-            deleteActuator: (id) => {
-                const store = getStore();
-                const opts = {
-                    method: 'DELETE',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': "Bearer " + store.token
-                    },
-                    body: JSON.stringify({
-                        "id": id,
-                    }),
-                };
-
-                const data = fetch(backendurl + `api/actuator/delete/${id}`, opts)
-                return data;
-            },
-
-            getBoardsByUserId: (currentId) => {
-                const id = Object.stringify(currentId.id)
-                const url = backendurl + "api/user/boards/" + { id }
-                const data = fetch(url)
-                return data;
-            },
-
-            getActuatorById: async (lockId) => {
-
-                try {
-                    const id = Object.values(lockId)
-                    console.log(id)
-                    const url = backendurl + `api/actuator/get/${id}`
-                    const data = await fetch(url)
-                    return data;
-                }
-                catch (error) {
-                    console.log(error)
-                }
-            },
-
-            updateState: async ({ lockId, state }) => {
-                try {
-                    const store = getStore();
-                    const actions = getActions();
-                    const opts = {
-                        method: 'PUT',
-                        mode: 'cors',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': "Bearer " + store.token
-                        },
-                        body: JSON.stringify({
-                            "state": state,
-                        }),
-                    };
-                    const url = backendurl + `api/actuator/updateState/${lockId}`
-                    const res = await fetch(url, opts)
-                    if (res.status === 401) {
-                        alert("An error has occured, refreshing token, please try again");
-                        actions.refreshToken();
-                        return false;
-                    }
-
-                    const res2 = actions.act({ lockId, state })
-
-                    if (res2 === true) {
-                        alert("actions.act res.status !== 200");
-                        return false;
-                    }
-
-                    console.log("update and action done")
-                    return true;
-                }
-
-                catch (error) {
-                    console.error(error)
-                }
-            },
-
-            updateActuator: async (id, name, pin, board_id, type) => {
-                try {
-                    const store = getStore();
-                    const actions = getActions();
-                    const opts = {
-                        method: 'PUT',
-                        mode: 'cors',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': "Bearer " + store.token
-                        },
-                        body: JSON.stringify({
-                            "name": name,
-                            "pin": pin,
-                            "board_id": board_id,
-                            "type": type,
-                        }),
-                    };
-                    const url = backendurl + `api/actuator/update/${id}`
-                    const res = await fetch(url, opts)
-                    if (res.status === 401) {
-                        alert("Token expired, Press OK to refresh token");
-                        actions.refreshToken();
-                        return false;
-                    }
-
-                    console.log("Actuator " + id + " updated")
-                    return true;
-                }
-
-                catch (error) {
-                    console.error(error)
-                }
-            },
-
-
-            act: async ({ lockId, state }) => {
-                try {
-                    const store = getStore();
-                    const opts = {
-                        method: 'POST',
-                        mode: 'cors',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': "Bearer " + store.token
-                        },
-                        body: JSON.stringify({
-                            "state": state,
-                        }),
-                    };
-                    const url = backendurl + `api/act/${lockId}`;
-                    const response = await fetch(url, opts);
-
-                    if (response.status !== 200) {
-                        return false;
-                    }
-
-                    return true;
-
-                } catch (error) {
-                    console.error(error);
-                }
-            },
-
-            getCurrentWeather: () => {
-                const url = "https://api.open-meteo.com/v1/forecast?latitude=36.845128&longitude=10.163944&current_weather=true&forecast_days=1&timezone=Europe%2FBerlin"
-                return fetch(url)
-                    .then(res => res.json())
-                    .catch(error => console.log(error))
-            },
-
-            getRoomSensor: () => {
-                const store = getStore();
-                const opts = {
-                    method: 'GET',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': "Bearer " + store.token
-                    },
-                };
-                const url = backendurl + "api/sensor/temp_hum/"
-                return fetch(url, opts)
-                    .then(res => res.json())
-                    .catch(error => console.log(error))
-            },
-
-            refreshToken: async () => {
-                try {
-                    const encryptedRefreshToken = sessionStorage.getItem("refresh_token");
-                    if (encryptedRefreshToken && encryptedRefreshToken !== "" && encryptedRefreshToken !== undefined) {
-                        const decryptedRefreshToken = CryptoJS.AES.decrypt(encryptedRefreshToken, secretKey).toString(CryptoJS.enc.Utf8);
-                        
-                        const opts = {
-                            method: 'POST',
-                            mode: 'cors',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': "Bearer " + decryptedRefreshToken
-                            },
-                        };
-            
-                        const url = backendurl + "auth/refresh";
-                        const response = await fetch(url, opts);
-                        const data = await response.json();
-            
-                        if (response.status !== 200) {
-                            alert(data);
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            await getActions().refreshToken();
                             return false;
                         }
-            
-                        // Encrypt the new token before storing it in sessionStorage
-                        const encryptedNewToken = CryptoJS.AES.encrypt(data.access_token, secretKey).toString();
-                        sessionStorage.setItem("token", encryptedNewToken);
-                        setStore({ token: data.access_token }); // Update the store with the new token
-                        return true;
+                        throw new Error('Failed to update board');
                     }
-            
+
+                    return true;
                 } catch (error) {
-                    console.error(error);
+                    console.error('Update board failed:', error);
+                    throw error;
                 }
             },
 
+            deleteBoard: async (id) => {
+                try {
+                    const response = await secureRequest(`api/board/delete/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to delete board');
+                    }
+
+                    return response;
+                } catch (error) {
+                    console.error('Delete board failed:', error);
+                    throw error;
+                }
+            },
+
+// Actuator Management Actions
+addActuator: async (name, pin, board_id, type) => {
+    try {
+        const sanitizedName = securityUtils.sanitizeInput(name);
+        const sanitizedPin = securityUtils.sanitizeInput(pin);
+        const sanitizedType = securityUtils.sanitizeInput(type);
+
+        const response = await secureRequest('api/actuator/add', {
+            method: 'POST',
+            body: JSON.stringify({
+                name: sanitizedName,
+                pin: sanitizedPin,
+                board_id,
+                type: sanitizedType
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to add actuator');
         }
+
+        console.log("Actuator added successfully");
+        return await response.json();
+    } catch (error) {
+        console.error('Error adding actuator:', error);
+        throw error;
+    }
+},
+
+updateActuator: async (id, name, pin, board_id, type) => {
+    try {
+        const sanitizedName = securityUtils.sanitizeInput(name);
+        const sanitizedPin = securityUtils.sanitizeInput(pin);
+        const sanitizedType = securityUtils.sanitizeInput(type);
+
+        const response = await secureRequest(`api/actuator/update/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                name: sanitizedName,
+                pin: sanitizedPin,
+                board_id,
+                type: sanitizedType
+            })
+        });
+
+        if (response.status === 401) {
+            await getActions().refreshToken();
+            return false;
+        }
+
+        if (!response.ok) {
+            throw new Error('Failed to update actuator');
+        }
+
+        console.log(`Actuator ${id} updated successfully`);
+        return true;
+    } catch (error) {
+        console.error('Error updating actuator:', error);
+        throw error;
+    }
+},
+
+deleteActuator: async (id) => {
+    try {
+        const response = await secureRequest(`api/actuator/delete/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete actuator');
+        }
+
+        console.log(`Actuator ${id} deleted successfully`);
+        return true;
+    } catch (error) {
+        console.error('Error deleting actuator:', error);
+        throw error;
+    }
+},
+
+getActuatorById: async (lockId) => {
+    try {
+        const id = Object.values(lockId);
+        const response = await secureRequest(`api/actuator/get/${id}`, {
+            method: 'GET'
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch actuator');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching actuator:', error);
+        throw error;
+    }
+},
+
+updateState: async ({ lockId, state }) => {
+    try {
+        const response = await secureRequest(`api/actuator/updateState/${lockId}`, {
+            method: 'PUT',
+            body: JSON.stringify({ state })
+        });
+
+        if (response.status === 401) {
+            await getActions().refreshToken();
+            return false;
+        }
+
+        if (!response.ok) {
+            throw new Error('Failed to update state');
+        }
+
+        const actionResult = await getActions().act({ lockId, state });
+        if (!actionResult) {
+            throw new Error('Failed to execute actuator action');
+        }
+
+        console.log("State update and action completed successfully");
+        return true;
+    } catch (error) {
+        console.error('Error updating state:', error);
+        throw error;
+    }
+},
+
+// IoT Action Execution
+act: async ({ lockId, state }) => {
+    try {
+        const response = await secureRequest(`api/act/${lockId}`, {
+            method: 'POST',
+            body: JSON.stringify({ state })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to execute action');
+        }
+
+        return true;
+    } catch (error) {
+        console.error('Error executing action:', error);
+        return false;
+    }
+},
+
+// Weather and Sensor Actions
+getCurrentWeather: async () => {
+    try {
+        const response = await fetch(
+            "https://api.open-meteo.com/v1/forecast?" +
+            "latitude=36.845128&longitude=10.163944&" +
+            "current_weather=true&forecast_days=1&" +
+            "timezone=Europe%2FBerlin"
+        );
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch weather data');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching weather data:', error);
+        throw error;
+    }
+},
+
+getRoomSensor: async () => {
+    try {
+        const response = await secureRequest("api/sensor/temp_hum/", {
+            method: 'GET'
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch room sensor data');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching room sensor data:', error);
+        throw error;
+    }
+},
+
+// Session Management Actions
+startActivityMonitor: () => {
+    const store = getStore();
+    const checkInterval = setInterval(() => {
+        if (Date.now() - store.lastActivity > store.sessionTimeout) {
+            getActions().logout();
+            clearInterval(checkInterval);
+        }
+    }, 60000); // Check every minute
+
+    window.addEventListener('mousemove', () => {
+        setStore({ lastActivity: Date.now() });
+    });
+
+    return () => {
+        clearInterval(checkInterval);
+        window.removeEventListener('mousemove', () => {});
     };
+},
+
+updateLastActivity: () => {
+    setStore({ lastActivity: Date.now() });
+}
+}
+};
 };
 
 export default getState;
