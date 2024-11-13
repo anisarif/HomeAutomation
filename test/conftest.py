@@ -31,3 +31,16 @@ def app():
 def client(app):
     with app.test_client() as client:
         yield client
+
+
+@pytest.fixture
+def mock_db_session(mocker):
+    """Test double for database session"""
+    mock_session = mocker.MagicMock()
+    mocker.patch('Backend.models.db.session', mock_session)
+    return mock_session
+
+@pytest.fixture
+def auth_headers():
+    """Test double for admin authentication"""
+    return {"Authorization": f"Bearer {create_admin_token()}"} 
