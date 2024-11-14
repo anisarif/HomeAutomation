@@ -15,7 +15,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 import ssl
 from functools import wraps
-
+import time
 socketio = SocketIO()
 limiter = Limiter(
     key_func=get_remote_address,
@@ -78,16 +78,15 @@ def create_app(test_config=None):
     elif os.path.exists(os.path.join(app.instance_path, 'config.py')):
         app.config.from_pyfile('config.py')
 
-    # Database initialization with retry mechanism
+    db.init_app(app)
+
     max_retries = 3
     for attempt in range(max_retries):
         try:
-            db.init_app(app)
             with app.app_context():
                 db.create_all()
                 from .models import UserHome
-                
-                # Secure default admin creation
+
                 admin_password = os.getenv('ADMIN_PASSWORD', secrets.token_urlsafe(16))
                 user = UserHome.query.filter_by(username='admin').first()
                 if user is None:
@@ -105,7 +104,7 @@ def create_app(test_config=None):
                 app.logger.error(f"Failed to initialize database after {max_retries} attempts: {e}")
                 raise
             app.logger.warning(f"Database initialization attempt {attempt + 1} failed: {e}")
-
+            time.sleep(5)
     # CORS Configuration with enhanced security
     CORS(app, resources={
         r"/api/*": {

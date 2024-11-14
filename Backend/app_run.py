@@ -1,5 +1,5 @@
 import os
-from . import create_app
+from Backend import create_app
 
 def run_flask_app():
     cert_path = os.getenv('SSL_CERT', '/app/Backend/certs/cert.pem')
