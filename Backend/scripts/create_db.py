@@ -3,7 +3,7 @@ import psycopg2
 from psycopg2 import sql
 import time
 
-def wait_for_db(host, max_retries=5):
+def wait_for_db(host, max_retries=30):  # Increased retries
     retries = 0
     while retries < max_retries:
         try:
@@ -11,11 +11,14 @@ def wait_for_db(host, max_retries=5):
                 dbname="postgres",
                 user=os.getenv("POSTGRES_USER", "postgres"),
                 password=os.getenv("POSTGRES_PASSWORD", "changeme"),
-                host=host
+                host=host,
+                # Add connection timeout
+                connect_timeout=3
             )
             conn.close()
             return True
         except psycopg2.OperationalError:
+            print(f"Waiting for database... ({retries}/{max_retries})")
             retries += 1
             time.sleep(2)
     return False

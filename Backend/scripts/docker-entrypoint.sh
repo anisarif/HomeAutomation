@@ -1,7 +1,9 @@
+#!/bin/bash
 set -e
 
-# Wait for database and run migrations
-python scripts/create_db.py
+echo "Starting database initialization..."
+# Use absolute paths
+python /app/Backend/scripts/create_db.py
 
-# Start application
-python app_run.py
+echo "Starting Flask application..."
+python /app/Backend/app_run.py

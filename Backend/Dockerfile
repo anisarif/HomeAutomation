@@ -13,9 +13,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY . .
-RUN chmod +x scripts/docker-entrypoint.sh
+COPY . /app/Backend/
+COPY scripts/docker-entrypoint.sh /app/Backend/scripts/
+RUN chmod +x /app/Backend/scripts/docker-entrypoint.sh
 
-ENV PYTHONPATH=/app
 
-ENTRYPOINT ["./scripts/docker-entrypoint.sh"]
+ENV PYTHONPATH=/app/Backend
+ENV FLASK_APP=Backend
+ENV FLASK_ENV=development
+WORKDIR /app/Backend
+ENTRYPOINT ["/app/Backend/scripts/docker-entrypoint.sh"]
