@@ -1,2 +1,0 @@
-start psql db :
-sudo service postgresql start
