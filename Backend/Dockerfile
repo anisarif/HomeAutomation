@@ -12,13 +12,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY requirements.txt .
 RUN pip install -r requirements.txt
+RUN pip install python-dotenv
 
 COPY . /app/Backend/
 COPY scripts/docker-entrypoint.sh /app/Backend/scripts/
 RUN chmod +x /app/Backend/scripts/docker-entrypoint.sh
 
 
-ENV PYTHONPATH=/app/Backend
+ENV PYTHONPATH=/app
 ENV FLASK_APP=Backend
 ENV FLASK_ENV=development
 WORKDIR /app/Backend

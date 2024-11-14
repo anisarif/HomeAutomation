@@ -2,7 +2,6 @@
 set -e
 
 echo "Starting database initialization..."
-# Use absolute paths
 python /app/Backend/scripts/create_db.py
 
 echo "Starting Flask application..."
