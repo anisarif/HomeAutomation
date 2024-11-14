@@ -8,9 +8,9 @@ def wait_for_db(host, max_retries=30):  # Increased retries
     while retries < max_retries:
         try:
             conn = psycopg2.connect(
-                dbname="postgres",
+                dbname="home_db",
                 user=os.getenv("POSTGRES_USER", "postgres"),
-                password=os.getenv("POSTGRES_PASSWORD", "changeme"),
+                password=os.getenv("POSTGRES_PASSWORD", "your_secure_password"),
                 host=host,
                 # Add connection timeout
                 connect_timeout=3
@@ -25,9 +25,9 @@ def wait_for_db(host, max_retries=30):  # Increased retries
 
 def create_database():
     host = os.getenv("DB_HOST", "db")
-    dbname = os.getenv("POSTGRES_DB", "homeautomation")
+    dbname = os.getenv("POSTGRES_DB", "home_db")
     user = os.getenv("POSTGRES_USER", "postgres")
-    password = os.getenv("POSTGRES_PASSWORD", "changeme")
+    password = os.getenv("POSTGRES_PASSWORD", "your_secure_password")
     app_user = os.getenv("APP_DB_USER", "home")
     app_password = os.getenv("APP_DB_PASSWORD", "admin")
 

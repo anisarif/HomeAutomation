@@ -17,9 +17,9 @@ class SecureMQTTClient:
         app.config['MQTT_TLS_ENABLED'] = True
         app.config['MQTT_TLS_VERSION'] = ssl.PROTOCOL_TLS
         app.config['MQTT_TLS_CERT_REQS'] = ssl.CERT_REQUIRED
-        app.config['MQTT_TLS_CA_CERTS'] = 'path/to/ca.crt'
-        app.config['MQTT_TLS_CERTFILE'] = 'path/to/client.crt'
-        app.config['MQTT_TLS_KEYFILE'] = 'path/to/client.key'
+        app.config['MQTT_TLS_CA_CERTS'] = 'Backend/certs/ca.crt'
+        app.config['MQTT_TLS_CERTFILE'] = 'Backend/certs/client.crt'
+        app.config['MQTT_TLS_KEYFILE'] = 'Backend/certs/client.key'
         
         self.mqtt = Mqtt(app)
         self.device_security = DeviceSecurity()

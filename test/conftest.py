@@ -7,7 +7,7 @@ from Backend import create_app, db  # import your Flask application instance and
 def app():
 
     test_config = {
-        "DATABASE_URI": 'postgresql://admin_db:password_db@localhost:5432/test_home_db'
+        "DATABASE_URI": 'postgresql://admin_db:password_db@db:5432/test_home_db'
     }
 
     app = create_app(test_config)

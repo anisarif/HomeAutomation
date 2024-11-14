@@ -43,7 +43,7 @@ def create_app(test_config=None):
         API_KEY=os.getenv('API_KEY', secrets.token_hex(32)),
         
         # Database Configuration
-        SQLALCHEMY_DATABASE_URI=os.getenv('DATABASE_URI', "postgresql://home:admin@localhost:5432/home_db"),
+        SQLALCHEMY_DATABASE_URI=os.getenv('DATABASE_URI', "postgresql://home:admin@db:5432/home_db"),
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
         
         # Session Security
@@ -65,9 +65,9 @@ def create_app(test_config=None):
         MQTT_TLS_ENABLED=True,
         MQTT_TLS_VERSION=ssl.PROTOCOL_TLS,
         MQTT_TLS_CERT_REQS=ssl.CERT_REQUIRED,
-        MQTT_TLS_CA_CERTS=os.getenv('MQTT_TLS_CA_CERTS', 'path/to/ca.crt'),
-        MQTT_TLS_CERTFILE=os.getenv('MQTT_TLS_CERTFILE', 'path/to/client.crt'),
-        MQTT_TLS_KEYFILE=os.getenv('MQTT_TLS_KEYFILE', 'path/to/client.key'),
+        MQTT_TLS_CA_CERTS='Backend/certs/ca.crt',
+        MQTT_TLS_CERTFILE='Backend/certs/client.crt',
+        MQTT_TLS_KEYFILE='Backend/certs/client.key',
         
         # CORS Configuration
         CORS_HEADERS='Content-Type'
