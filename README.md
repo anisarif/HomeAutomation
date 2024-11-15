@@ -83,6 +83,14 @@ password : admin
 
 ---
 
+
+
+# Security
+
+### Application Threat Model
+
+[Threat Model.pdf](https://github.com/anisarif/HomeAutomation/blob/master/Threat%20Model.pdf)
+
 ## List of Measures Implemented and Planned:
 
 ### On the Hardware Level: (Raspberry Pi)
