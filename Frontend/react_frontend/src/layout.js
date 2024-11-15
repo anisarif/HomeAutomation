@@ -63,21 +63,17 @@ const PublicRoute = ({ children }) => {
 };
 
 const Layout = () => {
-    const { checkAuth, initializeAuth } = useAuth();
+    const { checkAuthStatus, initializeAuth } = useAuth();
     
     useEffect(() => {
-        // Initialize authentication state
         initializeAuth();
         
-        // Set up authentication check interval
-        const authCheckInterval = setInterval(checkAuth, 60000); // Check every minute
+        const authCheckInterval = setInterval(checkAuthStatus, 60000);
         
-        // Set up activity monitoring
         let activityTimeout;
         const resetActivityTimer = () => {
             clearTimeout(activityTimeout);
             activityTimeout = setTimeout(() => {
-                // Logout user after 30 minutes of inactivity
                 window.location.href = "/login";
             }, 30 * 60 * 1000);
         };
@@ -85,59 +81,48 @@ const Layout = () => {
         window.addEventListener("mousemove", resetActivityTimer);
         window.addEventListener("keypress", resetActivityTimer);
         
-        // Cleanup function
         return () => {
             clearInterval(authCheckInterval);
             clearTimeout(activityTimeout);
             window.removeEventListener("mousemove", resetActivityTimer);
             window.removeEventListener("keypress", resetActivityTimer);
         };
-    }, []);
+    }, [initializeAuth, checkAuthStatus]);
 
     return (
         <ErrorBoundary>
-            <SecurityProvider>
-                <BrowserRouter>
-                    <Routes>
-                        {/* Public Routes */}
-                        <Route 
-                            path="/login" 
-                            element={
-                                <PublicRoute>
-                                    <Login />
-                                </PublicRoute>
-                            }
-                        />
-
-                        {/* Protected Routes */}
-                        <Route 
-                            path="/" 
-                            element={
-                                <ProtectedRoute>
-                                    <Home />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route 
-                            path="/user/profile/:id" 
-                            element={
-                                <ProtectedRoute>
-                                    <UserProfile />
-                                </ProtectedRoute>
-                            }
-                        />
-
-                        {/* Catch all route - redirect to home */}
-                        <Route 
-                            path="*" 
-                            element={<Navigate replace to="/" />} 
-                        />
-                    </Routes>
-                </BrowserRouter>
-            </SecurityProvider>
+            <Routes>
+                <Route 
+                    path="/login" 
+                    element={
+                        <PublicRoute>
+                            <Login />
+                        </PublicRoute>
+                    }
+                />
+                <Route 
+                    path="/" 
+                    element={
+                        <ProtectedRoute>
+                            <Home />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route 
+                    path="/user/profile/:id" 
+                    element={
+                        <ProtectedRoute>
+                            <UserProfile />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route 
+                    path="*" 
+                    element={<Navigate replace to="/" />} 
+                />
+            </Routes>
         </ErrorBoundary>
     );
 };
 
-// Higher Order Component with Context
-export default injectContext(Layout);
+export default Layout;

@@ -2,11 +2,16 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSecurityContext } from '../context/SecurityContext';
-import { jwtDecode } from 'jwt-decode';
 
 export const useAuth = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
+    const security = useSecurityContext();
+    
+    if (!security) {
+        throw new Error('useAuth must be used within SecurityProvider');
+    }
+
     const { 
         isAuthenticated,
         loading: securityLoading,
@@ -14,26 +19,19 @@ export const useAuth = () => {
         login: securityLogin,
         logout: securityLogout,
         checkAuthStatus
-    } = useSecurityContext();
+    } = security;
+
+    useEffect(() => {
+        setIsLoading(securityLoading);
+    }, [securityLoading]);
 
     const login = useCallback(async (username, password) => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
-
-            if (!response.ok) {
-                throw new Error('Login failed');
+            const success = await securityLogin(username, password);
+            if (success) {
+                navigate('/');
             }
-
-            const data = await response.json();
-            const userData = jwtDecode(data.access_token);
-            
-            securityLogin(data.access_token, userData);
-            navigate('/');
-            return true;
+            return success;
         } catch (error) {
             console.error('Login error:', error);
             return false;
@@ -48,10 +46,6 @@ export const useAuth = () => {
     const initializeAuth = useCallback(async () => {
         await checkAuthStatus();
     }, [checkAuthStatus]);
-
-    useEffect(() => {
-        setIsLoading(securityLoading);
-    }, [securityLoading]);
 
     return {
         isAuthenticated,
