@@ -1,5 +1,5 @@
 // context/SecurityContext.js
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import CryptoJS from 'crypto-js';
 import { jwtDecode } from 'jwt-decode';
@@ -90,6 +90,11 @@ export const SecurityProvider = ({ children }) => {
         validateToken
     };
 
+    useEffect(() => {
+        console.log("SecurityProvider initialized");
+        console.log({ isAuthenticated, user });
+    }, [isAuthenticated, user]);
+    
     return (
         <SecurityContext.Provider value={value}>
             {children}

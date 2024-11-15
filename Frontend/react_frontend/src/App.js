@@ -5,11 +5,11 @@ import Layout from './layout';
 
 const App = () => {
   return (
-    <SecurityProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <SecurityProvider>
         <Layout />
-      </BrowserRouter>
-    </SecurityProvider>
+      </SecurityProvider>
+    </BrowserRouter>
   );
 };
 

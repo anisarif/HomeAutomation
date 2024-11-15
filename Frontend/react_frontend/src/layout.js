@@ -7,7 +7,6 @@ import Login from "./pages/Login";
 import UserProfile from "./pages/UserProfile";
 import injectContext from "./store/appContext";
 import { ErrorBoundary } from "./components/ErrorBoundary";
-import { SecurityProvider } from "./context/SecurityContext";
 import { LoadingSpinner } from "./components/LoadingSpinner";
 import { useAuth } from "./hooks/useAuth";
 

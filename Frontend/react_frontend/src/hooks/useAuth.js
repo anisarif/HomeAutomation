@@ -25,6 +25,12 @@ export const useAuth = () => {
         setIsLoading(securityLoading);
     }, [securityLoading]);
 
+    useEffect(() => {
+        console.log("useAuth initialized");
+        console.log({ isAuthenticated });
+    }, [isAuthenticated]);
+    
+
     const login = useCallback(async (username, password) => {
         try {
             const success = await securityLogin(username, password);
