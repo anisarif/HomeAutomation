@@ -60,14 +60,16 @@ def create_app(test_config=None):
         JWT_ACCESS_CSRF_HEADER_NAME="X-CSRF-TOKEN",
         
         # MQTT Security Configuration
-        MQTT_BROKER_PORT=8883,  # TLS port
+        #MQTT_BROKER_PORT=8883,  # TLS port
+        MQTT_BROKER_URL = 'mqtt',
+        MQTT_BROKER_PORT=1883,
         MQTT_KEEPALIVE=60,
-        MQTT_TLS_ENABLED=True,
-        MQTT_TLS_VERSION=ssl.PROTOCOL_TLS,
-        MQTT_TLS_CERT_REQS=ssl.CERT_REQUIRED,
-        MQTT_TLS_CA_CERTS='Backend/certs/ca.crt',
-        MQTT_TLS_CERTFILE='Backend/certs/client.crt',
-        MQTT_TLS_KEYFILE='Backend/certs/client.key',
+        MQTT_TLS_ENABLED=False,
+        #MQTT_TLS_VERSION=ssl.PROTOCOL_TLS,
+        #MQTT_TLS_CERT_REQS=ssl.CERT_REQUIRED,
+        #MQTT_TLS_CA_CERTS='Backend/certs/ca.crt',
+        #MQTT_TLS_CERTFILE='Backend/certs/client.crt',
+        #MQTT_TLS_KEYFILE='Backend/certs/client.key',
         
         # CORS Configuration
         CORS_HEADERS='Content-Type'

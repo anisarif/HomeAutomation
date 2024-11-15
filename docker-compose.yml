@@ -67,6 +67,7 @@ services:
     environment:
       - REACT_APP_API_URL=http://localhost:5000
       - REACT_APP_MQTT_URL=ws://localhost:9001
+      - REACT_APP_ENCRYPTION_KEY=your-encryption-key
     depends_on:
       - backend
 

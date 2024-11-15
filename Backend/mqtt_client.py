@@ -13,13 +13,15 @@ import time
 class SecureMQTTClient:
     def __init__(self, app):
         # MQTT TLS Configuration
-        app.config['MQTT_BROKER_PORT'] = 8883  # TLS port
-        app.config['MQTT_TLS_ENABLED'] = True
-        app.config['MQTT_TLS_VERSION'] = ssl.PROTOCOL_TLS
-        app.config['MQTT_TLS_CERT_REQS'] = ssl.CERT_REQUIRED
-        app.config['MQTT_TLS_CA_CERTS'] = 'Backend/certs/ca.crt'
-        app.config['MQTT_TLS_CERTFILE'] = 'Backend/certs/client.crt'
-        app.config['MQTT_TLS_KEYFILE'] = 'Backend/certs/client.key'
+        #app.config['MQTT_BROKER_PORT'] = 8883  # TLS port
+        app.config['MQTT_BROKER_URL'] = 'mqtt'
+        app.config['MQTT_BROKER_PORT'] = 1883
+        app.config['MQTT_TLS_ENABLED'] = False
+        #app.config['MQTT_TLS_VERSION'] = ssl.PROTOCOL_TLS
+        #app.config['MQTT_TLS_CERT_REQS'] = ssl.CERT_REQUIRED
+        #app.config['MQTT_TLS_CA_CERTS'] = 'Backend/certs/ca.crt'
+        #app.config['MQTT_TLS_CERTFILE'] = 'Backend/certs/client.crt'
+        #app.config['MQTT_TLS_KEYFILE'] = 'Backend/certs/client.key'
         
         self.mqtt = Mqtt(app)
         self.device_security = DeviceSecurity()
