@@ -65,8 +65,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - REACT_APP_API_URL=http://localhost:5000
-      - REACT_APP_MQTT_URL=ws://localhost:9001
+      - REACT_APP_API_URL=http://backend:5000
+      - REACT_APP_MQTT_URL=ws://mqtt:9001
       - REACT_APP_ENCRYPTION_KEY=your-encryption-key
     depends_on:
       - backend
