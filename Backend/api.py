@@ -1,8 +1,6 @@
 from flask import request, Blueprint, jsonify
 from .models import db, UserHome, Boards, Actuators, LockActions
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import get_jwt_identity, jwt_required
-from .utils import Action, admin_required
+from .utils import Action
 from .mqtt_client import cache
 from marshmallow import Schema, fields, validate, ValidationError
 
@@ -14,11 +12,9 @@ bp = Blueprint('api', __name__, url_prefix='/api')
 
 class UserSchema(Schema):
     username = fields.String(required=True, validate=validate.Length(min=1))
-    password = fields.String(required=True, validate=validate.Length(min=6))
-    role = fields.String(required=True, validate=validate.OneOf(["admin", "user"]))
+    role = fields.String(load_default="user", validate=validate.OneOf(["admin", "user"]))
 
 @bp.route("/user/add", methods=['POST'])
-@admin_required
 def adduser():
     data = request.get_json()
     try:
@@ -26,8 +22,7 @@ def adduser():
     except ValidationError as err:
         return jsonify(err.messages), 400
 
-    user = UserHome(username=validated_data['username'],
-                    password=generate_password_hash(validated_data['password']), role=validated_data['role'])
+    user = UserHome(username=validated_data['username'], role=validated_data['role'])
     db.session.add(user)
     db.session.commit()
     return 'user added'
@@ -55,7 +50,6 @@ def getuser_id(id):
     })
 
 @bp.route("/user/update/<int:id>", methods=['PUT'])
-@admin_required
 def updateuser(id):
     user = UserHome.query.filter_by(id=id).first()
     if user:
@@ -65,32 +59,7 @@ def updateuser(id):
         db.session.commit()
     return str(f"user {user.username} updated")
 
-@bp.route("/user/updateUsername/<int:id>", methods=['PUT'])
-@jwt_required()
-def updateusername(id):
-    user = UserHome.query.filter_by(id=id).first()
-    if user:
-        data = request.get_json()
-        user.username = data['username']
-        db.session.commit()
-    return str(f"username {user.username} updated")
-
-@bp.route("/user/modifyPassword/<int:id>", methods=['PUT'])
-@jwt_required()
-def modifypassword(id):
-    user = UserHome.query.filter_by(id=id).first()
-    if user:
-        data = request.get_json()
-        password = data['password']
-        newPassword = data['newPassword']
-        if not check_password_hash(user.password, password):
-            return str("incorrect password", 400)
-        user.password = generate_password_hash(newPassword)
-        db.session.commit()
-    return str("password modified")
-
 @bp.route("/user/delete/<int:id>", methods=['DELETE'])
-@admin_required
 def deleteuser(id):
     user = UserHome.query.filter_by(id=id).first()
     if user:
@@ -115,7 +84,6 @@ def get_user_boards(current_id):
 ##################################
 
 @bp.route("/board/add", methods=['POST'])
-@admin_required
 def addboard():
     data = request.get_json()
     name = data['name']
@@ -152,7 +120,6 @@ def getboard(id):
     return board
 
 @bp.route("/board/update/<int:id>", methods=['PUT'])
-@admin_required
 def updateBoard(id):
     board = Boards.query.filter_by(id=id).first()
     if board:
@@ -170,7 +137,6 @@ def updateBoard(id):
     return str(f"board {board.name} updated")
 
 @bp.route("/board/delete/<int:id>", methods=['DELETE'])
-@admin_required
 def deleteboard(id):
     board = Boards.query.filter_by(id=id).first()
     if board:
@@ -183,16 +149,13 @@ def deleteboard(id):
 ##################################
 
 @bp.route("/actuator/add", methods=['POST'])
-@admin_required
 def addactuator():
     data = request.get_json()
-
     name = data['name']
     pin = data['pin']
     board_id = data['board_id']
     type = data['type']
-    state = 0
-    actuator = Actuators(name=name, pin=int(pin), board_id=int(board_id), type=type, state=int(state))
+    actuator = Actuators(name=name, pin=int(pin), board_id=int(board_id), type=type, state=0)
     db.session.add(actuator)
     db.session.commit()
     return "actuator added"
@@ -217,34 +180,31 @@ def getactuators():
 def getactuator(id):
     actuator = Actuators.query.filter_by(id=id).first()
     if actuator:
-        actuator = {
+        return jsonify({
             "id": actuator.id,
             "name": actuator.name,
             "pin": actuator.pin,
             "board_id": actuator.board_id,
             "type": actuator.type,
             "state": actuator.state,
-        }
-        return actuator
+        })
 
 @bp.route("/actuator/updateState/<int:id>", methods=['PUT'])
-@jwt_required()
 def update_actuator_state(id):
-    user_id = get_jwt_identity()
     actuator = Actuators.query.filter_by(id=id).first()
     if actuator:
         state = request.get_json('state')
         if state['state'] == False:
             actuator.state = 0
             db.session.commit()
-            lock_action = LockActions(user_id=user_id, board_id=actuator.board_id, actuator_id=id, state=0)
+            lock_action = LockActions(user_id=1, board_id=actuator.board_id, actuator_id=id, state=0)
             db.session.add(lock_action)
             db.session.commit()
             return f"Actuator id: {id} updated to false"
         elif state['state'] == True:
             actuator.state = 1
             db.session.commit()
-            lock_action = LockActions(user_id=user_id, board_id=actuator.board_id, actuator_id=id, state=1)
+            lock_action = LockActions(user_id=1, board_id=actuator.board_id, actuator_id=id, state=1)
             db.session.add(lock_action)
             db.session.commit()
             return f"Actuator id: {id} updated to true"
@@ -253,7 +213,6 @@ def update_actuator_state(id):
         return "actuator not found"
 
 @bp.route("/actuator/update/<int:id>", methods=['PUT'])
-@admin_required
 def updateactuator(id):
     actuator = Actuators.query.filter_by(id=id).first()
     if actuator:
@@ -266,7 +225,6 @@ def updateactuator(id):
     return f"actuator id: {id} updated"
 
 @bp.route("/actuator/delete/<int:id>", methods=['DELETE'])
-@admin_required
 def deleteactuator(id):
     actuator = Actuators.query.filter_by(id=id).first()
     if actuator:
@@ -275,20 +233,15 @@ def deleteactuator(id):
     return f"actuator {id} deleted"
 
 @bp.route("/act/<int:id>", methods=['POST'])
-@jwt_required()
 def actionmqtt(id):
     Action(id)
     return f"Action triggered for ID: {id}"
-
-# Sensor Temperature humidity
 
 @bp.route("/sensor/temp_hum/", methods=['GET'])
 def sensor_temp_hum():
     temp = cache.get('room_temp')
     hum = cache.get('room_humidity')
     return jsonify({"temp": temp, "hum": hum})
-
-# Get History of Locks
 
 @bp.route("/getHistory", methods=['GET'])
 def getHistory():
@@ -305,8 +258,6 @@ def getHistory():
         }
         list.append(actions)
     return jsonify(list)
-
-#Get Custom Actions
 
 @bp.route("/getActions", methods=['GET'])
 def getActions():
@@ -330,6 +281,5 @@ def getActions():
         elif state == 'False' and actions_list:
             last_action = actions_list[-1]
             last_action['end'] = timestamp
-
 
     return jsonify(actions_list)

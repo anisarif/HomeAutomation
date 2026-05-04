@@ -10,10 +10,10 @@ const History = () => {
     const [last_items, setLast_items] = useState([]);
 
     useEffect(() => {
-        const res = actions.getHistory().then((res) => {
+        actions.getHistory().then((res) => {
             setHistory(res)
-        })
-    }, []);
+        });
+    }, [actions]);
 
     useEffect(() => {
         const last_items = history.slice(Math.max(history.length - 12, 0))
