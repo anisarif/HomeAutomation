@@ -13,6 +13,12 @@ RUN npm install
 # Copy frontend code
 COPY . .
 
+# Bake API/MQTT endpoints at build time (CRA inlines REACT_APP_* during build)
+ARG REACT_APP_BACKEND_URL
+ARG REACT_APP_MQTT_URL
+ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
+ENV REACT_APP_MQTT_URL=$REACT_APP_MQTT_URL
+
 # Build the application
 RUN npm run build
 

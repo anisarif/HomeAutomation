@@ -6,7 +6,7 @@ import Sensor from "./Weather/Sensor"
 const Dashboard = () => {
 
     return (
-        <div className="grid grid-cols-2 gap-4 m-8 mx-24">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 m-4 sm:m-8 mx-4 sm:mx-12 lg:mx-24">
             <Locks />
             <Lights />
             <Weather />
