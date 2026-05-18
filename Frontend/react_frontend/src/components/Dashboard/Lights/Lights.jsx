@@ -13,6 +13,8 @@ const Lights = () => {
         fetchData().catch(console.error);
     }, []);
 
+    if (lights.length === 0) return null;
+
     return (
         <div className="p-4 bg-slate-200 rounded-md">
             <h1 className="text-slate-700 font-medium text-center text-3xl mb-8">Lights</h1>
