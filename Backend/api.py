@@ -283,3 +283,23 @@ def getActions():
             last_action['end'] = timestamp
 
     return jsonify(actions_list)
+
+##################################
+################################## AUTO MODE ##################################
+##################################
+
+# In-memory auto-mode state per actuator ID. Defaults to True (enabled).
+# Resets to True on restart — safe default for presence-controlled lights.
+_auto_mode = {}  # {actuator_id: bool}, default True
+
+@bp.route("/auto-mode/<int:id>", methods=["GET"])
+def get_auto_mode(id):
+    return jsonify({"id": id, "enabled": _auto_mode.get(id, True)})
+
+@bp.route("/auto-mode/<int:id>", methods=["POST"])
+def set_auto_mode(id):
+    data = request.get_json()
+    if data is None or "enabled" not in data:
+        return jsonify({"error": "missing enabled field"}), 400
+    _auto_mode[id] = bool(data["enabled"])
+    return jsonify({"id": id, "enabled": _auto_mode[id]})
