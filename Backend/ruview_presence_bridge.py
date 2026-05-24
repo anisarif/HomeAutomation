@@ -20,7 +20,7 @@ IN_ROOM      = {"present_moving", "present_static"}
 # ── Auto-mode cache (refresh every 10s, not every frame) ──
 _auto_mode_value     = True
 _auto_mode_fetched   = 0.0
-AUTO_MODE_CACHE_SECS = 10
+AUTO_MODE_CACHE_SECS = 2
 
 def is_auto_mode_enabled() -> bool:
     global _auto_mode_value, _auto_mode_fetched
