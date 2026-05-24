@@ -11,6 +11,10 @@ const Lights = () => {
             setLights(actuators.filter(a => a.type === "Light"));
         };
         fetchData().catch(console.error);
+
+        // Poll every 3s so the switch reflects state changes made by the bridge
+        const interval = setInterval(() => fetchData().catch(console.error), 3000);
+        return () => clearInterval(interval);
     }, []);
 
     if (lights.length === 0) return null;
