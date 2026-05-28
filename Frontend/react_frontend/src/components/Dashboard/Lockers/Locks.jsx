@@ -1,20 +1,8 @@
 import Lock from "./Lock";
-import { getActuators } from "../../../utils/api";
-import { useState, useEffect } from 'react';
 
-const Locks = () => {
-    const [locks, setLocks] = useState([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const actuators = await getActuators();
-            setLocks(actuators.filter(a => a.type === "Lock"));
-        };
-        fetchData().catch(console.error);
-    }, []);
-
+const Locks = ({ actuators = [] }) => {
+    const locks = actuators.filter(a => a.type === "Lock");
     if (locks.length === 0) return null;
-
     return (
         <div className="p-4 bg-slate-200 rounded-md">
             <h1 className="text-slate-700 font-medium text-center text-3xl mb-8">Lockers</h1>

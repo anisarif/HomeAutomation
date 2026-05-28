@@ -233,6 +233,20 @@ def deleteactuator(id):
         db.session.commit()
     return f"actuator {id} deleted"
 
+@bp.route("/actuator/toggle/<int:id>", methods=['POST'])
+def toggle_actuator(id):
+    actuator = Actuators.query.filter_by(id=id).first()
+    if not actuator:
+        return "actuator not found", 404
+    data = request.get_json()
+    state = data['state']
+    actuator.state = 1 if state else 0
+    lock_action = LockActions(user_id=1, board_id=actuator.board_id, actuator_id=id, state=state)
+    db.session.add(lock_action)
+    db.session.commit()
+    mqtt.publish(str(id), "1" if state else "0")
+    return jsonify({"state": state})
+
 @bp.route("/act/<int:id>", methods=['POST'])
 def actionmqtt(id):
     Action(id)
