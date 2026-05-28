@@ -102,12 +102,11 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
             updateState: async ({ lockId, state }) => {
-                const response = await request(`api/actuator/updateState/${lockId}`, {
-                    method: 'PUT',
+                const response = await request(`api/actuator/toggle/${lockId}`, {
+                    method: 'POST',
                     body: JSON.stringify({ state })
                 });
-                if (!response.ok) throw new Error('Failed to update state');
-                await getActions().act({ lockId, state });
+                if (!response.ok) throw new Error('Failed to toggle actuator');
                 return true;
             },
 

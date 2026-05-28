@@ -124,6 +124,7 @@ void setupWifi() {
 void reconnect() {
     while (!client.connected()) {
         Serial.print("MQTT...");
+        client.setKeepAlive(60);
         if (client.connect("rgb_strip")) {
             char topic[8];
             sprintf(topic, "%d", ACTUATOR_ID);
