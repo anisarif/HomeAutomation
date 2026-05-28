@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { setRGBColor, getRGBState } from '../../../utils/api';
 
 const EFFECTS = [
@@ -24,6 +24,7 @@ const RGBLight = ({ name, id }) => {
     const [intensity, setIntensity] = useState(100);
     const [effect,    setEffect]    = useState('solid');
     const [speed,     setSpeed]     = useState(5);
+    const debounceRef = useRef(null);
 
     useEffect(() => {
         getRGBState(id).then(state => {
@@ -39,40 +40,40 @@ const RGBLight = ({ name, id }) => {
         if (!isOn) { setRGBColor(id, 0, 0, 0, 'solid', spd); return; }
         const { r, g, b } = hexToRgb(hex);
         const f = pct / 100;
-        setRGBColor(id,
-            Math.round(r * f),
-            Math.round(g * f),
-            Math.round(b * f),
-            eff, spd
-        );
+        setRGBColor(id, Math.round(r * f), Math.round(g * f), Math.round(b * f), eff, spd);
+    };
+
+    const sendDebounced = (isOn, hex, pct, eff, spd) => {
+        clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => send(isOn, hex, pct, eff, spd), 150);
     };
 
     const handleToggle = () => {
         const next = !on;
         setOn(next);
-        send(next, color, intensity, effect, speed);
+        send(next, color, intensity, effect, speed); // immediate — no debounce on toggle
     };
 
     const handleColor = (e) => {
         setColor(e.target.value);
-        if (on) send(true, e.target.value, intensity, effect, speed);
+        if (on) sendDebounced(true, e.target.value, intensity, effect, speed);
     };
 
     const handleIntensity = (e) => {
         const val = parseInt(e.target.value);
         setIntensity(val);
-        if (on) send(true, color, val, effect, speed);
+        if (on) sendDebounced(true, color, val, effect, speed);
     };
 
     const handleEffect = (e) => {
         setEffect(e.target.value);
-        if (on) send(true, color, intensity, e.target.value, speed);
+        if (on) send(true, color, intensity, e.target.value, speed); // immediate — effect change
     };
 
     const handleSpeed = (e) => {
         const val = parseInt(e.target.value);
         setSpeed(val);
-        if (on) send(true, color, intensity, effect, val);
+        if (on) sendDebounced(true, color, intensity, effect, val);
     };
 
     const hideColor = on && effect === 'colorCycle';
