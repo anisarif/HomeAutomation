@@ -16,7 +16,7 @@ const UpdateActuator = ({id, actuator, update, setShowModal }) => {
             return;
         }
         
-        if (!['Light', 'Lock', 'Sensor'].includes(type)) {
+        if (!['Light', 'Lock', 'Sensor', 'RGBLight'].includes(type)) {
             alert('Invalid type');
             return;
         }
@@ -69,6 +69,7 @@ const UpdateActuator = ({id, actuator, update, setShowModal }) => {
                         <option value="Light">Light</option>
                         <option value="Lock">Locker</option>
                         <option value="Sensor">Sensor</option>
+                        <option value="RGBLight">RGB Strip</option>
                     </select>
                     <button className='mt-10 bg-slate-300 text-slate-800 rounded-lg px-3 py-1' type="submit" onClick={handleClick} > update </button>
                 </div>
