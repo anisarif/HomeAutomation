@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from .models import db
+from sqlalchemy import text
 from flask_cors import CORS
 from .mqtt_client import mqtt, cache, init_extensions
 from flask_socketio import SocketIO
@@ -32,6 +33,12 @@ def create_app(test_config=None):
 
     with app.app_context():
         db.create_all()
+        # Safe to run on every startup — IF NOT EXISTS is a no-op after first run
+        try:
+            with db.engine.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
+                conn.execute(text("ALTER TYPE actuator_type ADD VALUE IF NOT EXISTS 'RGBLight'"))
+        except Exception as e:
+            app.logger.warning(f"RGB enum migration skipped: {e}")
 
     CORS(app, resources={
         r"/*": {

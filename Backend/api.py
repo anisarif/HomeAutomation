@@ -1,7 +1,8 @@
+import json
 from flask import request, Blueprint, jsonify
 from .models import db, UserHome, Boards, Actuators, LockActions
 from .utils import Action
-from .mqtt_client import cache
+from .mqtt_client import cache, mqtt
 from marshmallow import Schema, fields, validate, ValidationError
 
 bp = Blueprint('api', __name__, url_prefix='/api')
@@ -236,6 +237,27 @@ def deleteactuator(id):
 def actionmqtt(id):
     Action(id)
     return f"Action triggered for ID: {id}"
+
+@bp.route("/rgb/<int:id>", methods=['POST'])
+def set_rgb(id):
+    data = request.get_json()
+    r = max(0, min(255, int(data.get('r', 0))))
+    g = max(0, min(255, int(data.get('g', 0))))
+    b = max(0, min(255, int(data.get('b', 0))))
+    cache.set(f'rgb_{id}', {'r': r, 'g': g, 'b': b})
+    # ESP8266 analogWrite range is 0-1023; frontend sends standard 0-255
+    payload = json.dumps({
+        "r": round(r * 1023 / 255),
+        "g": round(g * 1023 / 255),
+        "b": round(b * 1023 / 255),
+    })
+    mqtt.publish(str(id), payload)
+    return jsonify({"status": "ok"})
+
+@bp.route("/rgb/<int:id>", methods=['GET'])
+def get_rgb(id):
+    state = cache.get(f'rgb_{id}') or {'r': 0, 'g': 0, 'b': 0}
+    return jsonify(state)
 
 @bp.route("/sensor/temp_hum/", methods=['GET'])
 def sensor_temp_hum():
