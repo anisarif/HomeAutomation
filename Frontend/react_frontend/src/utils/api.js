@@ -17,3 +17,17 @@ export const getActuators = () => {
         .then(res => res.json())
         .catch(error => { console.error('getActuators failed:', error); return []; })
 }
+
+export const setRGBColor = (id, r, g, b) => {
+    return fetch(backendurl + `api/rgb/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ r, g, b }),
+    }).catch(error => { console.error('setRGBColor failed:', error); })
+}
+
+export const getRGBState = (id) => {
+    return fetch(backendurl + `api/rgb/${id}`)
+        .then(res => res.json())
+        .catch(error => { console.error('getRGBState failed:', error); return { r: 0, g: 0, b: 0 }; })
+}

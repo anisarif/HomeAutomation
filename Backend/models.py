@@ -38,7 +38,7 @@ class Actuators(db.Model):
     pin = db.Column(db.Integer, nullable=False)
     board_id = db.Column(db.Integer, db.ForeignKey(
         'boards.id'), nullable=False)
-    type = db.Column(Enum("Light", "Lock", "Sensor",
+    type = db.Column(Enum("Light", "Lock", "Sensor", "RGBLight",
                      name="actuator_type"), nullable=False)
     state = db.Column(db.Boolean, index=True, nullable=False, default=False)
 
