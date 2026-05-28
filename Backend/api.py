@@ -241,12 +241,15 @@ def actionmqtt(id):
 @bp.route("/rgb/<int:id>", methods=['POST'])
 def set_rgb(id):
     data = request.get_json()
-    r = max(0, min(255, int(data.get('r', 0))))
-    g = max(0, min(255, int(data.get('g', 0))))
-    b = max(0, min(255, int(data.get('b', 0))))
-    cache.set(f'rgb_{id}', {'r': r, 'g': g, 'b': b})
-    # ESP8266 analogWrite range is 0-1023; frontend sends standard 0-255
+    r      = max(0, min(255, int(data.get('r', 0))))
+    g      = max(0, min(255, int(data.get('g', 0))))
+    b      = max(0, min(255, int(data.get('b', 0))))
+    effect = data.get('effect', 'solid')
+    speed  = max(1, min(10, int(data.get('speed', 5))))
+    cache.set(f'rgb_{id}', {'r': r, 'g': g, 'b': b, 'effect': effect, 'speed': speed})
     payload = json.dumps({
+        "effect": effect,
+        "speed":  speed,
         "r": round(r * 1023 / 255),
         "g": round(g * 1023 / 255),
         "b": round(b * 1023 / 255),

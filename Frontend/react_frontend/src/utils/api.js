@@ -18,11 +18,11 @@ export const getActuators = () => {
         .catch(error => { console.error('getActuators failed:', error); return []; })
 }
 
-export const setRGBColor = (id, r, g, b) => {
+export const setRGBColor = (id, r, g, b, effect = 'solid', speed = 5) => {
     return fetch(backendurl + `api/rgb/${id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ r, g, b }),
+        body: JSON.stringify({ r, g, b, effect, speed }),
     }).catch(error => { console.error('setRGBColor failed:', error); })
 }
 
