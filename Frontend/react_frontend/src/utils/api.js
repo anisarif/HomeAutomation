@@ -31,3 +31,21 @@ export const getRGBState = (id) => {
         .then(res => res.json())
         .catch(error => { console.error('getRGBState failed:', error); return { r: 0, g: 0, b: 0 }; })
 }
+
+export const getACUnits = () => {
+    return fetch(backendurl + 'api/ac/getall')
+        .then(res => res.json())
+        .catch(error => { console.error('getACUnits failed:', error); return []; })
+}
+
+export const getACCommands = (unitId) => {
+    return fetch(backendurl + `api/ac/${unitId}/commands`)
+        .then(res => res.json())
+        .catch(error => { console.error('getACCommands failed:', error); return []; })
+}
+
+export const getCaptured = (unitId) => {
+    return fetch(backendurl + `api/ac/${unitId}/captured`)
+        .then(res => res.json())
+        .catch(error => { console.error('getCaptured failed:', error); return null; })
+}

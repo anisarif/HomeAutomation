@@ -135,6 +135,14 @@ def handle_mqtt_message(client, userdata, message):
     if message.topic == 'h':
         cache.set("room_humidity", message.payload.decode('utf-8'))
 
+    # AC IR learn: the ESP publishes a decoded code on ac/<topic_key>/captured.
+    # Cache it per unit so GET /api/ac/<id>/captured can poll for it.
+    if message.topic.startswith('ac/') and message.topic.endswith('/captured'):
+        parts = message.topic.split('/')
+        if len(parts) == 3:
+            topic_key = parts[1]
+            cache.set(f"ac_captured_{topic_key}", message.payload.decode('utf-8'))
+
     print('Received message on topic: {topic} with payload: {payload}'.format(**data))
     socketio.emit('mqtt_message', data=data)
 

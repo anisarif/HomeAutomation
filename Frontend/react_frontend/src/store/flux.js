@@ -136,6 +136,57 @@ const getState = ({ getStore, getActions, setStore }) => {
                 return await response.json();
             },
 
+            sendACState: async (unitId, state) => {
+                const response = await request(`api/ac/${unitId}/state`, {
+                    method: 'POST',
+                    body: JSON.stringify(state)
+                });
+                if (!response.ok) throw new Error('Failed to set AC state');
+                return await response.json();
+            },
+
+            sendACCommand: async (unitId, commandId) => {
+                const response = await request(`api/ac/${unitId}/send/${commandId}`, {
+                    method: 'POST'
+                });
+                if (!response.ok) throw new Error('Failed to send AC command');
+                return true;
+            },
+
+            startLearn: async (unitId, ttl = 30) => {
+                const response = await request(`api/ac/${unitId}/learn`, {
+                    method: 'POST',
+                    body: JSON.stringify({ enable: true, ttl })
+                });
+                if (!response.ok) throw new Error('Failed to start learn mode');
+                return true;
+            },
+
+            stopLearn: async (unitId) => {
+                const response = await request(`api/ac/${unitId}/learn`, {
+                    method: 'POST',
+                    body: JSON.stringify({ enable: false })
+                });
+                if (!response.ok) throw new Error('Failed to stop learn mode');
+                return true;
+            },
+
+            saveCapturedCommand: async (unitId, name, payload) => {
+                const protocol = (payload && payload.protocol) ? payload.protocol : 'RAW';
+                const response = await request(`api/ac/${unitId}/commands`, {
+                    method: 'POST',
+                    body: JSON.stringify({ name, payload, protocol })
+                });
+                if (!response.ok) throw new Error('Failed to save captured command');
+                return await response.json();
+            },
+
+            deleteACCommand: async (commandId) => {
+                const response = await request(`api/ac/commands/${commandId}`, { method: 'DELETE' });
+                if (!response.ok) throw new Error('Failed to delete AC command');
+                return true;
+            },
+
             getHistory: async () => {
                 try {
                     const response = await request("api/getHistory", { method: 'GET' });

@@ -1,7 +1,7 @@
 import json
 from flask import request, Blueprint, jsonify
-from .models import db, UserHome, Boards, Actuators, LockActions
-from .utils import Action
+from .models import db, UserHome, Boards, Actuators, LockActions, ACUnit, IRCommand
+from .utils import Action, send_ac_state, send_ac_raw, set_learn
 from .mqtt_client import cache, mqtt
 from marshmallow import Schema, fields, validate, ValidationError
 
@@ -342,3 +342,197 @@ def set_auto_mode(id):
         return jsonify({"error": "missing enabled field"}), 400
     _auto_mode[id] = bool(data["enabled"])
     return jsonify({"id": id, "enabled": _auto_mode[id]})
+
+##################################
+################################## AC (IR) ##################################
+##################################
+
+class ACStateSchema(Schema):
+    power = fields.Boolean(required=True)
+    mode = fields.String(required=True, validate=validate.OneOf(
+        ["cool", "heat", "dry", "fan", "auto"]))
+    temp = fields.Integer(required=True, validate=validate.Range(min=16, max=30))
+    fan = fields.String(required=True, validate=validate.OneOf(
+        ["auto", "low", "med", "high"]))
+
+
+def _ac_dict(ac):
+    return {
+        "id": ac.id,
+        "name": ac.name,
+        "topic_key": ac.topic_key,
+        "board_id": ac.board_id,
+        "protocol": ac.protocol,
+        "power": ac.power,
+        "mode": ac.mode,
+        "temp": ac.temp,
+        "fan": ac.fan,
+    }
+
+
+def _command_dict(cmd):
+    return {
+        "id": cmd.id,
+        "ac_id": cmd.ac_id,
+        "name": cmd.name,
+        "protocol": cmd.protocol,
+        "payload": cmd.payload,
+        "category": cmd.category,
+    }
+
+
+@bp.route("/ac/add", methods=['POST'])
+def add_ac():
+    data = request.get_json()
+    ac = ACUnit(
+        name=data['name'],
+        topic_key=data['topic_key'],
+        board_id=data.get('board_id'),
+        protocol=data.get('protocol'),
+    )
+    db.session.add(ac)
+    db.session.commit()
+    return jsonify(_ac_dict(ac)), 201
+
+
+@bp.route("/ac/getall")
+def get_acs():
+    return jsonify([_ac_dict(ac) for ac in ACUnit.query.all()])
+
+
+@bp.route("/ac/get/<int:id>")
+def get_ac(id):
+    ac = ACUnit.query.filter_by(id=id).first()
+    if not ac:
+        return jsonify({"error": "AC not found"}), 404
+    return jsonify(_ac_dict(ac))
+
+
+@bp.route("/ac/update/<int:id>", methods=['PUT'])
+def update_ac(id):
+    ac = ACUnit.query.filter_by(id=id).first()
+    if not ac:
+        return jsonify({"error": "AC not found"}), 404
+    data = request.get_json()
+    ac.name = data.get('name', ac.name)
+    ac.topic_key = data.get('topic_key', ac.topic_key)
+    ac.board_id = data.get('board_id', ac.board_id)
+    ac.protocol = data.get('protocol', ac.protocol)
+    db.session.commit()
+    return jsonify(_ac_dict(ac))
+
+
+@bp.route("/ac/delete/<int:id>", methods=['DELETE'])
+def delete_ac(id):
+    ac = ACUnit.query.filter_by(id=id).first()
+    if ac:
+        db.session.delete(ac)
+        db.session.commit()
+    return f"AC {id} deleted"
+
+
+@bp.route("/ac/<int:unit_id>/state", methods=['POST'])
+def set_ac_state(unit_id):
+    ac = ACUnit.query.filter_by(id=unit_id).first()
+    if not ac:
+        return jsonify({"error": "AC not found"}), 404
+    try:
+        state = ACStateSchema().load(request.get_json())
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+
+    ac.power = state['power']
+    ac.mode = state['mode']
+    ac.temp = state['temp']
+    ac.fan = state['fan']
+    db.session.commit()
+
+    send_ac_state(ac.topic_key, {"protocol": ac.protocol, **state})
+    return jsonify(_ac_dict(ac))
+
+
+@bp.route("/ac/<int:unit_id>/commands", methods=['GET'])
+def get_ac_commands(unit_id):
+    ac = ACUnit.query.filter_by(id=unit_id).first()
+    if not ac:
+        return jsonify({"error": "AC not found"}), 404
+    cmds = IRCommand.query.filter_by(ac_id=unit_id).all()
+    return jsonify([_command_dict(c) for c in cmds])
+
+
+@bp.route("/ac/<int:unit_id>/commands", methods=['POST'])
+def add_ac_command(unit_id):
+    """Save a learned code as an IRCommand.
+
+    Body: {"name": "...", "payload": {...}, "category": "...", "protocol": "..."}.
+    `payload` is the captured JSON object (raw array or protocol value+bits).
+    """
+    ac = ACUnit.query.filter_by(id=unit_id).first()
+    if not ac:
+        return jsonify({"error": "AC not found"}), 404
+    data = request.get_json()
+    payload = data['payload']
+    if not isinstance(payload, str):
+        payload = json.dumps(payload)
+    cmd = IRCommand(
+        ac_id=unit_id,
+        name=data['name'],
+        protocol=data.get('protocol', 'RAW'),
+        payload=payload,
+        category=data.get('category'),
+    )
+    db.session.add(cmd)
+    db.session.commit()
+    return jsonify(_command_dict(cmd)), 201
+
+
+@bp.route("/ac/commands/<int:cmd_id>", methods=['DELETE'])
+def delete_ac_command(cmd_id):
+    cmd = IRCommand.query.filter_by(id=cmd_id).first()
+    if cmd:
+        db.session.delete(cmd)
+        db.session.commit()
+    return f"command {cmd_id} deleted"
+
+
+@bp.route("/ac/<int:unit_id>/send/<int:command_id>", methods=['POST'])
+def send_ac_command(unit_id, command_id):
+    ac = ACUnit.query.filter_by(id=unit_id).first()
+    cmd = IRCommand.query.filter_by(id=command_id, ac_id=unit_id).first()
+    if not ac or not cmd:
+        return jsonify({"error": "AC or command not found"}), 404
+    try:
+        payload = json.loads(cmd.payload)
+    except (json.JSONDecodeError, TypeError):
+        return jsonify({"error": "stored command payload is not valid JSON"}), 500
+    send_ac_raw(ac.topic_key, payload)
+    return f"command {command_id} sent to AC {unit_id}"
+
+
+@bp.route("/ac/<int:unit_id>/learn", methods=['POST'])
+def ac_learn(unit_id):
+    ac = ACUnit.query.filter_by(id=unit_id).first()
+    if not ac:
+        return jsonify({"error": "AC not found"}), 404
+    data = request.get_json() or {}
+    enable = data.get('enable', True)
+    # Clear any stale capture before (re)entering learn mode, so a poll can't
+    # pick up a previous session's code.
+    if enable:
+        cache.set(f"ac_captured_{ac.topic_key}", None)
+    set_learn(ac.topic_key, enable, ttl=data.get('ttl', 30))
+    return jsonify({"learn": bool(enable), "unit_id": unit_id})
+
+
+@bp.route("/ac/<int:unit_id>/captured", methods=['GET'])
+def ac_captured(unit_id):
+    ac = ACUnit.query.filter_by(id=unit_id).first()
+    if not ac:
+        return jsonify({"error": "AC not found"}), 404
+    raw = cache.get(f"ac_captured_{ac.topic_key}")
+    if not raw:
+        return jsonify(None)
+    try:
+        return jsonify(json.loads(raw))
+    except (json.JSONDecodeError, TypeError):
+        return jsonify(None)

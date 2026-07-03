@@ -5,6 +5,7 @@ import Lights from "./Lights/Lights"
 import RGBLights from "./RGBLights/RGBLights"
 import Weather from "./Weather/Weather"
 import Sensor from "./Weather/Sensor"
+import AC from "./AC/AC"
 
 const Dashboard = () => {
     const [actuators, setActuators] = useState([]);
@@ -23,6 +24,7 @@ const Dashboard = () => {
             <RGBLights actuators={actuators} />
             <Weather />
             <Sensor />
+            <AC />
         </div>
     )
 }
