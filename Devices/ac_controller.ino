@@ -35,9 +35,10 @@
 #include <IRutils.h>
 
 // ---------------------------------------------------------------- config ---
-const char* ssid        = "SSID";
-const char* password    = "password";
-const char* mqtt_server = "BrokerIp";
+const char* ssid        = "HIKVISION_0620";
+const char* password    = "arifwifi";
+const char* mqtt_server = "192.168.0.112";
+const int   mqtt_port   = 1885;   // Pi Mosquitto (host-mapped port)
 
 // Must match ACUnit.topic_key in the backend.
 const char* TOPIC_KEY   = "ac_controller";
@@ -266,7 +267,7 @@ void setup() {
   irrecv.setUnknownThreshold(kMinUnknownSize);
   irrecv.enableIRIn();
 
-  client.setServer(mqtt_server, 1883);
+  client.setServer(mqtt_server, mqtt_port);
   client.setCallback(callback);
   client.setBufferSize(kMqttBufferSize);  // CRITICAL: default 256B drops raw IR
 }
