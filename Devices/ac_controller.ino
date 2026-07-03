@@ -43,9 +43,10 @@ const int   mqtt_port   = 1885;   // Pi Mosquitto (host-mapped port)
 // Must match ACUnit.topic_key in the backend.
 const char* TOPIC_KEY   = "ac_controller";
 
-// IR hardware pins (NodeMCU). RECV_PIN = receiver module, SEND_PIN = IR LED.
-const uint16_t kRecvPin = D5;   // GPIO14
-const uint16_t kSendPin = D2;   // GPIO4
+// IR hardware pins. RECV_PIN = receiver module, SEND_PIN = IR LED.
+// Raw GPIO numbers (not D5/D2 aliases) so it compiles on "Generic ESP8266 Module" too.
+const uint16_t kRecvPin = 14;   // D5 / GPIO14 -> IR receiver
+const uint16_t kSendPin = 4;    // D2 / GPIO4  -> IR transmitter LED
 
 // Raw IR arrays are large; PubSubClient's default 256-byte buffer silently
 // drops them in BOTH directions. This must be big enough for the JSON payload.
