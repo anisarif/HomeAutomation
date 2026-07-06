@@ -19,6 +19,12 @@ ARG REACT_APP_MQTT_URL
 ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
 ENV REACT_APP_MQTT_URL=$REACT_APP_MQTT_URL
 
+# Keep the production build light enough for a Raspberry Pi:
+# - GENERATE_SOURCEMAP=false skips sourcemaps (the biggest memory/time hog)
+# - cap Node's heap so the build fails fast instead of thrashing swap
+ENV GENERATE_SOURCEMAP=false
+ENV NODE_OPTIONS=--max-old-space-size=1536
+
 # Build the application
 RUN npm run build
 
