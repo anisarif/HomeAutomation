@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { Sun } from 'lucide-react';
 import { setRGBColor, getRGBState } from '../../../utils/api';
 
 const EFFECTS = [
@@ -51,7 +52,7 @@ const RGBLight = ({ name, id }) => {
     const handleToggle = () => {
         const next = !on;
         setOn(next);
-        send(next, color, intensity, effect, speed); // immediate — no debounce on toggle
+        send(next, color, intensity, effect, speed);
     };
 
     const handleColor = (e) => {
@@ -67,7 +68,7 @@ const RGBLight = ({ name, id }) => {
 
     const handleEffect = (e) => {
         setEffect(e.target.value);
-        if (on) send(true, color, intensity, e.target.value, speed); // immediate — effect change
+        if (on) send(true, color, intensity, e.target.value, speed);
     };
 
     const handleSpeed = (e) => {
@@ -79,42 +80,47 @@ const RGBLight = ({ name, id }) => {
     const hideColor = on && effect === 'colorCycle';
 
     return (
-        <div className="flex flex-col gap-3 mx-4 py-3 border-b border-slate-300 last:border-0">
+        <div className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0">
             {/* Name + toggle */}
-            <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-medium">{name}</h2>
+            <div className="flex items-center justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-2.5">
+                    <span
+                        className="h-4 w-4 shrink-0 rounded-full ring-2 ring-border"
+                        style={{ backgroundColor: on && !hideColor ? color : '#475569' }}
+                    />
+                    <h3 className="truncate text-base font-medium text-foreground">{name}</h3>
+                </div>
                 <button
+                    type="button"
                     onClick={handleToggle}
-                    className={`w-16 py-1 rounded-md font-bold text-white border-none cursor-pointer ${on ? 'bg-emerald-600' : 'bg-red-600'}`}
+                    aria-pressed={on}
+                    className={`w-16 rounded-lg py-1.5 text-sm font-bold text-white transition-all active:scale-95 ${on ? 'bg-accent shadow-glow-accent' : 'bg-danger/90'}`}
                 >
                     {on ? 'ON' : 'OFF'}
                 </button>
             </div>
 
             {/* Color + intensity */}
-            <div className="flex items-center gap-4">
-                <div
-                    className="w-8 h-8 rounded-full border-2 border-slate-400 flex-shrink-0"
-                    style={{ backgroundColor: on && !hideColor ? color : '#9ca3af' }}
-                />
+            <div className="flex items-center gap-3">
                 {!hideColor && (
                     <input
                         type="color"
                         value={color}
                         onChange={handleColor}
                         disabled={!on}
-                        className="w-10 h-8 cursor-pointer rounded border border-slate-300 disabled:opacity-40 disabled:cursor-not-allowed"
+                        aria-label="Pick color"
+                        className="h-9 w-10 cursor-pointer rounded-lg border border-border bg-surface2 disabled:cursor-not-allowed disabled:opacity-40"
                     />
                 )}
-                <div className="flex items-center gap-2 flex-1">
-                    <span className="text-sm text-slate-500">☀</span>
+                <div className="flex flex-1 items-center gap-2">
+                    <Sun size={16} className="shrink-0 text-muted" aria-hidden="true" />
                     <input
                         type="range" min="1" max="100" value={intensity}
                         onChange={handleIntensity}
                         disabled={!on || hideColor}
-                        className="flex-1 disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="h-1.5 flex-1 cursor-pointer accent-accent disabled:cursor-not-allowed disabled:opacity-40"
                     />
-                    <span className="text-sm text-slate-600 w-9 text-right">{intensity}%</span>
+                    <span className="w-9 text-right text-sm tabular-nums text-muted">{intensity}%</span>
                 </div>
             </div>
 
@@ -124,22 +130,22 @@ const RGBLight = ({ name, id }) => {
                     value={effect}
                     onChange={handleEffect}
                     disabled={!on}
-                    className="text-slate-700 rounded-md px-2 py-1 bg-white border border-slate-300 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="rounded-lg border border-border bg-surface2 px-2 py-1.5 text-sm text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                 >
                     {EFFECTS.map(e => (
                         <option key={e.value} value={e.value}>{e.label}</option>
                     ))}
                 </select>
                 {effect !== 'solid' && (
-                    <div className="flex items-center gap-2 flex-1">
-                        <span className="text-sm text-slate-500 whitespace-nowrap">Speed</span>
+                    <div className="flex flex-1 items-center gap-2">
+                        <span className="whitespace-nowrap text-sm text-muted">Speed</span>
                         <input
                             type="range" min="1" max="10" value={speed}
                             onChange={handleSpeed}
                             disabled={!on}
-                            className="flex-1 disabled:opacity-40 disabled:cursor-not-allowed"
+                            className="h-1.5 flex-1 cursor-pointer accent-accent disabled:cursor-not-allowed disabled:opacity-40"
                         />
-                        <span className="text-sm text-slate-600 w-4 text-right">{speed}</span>
+                        <span className="w-4 text-right text-sm tabular-nums text-muted">{speed}</span>
                     </div>
                 )}
             </div>

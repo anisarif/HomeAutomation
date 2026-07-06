@@ -1,20 +1,16 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Context } from "../../../store/appContext";
-import thermometer from "../../../images/thermometer.png";
-import wind from "../../../images/wind.svg";
-const Weather = () => {
+import { CloudSun, Thermometer, Wind } from "lucide-react";
+import Card from "../../ui/Card";
 
-  const [currentWeather, setCurrentWeather] = useState([])
-  const [temperature, setTemperature] = useState('')
-  const [windspeed, setWindspeed] = useState('')
-  const { actions } = useContext(Context)
+const Weather = ({ index = 0 }) => {
+  const [currentWeather, setCurrentWeather] = useState([]);
+  const [temperature, setTemperature] = useState('');
+  const [windspeed, setWindspeed] = useState('');
+  const { actions } = useContext(Context);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const current = await actions.getCurrentWeather();
-      setCurrentWeather(current);
-    };
-    fetchData().catch(console.error);
+    actions.getCurrentWeather().then(setCurrentWeather).catch(console.error);
   }, [actions]);
 
   useEffect(() => {
@@ -27,24 +23,26 @@ const Weather = () => {
   if (!currentWeather || !currentWeather.current_weather) return null;
 
   return (
-    <div className="p-4 bg-slate-200 rounded-md">
-      <h1 className=" text-slate-700 font-medium text-center text-3xl mb-8">External Weather</h1>
-      <div className='grid grid-cols-2 gap-4'>
-
-        <h1 className=' font-medium text-6xl m-4 mb-8'>Tunis</h1>
-        <div></div>
-        <div className='flex items-center mb-4'>
-          <img className="h-12 w-12" src={thermometer} alt="thermometer" />
-          <h1 className='text-4xl '>{temperature}° C</h1>
+    <Card title="External Weather" icon={CloudSun} index={index}>
+      <p className="mb-5 text-3xl font-bold tracking-tight text-foreground">Tunis</p>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="glass-inset flex items-center gap-3 p-4">
+          <Thermometer size={26} className="text-accent" aria-hidden="true" />
+          <div>
+            <div className="text-2xl font-semibold tabular-nums">{temperature}°</div>
+            <div className="text-xs text-muted">Temp</div>
+          </div>
         </div>
-        <div className='flex items-center mb-4'>
-          <img className="h-12 w-12" src={wind} alt="wind" />
-          <h1 className='text-4xl '> {windspeed} Km/h</h1>
-
+        <div className="glass-inset flex items-center gap-3 p-4">
+          <Wind size={26} className="text-sky-400" aria-hidden="true" />
+          <div>
+            <div className="text-2xl font-semibold tabular-nums">{windspeed}</div>
+            <div className="text-xs text-muted">km/h</div>
+          </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
-}
+};
 
 export default Weather;

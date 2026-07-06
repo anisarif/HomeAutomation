@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Lightbulb, Wifi } from "lucide-react";
 import ButtonSwitchState from "../ButtonSwitchState";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000/";
@@ -32,31 +33,35 @@ const Light = (props) => {
     };
 
     return (
-        <div className="flex flex-col gap-2 mx-4 mb-4">
-            {/* Name + ON/OFF switch */}
-            <div className="flex justify-between items-center">
-                <h2 className="text-center text-2xl font-medium">{props.name}</h2>
+        <div className="flex flex-col gap-2 py-3 first:pt-0 last:pb-0">
+            <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5 min-w-0">
+                    <Lightbulb size={18} className={props.state ? "text-accent" : "text-muted"} aria-hidden="true" />
+                    <h3 className="truncate text-base font-medium text-foreground">{props.name}</h3>
+                </div>
                 <ButtonSwitchState lockId={props.id} state={props.state} />
             </div>
 
-            {/* Auto-mode toggle */}
             {!loadingAuto && (
-                <div className="flex items-center justify-end gap-2">
-                    <span className="text-sm text-slate-500">WiFi auto</span>
-                    <button
-                        onClick={toggleAutoMode}
-                        title={autoMode ? "Auto mode ON — WiFi presence controls this light" : "Manual mode — you control this light"}
-                        className={`relative inline-flex h-5 w-10 items-center rounded-full transition-colors duration-200 focus:outline-none ${
-                            autoMode ? "bg-emerald-500" : "bg-slate-300"
+                <button
+                    onClick={toggleAutoMode}
+                    title={autoMode ? "Auto mode ON — WiFi presence controls this light" : "Manual mode — you control this light"}
+                    className="flex items-center justify-end gap-2 self-end text-xs text-muted transition-colors hover:text-foreground"
+                >
+                    <Wifi size={13} aria-hidden="true" />
+                    <span>Auto</span>
+                    <span
+                        className={`relative inline-flex h-4 w-8 items-center rounded-full transition-colors duration-200 ${
+                            autoMode ? "bg-accent" : "bg-surface2"
                         }`}
                     >
                         <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 ${
-                                autoMode ? "translate-x-5" : "translate-x-1"
+                            className={`inline-block h-3 w-3 transform rounded-full bg-white shadow transition-transform duration-200 ${
+                                autoMode ? "translate-x-4" : "translate-x-1"
                             }`}
                         />
-                    </button>
-                </div>
+                    </span>
+                </button>
             )}
         </div>
     );

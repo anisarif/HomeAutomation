@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import { X } from "lucide-react";
 import { Context } from "../../../store/appContext";
 
 // A single learned IR code: tap to replay, small × to delete.
@@ -30,16 +31,18 @@ const CommandButton = ({ unitId, command, onDeleted }) => {
     return (
         <div className="relative">
             <button
+                type="button"
                 disabled={busy}
                 onClick={send}
-                className="w-full px-3 py-2 bg-sky-600 text-white font-medium rounded-md truncate"
+                className="w-full truncate rounded-lg border border-border bg-surface2 px-3 py-2 text-sm font-medium text-foreground transition-all hover:border-accent/50 hover:text-accent active:scale-95 disabled:opacity-60"
                 title={command.name}
             >{command.name}</button>
             <button
+                type="button"
                 onClick={remove}
-                className="absolute -top-2 -right-2 w-5 h-5 bg-slate-700 text-white text-xs rounded-full leading-none"
-                title="Delete"
-            >×</button>
+                aria-label={`Delete ${command.name}`}
+                className="absolute -right-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full bg-danger text-white shadow transition-transform hover:scale-110"
+            ><X size={12} /></button>
         </div>
     );
 };

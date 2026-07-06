@@ -76,26 +76,29 @@ const LearnFlow = ({ unitId, onSaved }) => {
     };
 
     return (
-        <div className="mt-4 pt-4 border-t border-slate-300">
+        <div className="mt-4 border-t border-border/50 pt-4">
             {phase === "idle" && (
-                <button onClick={startLearn}
-                    className="px-4 py-2 bg-indigo-600 text-white font-medium rounded-md">
+                <button type="button" onClick={startLearn}
+                    className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-accent-soft active:scale-95">
                     Learn a button
                 </button>
             )}
 
             {phase === "learning" && (
                 <div className="flex items-center gap-3">
-                    <span className="animate-pulse text-indigo-700 font-medium">Listening…</span>
-                    <button onClick={cancel}
-                        className="px-3 py-1 bg-slate-500 text-white rounded-md">Cancel</button>
+                    <span className="flex items-center gap-2 font-medium text-accent">
+                        <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-accent shadow-glow-accent" />
+                        Listening…
+                    </span>
+                    <button type="button" onClick={cancel}
+                        className="rounded-lg bg-surface2 px-3 py-1.5 text-sm text-foreground transition-colors hover:bg-border">Cancel</button>
                 </div>
             )}
 
             {phase === "captured" && (
                 <div className="flex flex-col gap-2">
-                    <span className="text-slate-700">
-                        Captured <b>{captured.protocol}</b>
+                    <span className="text-sm text-muted">
+                        Captured <b className="text-foreground">{captured.protocol}</b>
                         {captured.bits ? ` (${captured.bits} bits)` : ""}. Name it:
                     </span>
                     <div className="flex gap-2">
@@ -103,17 +106,17 @@ const LearnFlow = ({ unitId, onSaved }) => {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             placeholder="e.g. Power"
-                            className="flex-1 rounded-md px-2 py-1 border border-slate-300"
+                            className="flex-1 rounded-lg border border-border bg-surface2 px-3 py-1.5 text-sm text-foreground placeholder:text-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
                         />
-                        <button onClick={save}
-                            className="px-3 py-1 bg-emerald-600 text-white rounded-md">Save</button>
-                        <button onClick={cancel}
-                            className="px-3 py-1 bg-slate-500 text-white rounded-md">Cancel</button>
+                        <button type="button" onClick={save}
+                            className="rounded-lg bg-accent px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-accent-soft">Save</button>
+                        <button type="button" onClick={cancel}
+                            className="rounded-lg bg-surface2 px-3 py-1.5 text-sm text-foreground transition-colors hover:bg-border">Cancel</button>
                     </div>
                 </div>
             )}
 
-            {message && <p className="mt-2 text-sm text-slate-600">{message}</p>}
+            {message && <p className="mt-2 text-sm text-muted">{message}</p>}
         </div>
     );
 };

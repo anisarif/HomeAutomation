@@ -41,7 +41,7 @@ const AdminPanel = () => {
 
 
    return (
-      <div className=" grid grid-col-2 gap-4 m-8 ">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-4 py-8 md:grid-cols-2 md:px-8 lg:px-12">
          <div className="">
             <UsersBoard userCount={userCount} addUsersCount={addUsersCount} deleteUsersCount={deleteUsersCount} setShowModal={setShowModal} setEdit={setEdit} setShowAddModal={setShowAddModal} setAdd={setAdd} />
          </div>

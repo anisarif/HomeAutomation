@@ -16,7 +16,7 @@ const Home = () => {
 
     return (
         <ErrorBoundary>
-            <div className="bg-slate-600 h-full min-h-screen pb-20">
+            <div className="min-h-[100dvh] pb-24">
                 <Navbar handleClick={handleToggle} />
                 {toggle ? (
                     <MemoizedAdminPanel />

@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
+import { Snowflake } from "lucide-react";
 import { getACUnits, getACCommands } from "../../../utils/api";
+import Card from "../../ui/Card";
 import ACControls from "./ACControls";
 import CommandButton from "./CommandButton";
 import LearnFlow from "./LearnFlow";
@@ -21,12 +23,12 @@ const ACUnitCard = ({ unit }) => {
 
     return (
         <div className="mb-6 last:mb-0">
-            <h2 className="text-2xl font-semibold mb-4">{unit.name}</h2>
+            <h3 className="mb-4 text-base font-semibold text-foreground">{unit.name}</h3>
 
             {hasProtocol(unit) && <ACControls unit={unit} />}
 
             {commands.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
                     {commands.map((cmd) => (
                         <CommandButton
                             key={cmd.id}
@@ -43,26 +45,23 @@ const ACUnitCard = ({ unit }) => {
     );
 };
 
-const AC = () => {
+const AC = ({ index = 0 }) => {
     const [units, setUnits] = useState([]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            const acs = await getACUnits();
-            setUnits(Array.isArray(acs) ? acs : []);
-        };
-        fetchData().catch(console.error);
+        getACUnits()
+            .then((acs) => setUnits(Array.isArray(acs) ? acs : []))
+            .catch(console.error);
     }, []);
 
     if (units.length === 0) return null;
 
     return (
-        <div className="p-4 bg-slate-200 rounded-md">
-            <h1 className="text-slate-700 font-medium text-center text-3xl mb-8">Air Conditioning</h1>
+        <Card title="Air Conditioning" icon={Snowflake} index={index}>
             {units.map((unit) => (
                 <ACUnitCard key={unit.id} unit={unit} />
             ))}
-        </div>
+        </Card>
     );
 };
 

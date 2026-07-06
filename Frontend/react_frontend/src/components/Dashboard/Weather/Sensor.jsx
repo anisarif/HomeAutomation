@@ -1,48 +1,57 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Context } from "../../../store/appContext";
-import thermometer from "../../../images/thermometer.png";
-import humidityimg from "../../../images/humidity.svg";
+import { Home, Thermometer, Droplets } from "lucide-react";
+import Card from "../../ui/Card";
+import { useMqtt } from "../../../hooks/useMqtt";
 
+const fmt = (v) => (v === '' || v === undefined || v === null || isNaN(v) ? '--' : Math.round(Number(v) * 10) / 10);
 
-const Sensor = () => {
-  const [roomWeather, setRoomWeather] = useState([])
-  const [temperature, setTemperature] = useState('')
-  const [humidity, setHumidity] = useState('')
-  const { actions } = useContext(Context)
+const Sensor = ({ index = 0 }) => {
+  const [temperature, setTemperature] = useState('');
+  const [humidity, setHumidity] = useState('');
+  const [hasData, setHasData] = useState(false);
+  const { actions } = useContext(Context);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const current = await actions.getRoomSensor();
-      setRoomWeather(current);
-    };
-    fetchData().catch(console.error);
+    actions.getRoomSensor()
+      .then((d) => {
+        if (d && d.temp !== undefined && d.temp !== null) {
+          setTemperature(d.temp);
+          setHumidity(d.hum);
+          setHasData(true);
+        }
+      })
+      .catch(console.error);
   }, [actions]);
 
-  useEffect(() => {
-    if (roomWeather) {
-      setTemperature(roomWeather.temp);
-      setHumidity(roomWeather.hum);
-    }
-  }, [roomWeather]);
+  // Live: the DHT11 board streams to topics `t` and `h` every ~10s.
+  useMqtt((topic, payload) => {
+    if (topic === 't') { setTemperature(payload); setHasData(true); }
+    else if (topic === 'h') { setHumidity(payload); setHasData(true); }
+  });
 
-  if (!roomWeather || roomWeather.temp === undefined) return null;
+  if (!hasData) return null;
 
   return (
-    <div className="p-4 bg-slate-200 rounded-md">
-      <h1 className=" text-slate-700 font-medium text-center text-3xl mb-8">Room</h1>
-      <div className='grid grid-cols-2 gap-4'>
-        <h1 className=' font-medium text-6xl m-4 mb-8 col-span-2'>Living Room</h1>
-        <div className='flex items-center mb-4'>
-          <img className=" h-12 w-12" src={thermometer} alt="thermometer" />
-          <h1 className='text-4xl '>{temperature}°C</h1>
+    <Card title="Living Room" icon={Home} index={index}>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="glass-inset flex items-center gap-3 p-4">
+          <Thermometer size={26} className="text-accent" aria-hidden="true" />
+          <div>
+            <div className="text-2xl font-semibold tabular-nums">{fmt(temperature)}°</div>
+            <div className="text-xs text-muted">Temp</div>
+          </div>
         </div>
-        <div className='flex items-center mb-4'>
-          <img className="h-12 w-12" src={humidityimg} alt="humidity" />
-          <h1 className='text-4xl '>{humidity} %</h1>
+        <div className="glass-inset flex items-center gap-3 p-4">
+          <Droplets size={26} className="text-sky-400" aria-hidden="true" />
+          <div>
+            <div className="text-2xl font-semibold tabular-nums">{fmt(humidity)}%</div>
+            <div className="text-xs text-muted">Humidity</div>
+          </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
-}
+};
 
 export default Sensor;

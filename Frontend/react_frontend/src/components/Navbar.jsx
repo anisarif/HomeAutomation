@@ -1,20 +1,28 @@
-import switchImage from "../images/switch.png";
+import { Home, SlidersHorizontal } from "lucide-react";
 
 const Navbar = ({ handleClick }) => {
     return (
-        <div className="sticky top-0 flex items-center justify-items-center justify-between h-15 bg-slate-700 rounded-b-xl">
-            <div className="object-center mx-40 place-items-center">
-                <h1 className="text-slate-300 font-medium">Home Automation</h1>
-            </div>
-            <div className="mx-20 justify-evenly">
+        <header className="sticky top-0 z-40 border-b border-border/60 bg-bg/70 backdrop-blur-md">
+            <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-8 lg:px-12">
+                <div className="flex items-center gap-2.5">
+                    <span className="grid h-9 w-9 place-items-center rounded-xl bg-accent/15 text-accent ring-1 ring-accent/20">
+                        <Home size={18} aria-hidden="true" />
+                    </span>
+                    <h1 className="text-base font-bold tracking-tight text-foreground sm:text-lg">
+                        Home<span className="text-accent">Automation</span>
+                    </h1>
+                </div>
                 <button
+                    type="button"
                     onClick={handleClick}
-                    className="rounded-lg px-3 py-2 text-slate-700 font-medium hover:bg-slate-500 hover:text-slate-900"
+                    title="Toggle Admin Panel"
+                    aria-label="Toggle Admin Panel"
+                    className="grid h-10 w-10 place-items-center rounded-xl border border-border/60 bg-surface/50 text-muted transition-colors hover:text-foreground active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
                 >
-                    <img className="h-12 w-12" src={switchImage} alt="switch" title="Toggle Admin Panel" />
+                    <SlidersHorizontal size={18} />
                 </button>
             </div>
-        </div>
+        </header>
     );
 };
 
